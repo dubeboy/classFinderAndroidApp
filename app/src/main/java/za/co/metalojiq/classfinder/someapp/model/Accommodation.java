@@ -1,5 +1,6 @@
 package za.co.metalojiq.classfinder.someapp.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
@@ -70,6 +71,14 @@ public class Accommodation {
 
     public List<Picture> getPictures() {
         return pictures;
+    }
+
+    public ArrayList<String> getImagesUrls() {
+        ArrayList<String> urls = new ArrayList<>();
+        for (Picture p : pictures) {
+            urls.add(p.getImageUrl());
+        }
+        return urls;
     }
 
     public Picture getPicture(int position) {

@@ -13,12 +13,11 @@
         android:layout_marginLeft="9dp"
         android:layout_marginRight="9dp"
         android:layout_marginBottom="9dp"
-        card_view:cardElevation="0.5dp"
-      >
+        card_view:cardElevation="0.5dp">
         <RelativeLayout
             android:id="@+id/top_layout"
             android:layout_width="fill_parent"
-            android:layout_height="338dp">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/img_thumbnail"
@@ -69,11 +68,10 @@
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
-                android:alpha="0.8"
                 android:textColor="#000"
-                android:textSize="20dp"
+                android:textSize="15dp"
                 android:text="Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test"
-                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/tv_title"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
         </RelativeLayout>

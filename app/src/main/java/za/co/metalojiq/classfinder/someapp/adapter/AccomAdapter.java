@@ -82,8 +82,7 @@ public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHol
             tvTitle.setText(price);
             tvRoomType.setText(accommodation.getRoomType());
             Picasso.with(itemView.getContext())
-                    .load(ApiClient.HOST_URL + accommodation.getPicture(0).getImageUrl())
-                    .into(accomImageThumb);
+                    .load(ApiClient.HOST_URL + accommodation.getPicture(0).getImageUrl()).into(accomImageThumb);
 //            built in onClick listener for a view.. nice!!
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

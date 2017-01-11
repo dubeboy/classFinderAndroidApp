@@ -7,27 +7,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import za.co.metalojiq.classfinder.someapp.R;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+
+import za.co.metalojiq.classfinder.someapp.model.Picture;
+import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 
 /**
  * Created by divine on 1/11/17.
  */
 
-public class AndroidImageAdapter  extends PagerAdapter{
+public class AccomImageAdapter extends PagerAdapter{
     Context mContext;
-
-    AndroidImageAdapter(Context context) {
+    ArrayList<String> picturesUrls;
+    public AccomImageAdapter(Context context, ArrayList<String> picturesUrls ) {
         this.mContext = context;
+        this.picturesUrls = picturesUrls;
     }
-
-    private int[] sliderImagesId = new int[]{
-//            R.drawable.image1, R.drawable.image2, R.drawable.cat,
-//            R.drawable.image1, R.drawable.image2, R.drawable.cat,
-    };
 
     @Override
     public int getCount() {
-        return sliderImagesId.length;
+        return picturesUrls.size();
     }
 
     @Override
@@ -38,9 +39,12 @@ public class AndroidImageAdapter  extends PagerAdapter{
 
     @Override
     public Object instantiateItem(ViewGroup container, int i) {
+
         ImageView mImageView = new ImageView(mContext);
-        mImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        mImageView.setImageResource(sliderImagesId[i]);
+        mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+        Picasso.with(mContext) //// TODO: move this to a util class
+                .load(ApiClient.HOST_URL + picturesUrls.get(i)).into(mImageView);
         ((ViewPager) container).addView(mImageView, 0);
         return mImageView;
     }

@@ -3,12 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    tools:context="za.co.metalojiq.classfinder.someapp.activity.MainActivity">
+    android:padding="0dp"
+    tools:context="za.co.metalojiq.classfinder.someapp.activity.AccomImageSlider">
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/viewPageAndroid"
+        android:id="@+id/viewPageAccom"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
+
+
 
 </RelativeLayout>
