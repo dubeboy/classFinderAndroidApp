@@ -1,0 +1,51 @@
+package za.co.metalojiq.classfinder.someapp.model;
+
+import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+
+/**
+ * Created by divine on 1/9/17.
+ */
+
+
+//this class is useful when sending extra data with the json
+public class AccommodationResponse {
+
+//    @SerializedName("page")
+//    private int page;
+    @SerializedName("results")
+    private List<Accommodation> results;
+
+//    public int getPage() {
+//        return page;
+//    }
+//
+//    public void setPage(int page) {
+//        this.page = page;
+//    }
+
+    public List<Accommodation> getResults() {
+        return results;
+    }
+
+    public void setResults(List<Accommodation> results) {
+        this.results = results;
+    }
+
+//    public int getTotalResults() {
+//        return totalResults;
+//    }
+//
+//    public void setTotalResults(int totalResults) {
+//        this.totalResults = totalResults;
+//    }
+//
+//    public int getTotalPages() {
+//        return totalPages;
+//    }
+//
+//    public void setTotalPages(int totalPages) {
+//        this.totalPages = totalPages;
+//    }
+}
