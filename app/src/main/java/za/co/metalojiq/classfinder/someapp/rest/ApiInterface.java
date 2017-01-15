@@ -37,8 +37,8 @@ public interface ApiInterface {
     @GET("/users/{id}.json")
     Call<User> getUser(@Path("id") int id);
 
+    @Headers({ "Accept: application/json"})
     @FormUrlEncoded
-    @Headers({"Content-Type: application/json", "Accept: application/json"})
-    @POST("/sessions.json")
+    @POST("/api/v1/sessions")
     Call<UserResponse> signIn(@Field("email") String email, @Field("password") String  password);
 }

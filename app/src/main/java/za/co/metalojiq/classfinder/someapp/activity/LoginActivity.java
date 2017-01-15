@@ -3,6 +3,7 @@ package za.co.metalojiq.classfinder.someapp.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -29,6 +30,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -200,6 +202,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
+//            Toast.makeText(this, "You have successfully logged in dankie boss", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -311,6 +314,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mEmail;
         private final String mPassword;
+        private boolean yes = false;
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
@@ -320,19 +324,28 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
+
+
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
             Call<UserResponse> call = apiService.signIn(mEmail, mPassword);
             call.enqueue(new Callback<UserResponse>() {
                 @Override
                 public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-                    try {
-                        Log.d(TAG + " USER LOGIN", response.body().getUser().getEmail());
-                        Log.d(TAG + " ERRoR USER LOGIN", response.errorBody().string());
+                    Log.d(TAG + " USER LOGIN", "stuff do if null: " + response.body().toString());
+                    Log.d(TAG + " ERRoR USER LOGIN", "stuff do if null: " + response.body().getUser().getEmail());
+                    //todo: bad code!!!!!!! i think...
 
-                        call.execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    UserLoginTask.this.yes = response.body().isStatus();
+                    Toast.makeText(LoginActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    if (yes) {
+                        SharedPreferences sharedPreferences  = getSharedPreferences("userLogin", MODE_PRIVATE) ;
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("email", response.body().getUser().getEmail());
+                        editor.putInt("id", response.body().getUser().getId());
+
+                        editor.apply(); //fixme does this backgroud thing effect any thing
                     }
+
                 }
 
                 @Override
@@ -340,7 +353,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     Log.d(TAG, t.toString());
                 }
             });
-            return true;
+            return yes;
         }
 
         @Override

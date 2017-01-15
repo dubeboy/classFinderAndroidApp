@@ -13,6 +13,17 @@ public class User {
     @SerializedName("password")
     private String password;
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @SerializedName("id")
+    private int id; //todo: should be a long bra
+
     public User(String email, String password) {
         this.email = email;
         this.password = password;
