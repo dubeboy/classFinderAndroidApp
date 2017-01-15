@@ -110,12 +110,6 @@ public class Search extends AppCompatActivity implements AdapterView.OnItemSelec
         call.enqueue(new Callback<AccommodationResponse>() {
             @Override
             public void onResponse(Call<AccommodationResponse> call, Response<AccommodationResponse> response){
-                Log.d(TAG + "dsldsdsadsd=>", response.body().toString());
-                try {
-                    Log.d(TAG + " error", response.errorBody().string());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
                 intent.putExtra(AccomList.ACCOM_BUNDLE_KEY, response.body().getResults());
                 intent.putExtra(INTENT_RESPONSE_EXTRA, INTENT_RESPONSE.SUCCESS);
                 startActivity(intent);

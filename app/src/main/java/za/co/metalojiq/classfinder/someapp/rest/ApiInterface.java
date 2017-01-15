@@ -23,7 +23,7 @@ public interface ApiInterface {
     @GET("/accommodations.json")
     Call<AccommodationResponse> getAllAccommodations();
 
-    @Headers({"Content-Type: application/json", "Accept: application/json"})
+    @Headers({"Accept: application/json"})
     @GET("/accommodations/search")
     Call<AccommodationResponse> searchAccommodations(@Query(value ="name", encoded=true) String location,
                                                      @Query("room_type" )String roomType,
