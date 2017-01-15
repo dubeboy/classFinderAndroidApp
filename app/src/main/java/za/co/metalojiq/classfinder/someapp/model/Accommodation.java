@@ -1,11 +1,12 @@
 package za.co.metalojiq.classfinder.someapp.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Accommodation {
+public class Accommodation implements Serializable {
 
     @SerializedName("id=")
     private Integer id;

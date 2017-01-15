@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="locations_array">
+        <item>Auckland Park</item>
+        <item>Braamfontein</item>
+        <item>Doornfontein</item>
+        <item>Soweto</item>
+    </string-array>
+
+    <string-array name="room_type">
+        <item>Single</item>
+        <item>Sharing</item>
+        <item>Apartment</item>
+        <item>Cottage</item>
+    </string-array>
+
+    <string-array name="auck_areas">
+        <item>Brixton</item>
+        <item>Wetededene</item>
+        <item>Hursthill</item>
+        <item>MellVille</item>
+        <item>Vrededorp</item>
+    </string-array>
+</resources>

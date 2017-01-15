@@ -2,6 +2,7 @@ package za.co.metalojiq.classfinder.someapp.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ public class AccommodationResponse {
 //    @SerializedName("page")
 //    private int page;
     @SerializedName("results")
-    private List<Accommodation> results;
+    private ArrayList<Accommodation> results;
 
 //    public int getPage() {
 //        return page;
@@ -25,11 +26,11 @@ public class AccommodationResponse {
 //        this.page = page;
 //    }
 
-    public List<Accommodation> getResults() {
+    public ArrayList<Accommodation> getResults() {
         return results;
     }
 
-    public void setResults(List<Accommodation> results) {
+    public void setResults(ArrayList<Accommodation> results) {
         this.results = results;
     }
 

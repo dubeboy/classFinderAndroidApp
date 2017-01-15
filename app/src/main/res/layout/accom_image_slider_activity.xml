@@ -1,16 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="0dp"
-    tools:context="za.co.metalojiq.classfinder.someapp.activity.AccomImageSlider">
+    android:orientation="vertical"
+    tools:context="za.co.metalojiq.classfinder.someapp.activity.AccomImageSlider"
+    android:weightSum="1">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewPageAccom"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="300dp"
+        android:layout_weight="0.12" />
 
 
+    <android.support.v7.widget.CardView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="0dp"
+        card_view:cardElevation="0.3dp"
+        android:id="@+id/cardView"
+        >
 
-</RelativeLayout>
+
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:paddingLeft="10dp"
+          android:paddingRight="10dp"
+          android:paddingTop="10dp"
+          android:layout_height="wrap_content">
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="@string/accom_price"
+              android:textStyle="bold"
+              android:textColor="@color/accent"
+              android:textSize="20sp"
+              android:id="@+id/tv_price"/>
+
+          <TextView
+              android:id="@+id/tv_room_type"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="Sharing"
+              android:layout_below="@id/tv_price"
+              android:textSize="20sp"/>
+
+          <TextView
+              android:id="@+id/tv_room_location"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="Around Braamfontein"
+              android:layout_below="@id/tv_room_type"
+              android:textSize="20sp"/>
+
+          <!--<TextView-->
+              <!--android:id="@+id/tv_host"-->
+              <!--android:layout_width="match_parent"-->
+              <!--android:layout_height="wrap_content"-->
+              <!--android:text="By South Point"-->
+              <!--android:textStyle="bold"-->
+              <!--android:layout_below="@id/tv_room_location"-->
+              <!--android:textSize="20sp"/>-->
+      </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+
+</LinearLayout>

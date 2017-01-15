@@ -3,10 +3,12 @@ package za.co.metalojiq.classfinder.someapp.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
 * Created by divine on 1/9/17.
 */
- public class Picture {
+ public class Picture implements Serializable{
 
    @SerializedName("image_id")
    private Integer imageId;

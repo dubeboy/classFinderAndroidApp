@@ -8,8 +8,25 @@
         android:title="@string/action_settings"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_slider"
+        android:id="@+id/action_search"
         android:orderInCategory="200"
-        android:title="Show slides nikka"
-        app:showAsAction="never" />
+        android:title="Search"
+        app:showAsAction="ifRoom"
+        android:icon="@android:drawable/ic_menu_search"
+        />
+
+    <item
+        android:id="@+id/action_tabs"
+        android:orderInCategory="230"
+        android:title="tabs"
+        app:showAsAction="ifRoom"
+        android:icon="@android:drawable/ic_menu_search"
+        />
+    <item
+        android:id="@+id/action_login"
+        android:actionViewClass="android.support.v7.widget.SearchView"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:title="Login"
+        android:orderInCategory="230"
+        />
 </menu>
