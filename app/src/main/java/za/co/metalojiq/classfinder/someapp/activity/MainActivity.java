@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(login);
                 return true;
             case R.id.action_settings:
-            Intent settings = new Intent(this, SettingsActivity.class);
+            Intent settings = new Intent(this, Runner.class);
             startActivity(settings);
             return true;
         }

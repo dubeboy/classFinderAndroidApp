@@ -7,7 +7,7 @@ import za.co.metalojiq.classfinder.someapp.R;
 
 
 
-//currently the user is a runner
+//currently the user is a runner so look in the runner activity
 public class Users extends AppCompatActivity {
 
     @Override

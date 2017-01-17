@@ -8,6 +8,8 @@ import java.io.Serializable;
 /**
 * Created by divine on 1/9/17.
 */
+
+// TODO: 1/17/17  should move thing in the Picture class.
  public class Picture implements Serializable{
 
    @SerializedName("image_id")
