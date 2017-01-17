@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -20,15 +21,15 @@ import za.co.metalojiq.classfinder.someapp.adapter.AccomAdapter;
 import za.co.metalojiq.classfinder.someapp.model.Accommodation;
 
 /**
- * A simple {@link Fragment} subclass.
+ * This displays all the available accommodations
  */
 public class AccomList extends Fragment {
 
 
-    public  static final String PICTURES_ARRAY_EXTRA = MainActivity.TAG + ".PICTURES_ARRAY_LIST";
-    public  static final String DOUBLE_PRICE_EXTRA = MainActivity.TAG + ".DOUBLE_PRICE";
-    public  static final String STRING_ROOM_TYPE_EXTRA = MainActivity.TAG + ".STRING_ROOM_TYPE";
-    public  static final String STRING_ROOM_LOCATION_EXTRA = MainActivity.TAG + ".STRING_ROOM_LOCATION";
+    public static final String PICTURES_ARRAY_EXTRA = MainActivity.TAG + ".PICTURES_ARRAY_LIST";
+    public static final String DOUBLE_PRICE_EXTRA = MainActivity.TAG + ".DOUBLE_PRICE";
+    public static final String STRING_ROOM_TYPE_EXTRA = MainActivity.TAG + ".STRING_ROOM_TYPE";
+    public static final String STRING_ROOM_LOCATION_EXTRA = MainActivity.TAG + ".STRING_ROOM_LOCATION";
     private static final String TAG = AccomList.class.getSimpleName();
     public static final String ACCOM_BUNDLE_KEY = TAG + ".ACCOM_KEY";
 
@@ -52,27 +53,34 @@ public class AccomList extends Fragment {
         View linearLayout = inflater.inflate(R.layout.fragment_accom_list, container, false);
 
         final RecyclerView recyclerView = (RecyclerView) linearLayout.findViewById(R.id.recycler_view);
+        final TextView textViewError = (TextView) linearLayout.findViewById(R.id.accomListTvError);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
 
-        //// TODO: 1/13/17  make it better please
+        //// TODO: 1/13/17  make it better please move this the onCreate Hook
         ArrayList<Accommodation> accommodations = (ArrayList<Accommodation>) getArguments().getSerializable(ACCOM_BUNDLE_KEY);
 
-        Log.d(TAG, "Number of elemets =" + accommodations.size());
-
-        recyclerView.setAdapter(new AccomAdapter(accommodations,
-                R.layout.list_item_accom, getActivity().getApplicationContext(), new AccomAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Accommodation accommodation) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), AccomImageSlider.class);
-                intent.putStringArrayListExtra(PICTURES_ARRAY_EXTRA, accommodation.getImagesUrls()); // TODO: 1/11/17 google how to add an arraylist to a put extra
-                intent.putExtra(DOUBLE_PRICE_EXTRA, accommodation.getPrice());
-                intent.putExtra(STRING_ROOM_TYPE_EXTRA, accommodation.getRoomType());
-                intent.putExtra(STRING_ROOM_LOCATION_EXTRA, accommodation.getLocation());
-                startActivity(intent);
+        if (accommodations != null) {  //I think its redundant.
+            Log.d(TAG, "Number of elemets =" + accommodations.size());
+            // I need to load the recycler view only if there are items to load!!!
+            if (accommodations.size() > 0) {
+                recyclerView.setAdapter(new AccomAdapter(accommodations,
+                        R.layout.list_item_accom, getActivity().getApplicationContext(), new AccomAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(Accommodation accommodation) {
+                        Intent intent = new Intent(getActivity().getApplicationContext(), AccomImageSlider.class);
+                        intent.putStringArrayListExtra(PICTURES_ARRAY_EXTRA, accommodation.getImagesUrls()); // TODO: 1/11/17 google how to add an arraylist to a put extra
+                        intent.putExtra(DOUBLE_PRICE_EXTRA, accommodation.getPrice());
+                        intent.putExtra(STRING_ROOM_TYPE_EXTRA, accommodation.getRoomType());
+                        intent.putExtra(STRING_ROOM_LOCATION_EXTRA, accommodation.getLocation());
+                        startActivity(intent);
+                    }
+                }));
+            } else {
+                textViewError.setVisibility(View.VISIBLE);
             }
-        }));
-        return  linearLayout;
+        }
+        return linearLayout;
 
     }
 }

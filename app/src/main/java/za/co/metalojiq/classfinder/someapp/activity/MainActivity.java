@@ -16,6 +16,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import za.co.metalojiq.classfinder.someapp.R;
+import za.co.metalojiq.classfinder.someapp.activity.expirimental.SettingsActivity;
+import za.co.metalojiq.classfinder.someapp.activity.expirimental.Tabbed;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.AccomList;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.GetAccomFailed;
 import za.co.metalojiq.classfinder.someapp.model.Accommodation;
@@ -42,18 +44,14 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, Search.class);
                 startActivity(intent);
                 return true;
-            case R.id.action_settings:
-                Intent settings = new Intent(this, SettingsActivity.class);
-                startActivity(settings);
-                return true;
-            case R.id.action_tabs:
-                Intent tab = new Intent(this, Tabbed.class);
-                startActivity(tab);
-                return true;
             case R.id.action_login:
                 Intent login = new Intent(this, LoginActivity.class);
                 startActivity(login);
                 return true;
+            case R.id.action_settings:
+            Intent settings = new Intent(this, SettingsActivity.class);
+            startActivity(settings);
+            return true;
         }
         return  super.onOptionsItemSelected(item);
     }
@@ -74,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
             //todo: please make this wait a bit so that it does not time out fast
             @Override
             public void onResponse(Call<AccommodationResponse> call, Response<AccommodationResponse> response) {
-
                 ArrayList<Accommodation> accommodations = response.body().getResults();
                 AccomList accomList = AccomList.newInstance(accommodations);
                 setTitle(R.string.app_name);

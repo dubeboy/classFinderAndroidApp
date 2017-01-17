@@ -31,6 +31,7 @@ public class SearchResults extends AppCompatActivity {
 
         final ArrayList<Accommodation> accommodations = (ArrayList<Accommodation>) intent.getSerializableExtra(AccomList.ACCOM_BUNDLE_KEY);
 
+
         //get fragement manO
         FragmentManager fragmentManager = getSupportFragmentManager();
         final FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -39,7 +40,6 @@ public class SearchResults extends AppCompatActivity {
         if (intentResponse == Search.INTENT_RESPONSE.SUCCESS) {
             //todo unchecked cast
             AccomList accomList = AccomList.newInstance(accommodations);
-            setTitle("Search Results");
             transaction.add(R.id.activity_search_results, accomList, "ACCOM_LIST_FRAGMENT");
         } else {
             GetAccomFailed getAccomFailed = new GetAccomFailed();

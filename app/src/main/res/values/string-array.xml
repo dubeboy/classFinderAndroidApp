@@ -16,9 +16,9 @@
 
     <string-array name="auck_areas">
         <item>Brixton</item>
-        <item>Wetededene</item>
-        <item>Hursthill</item>
-        <item>MellVille</item>
+        <item>Westedene</item>
+        <item>Hursthil</item>
+        <item>Mellville</item>
         <item>Vrededorp</item>
     </string-array>
 </resources>

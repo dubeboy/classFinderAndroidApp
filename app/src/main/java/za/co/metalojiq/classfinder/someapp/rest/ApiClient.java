@@ -17,7 +17,7 @@ public class ApiClient {
 
     //todo make this a gradle task
     //todo:  this should be calling the api domain /api/v1/...
-    public static final String HOST_URL = "http://192.168.42.140:3000";
+    public static final String HOST_URL = "http://192.168.56.1:3000";
 //    public static final String BASE_URL = HOST_URL + "/accommodations" ; not required man retrofit is cool
     private static Retrofit retrofit = null;
 

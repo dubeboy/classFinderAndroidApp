@@ -23,19 +23,21 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.AccomImageSlider" />
-        <activity android:name=".activity.Search" />
-        <activity android:name=".activity.SearchResults" />
+        <activity android:name=".activity.Search"
+            android:label="@string/search_accommodation"/>
+        <activity android:name=".activity.SearchResults"
+            android:label="Search results"/>
         <activity android:name=".activity.Users" />
         <activity
             android:name=".activity.LoginActivity"
             android:label="@string/title_activity_login" />
         <activity
-            android:name=".activity.Tabbed"
+            android:name=".activity.expirimental.Tabbed"
             android:label="@string/title_activity_tabbed"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:name=".activity.expirimental.SettingsActivity"
+            android:label="@string/title_activity_settings" />
     </application>
 
 </manifest>

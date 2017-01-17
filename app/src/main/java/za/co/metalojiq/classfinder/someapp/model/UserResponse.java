@@ -16,6 +16,9 @@ public class UserResponse {
     @SerializedName("status")
     private boolean status;
 
+    @SerializedName("message")
+    private String message;
+
     public void setMessage(String message) {
         this.message = message;
     }
@@ -23,9 +26,6 @@ public class UserResponse {
     public String getMessage() {
         return message;
     }
-
-    @SerializedName("message")
-    private String message;
 
     public boolean isStatus() {
         return status;

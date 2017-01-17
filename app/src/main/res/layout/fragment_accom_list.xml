@@ -10,6 +10,13 @@
         android:id="@+id/recycler_view"
         />
 
-
-
+    <TextView
+        android:id="@+id/accomListTvError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="25dp"
+        android:textSize="20sp"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:text="Sorry your search does not match any available accommodations."
+        android:visibility="gone"/>
 </FrameLayout>

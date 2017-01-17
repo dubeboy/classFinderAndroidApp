@@ -1,4 +1,4 @@
-package za.co.metalojiq.classfinder.someapp.activity;
+package za.co.metalojiq.classfinder.someapp.activity.expirimental;
 
 
 import android.annotation.TargetApi;

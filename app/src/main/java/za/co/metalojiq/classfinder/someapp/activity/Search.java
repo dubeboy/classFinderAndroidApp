@@ -52,6 +52,7 @@ public class Search extends AppCompatActivity implements AdapterView.OnItemSelec
         roomTypeSpinner = setupSpinner(R.id.search_spinner_room_type, R.array.room_type);
         auckAreaSpinner = setupSpinner(R.id.search_spinner_auck_areas, R.array.auck_areas);
 
+
         locationSpinner.setOnItemSelectedListener(this);
         priceFrom = (EditText) findViewById(R.id.search_price_from);
         priceTo = (EditText) findViewById(R.id.search_price_to);
@@ -87,13 +88,13 @@ public class Search extends AppCompatActivity implements AdapterView.OnItemSelec
     }
 
     public void search(View view) {
-        final Intent intent = new Intent(this, SearchResults.class);
         String auckArea = "";
 
         String location = (String) locationSpinner.getSelectedItem();
 
         if (location.equals(locations[0])) {
-            auckArea = (String) auckAreaSpinner.getSelectedItem();
+            String rawArea = (String) auckAreaSpinner.getSelectedItem();
+            auckArea = "Auckland Park, " + rawArea; //YAK MAN bad code need better thought man.
         }
 
         String roomType = (String) roomTypeSpinner.getSelectedItem();
@@ -106,7 +107,7 @@ public class Search extends AppCompatActivity implements AdapterView.OnItemSelec
         Call<AccommodationResponse> call = apiService.searchAccommodations(location, roomType, auckArea, priceF, priceT);
 
         Log.d(TAG + "dsldsdsadsd request", call.request().toString());
-
+        final Intent intent = new Intent(this, SearchResults.class);
         call.enqueue(new Callback<AccommodationResponse>() {
             @Override
             public void onResponse(Call<AccommodationResponse> call, Response<AccommodationResponse> response){
