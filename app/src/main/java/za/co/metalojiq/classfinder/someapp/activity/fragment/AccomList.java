@@ -76,6 +76,7 @@ public class AccomList extends Fragment {
                         startActivity(intent);
                     }
                 }));
+
             } else {
                 textViewError.setVisibility(View.VISIBLE);
             }

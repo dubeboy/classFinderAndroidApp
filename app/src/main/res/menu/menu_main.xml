@@ -14,9 +14,22 @@
         android:id="@+id/action_login"
         android:actionViewClass="android.support.v7.widget.SearchView"
         android:title="Login"
+        android:visible="false"
         android:orderInCategory="230"
         />
 
+    <item
+        android:id="@+id/action_runner"
+        android:orderInCategory="200"
+        android:title="@string/runner_panel"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_sign_out"
+        android:orderInCategory="700"
+        android:title="@string/action_string_sign_out"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="700"

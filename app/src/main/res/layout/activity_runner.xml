@@ -32,6 +32,15 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <!-- runner transactions load!!!!!!!! -->
+    <ProgressBar
+            android:id="@+id/runnerTransLoad"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:visibility="visible" />
+
     <android.support.v4.view.ViewPager
         android:id="@+id/container"
         android:layout_width="match_parent"

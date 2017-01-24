@@ -10,12 +10,16 @@ import java.util.ArrayList;
 
 //if the user authenticates using the gmail them then user we get that user id and check if its there on our servers
 public class User {
+    @SerializedName("id")
+    private int id; //todo: should be a long bra
     @SerializedName("email")
     private String email;
     @SerializedName("password")
     private String password;
     @SerializedName("time_slots")
     private ArrayList<TimeSlot> timeSlots;
+    @SerializedName("runner")
+    private boolean runner;
 
 
     public ArrayList<TimeSlot> getTimeSlots() {
@@ -36,12 +40,12 @@ public class User {
         this.id = id;
     }
 
-    @SerializedName("id")
-    private int id; //todo: should be a long bra
 
-    public User(String email, String password) {
+
+    public User(String email, String password, boolean runner) {
         this.email = email;
         this.password = password;
+        this.runner = runner;
     }
 
     public String getEmail() {
@@ -58,6 +62,11 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isRunner() {
+
+        return runner;
     }
 
     //This class belongs to the user and nowhere else so u can only get to it via a user object.

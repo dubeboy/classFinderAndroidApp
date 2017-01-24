@@ -6,119 +6,87 @@ import com.google.gson.annotations.SerializedName;
  * Created by divine on 1/18/17.
  */
 
-class Transaction {
-    @SerializedName("id")
-    private int id;
-    @SerializedName("host_id")
-    private int hostId;
-    @SerializedName("user_id")
-    private int userId;
-    @SerializedName("runner_id")
-    private int runnerId;
-    @SerializedName("accommodation_id")
-    private int accommodationId;
-    @SerializedName("paid")
-    private boolean paid;
-    @SerializedName("booking_type")
-    private boolean bookingType;
-    @SerializedName("std_confirm")
-    private boolean stdConfirm;
-    @SerializedName("month")
-    private String month;
-    @SerializedName("time")
-    private String time;
 
-    public Transaction(int id, int hostId, int userId, int runnerId, int accommodationId,
-                       boolean paid, boolean bookingType, boolean stdConfirm, String month, String time) {
-        this.id = id;
-        this.hostId = hostId;
-        this.userId = userId;
-        this.runnerId = runnerId;
-        this.accommodationId = accommodationId;
-        this.paid = paid;
-        this.bookingType = bookingType;
-        this.stdConfirm = stdConfirm;
-        this.month = month;
-        this.time = time;
+//Transaction is a very good mixed up object which gets data from an Accommodation and User
+public class Transaction {
+    @SerializedName("student_email")
+    private String email;
+    @SerializedName("student_contact")
+    private String StudentContact;
+    @SerializedName("location")
+    private String location;
+    @SerializedName("room_type")
+    private String roomType;
+    @SerializedName("accom_views")
+    private int accomViews;
+    @SerializedName("host_name")
+    private String hostName;
+    @SerializedName("view_date")
+    private String viewDate;
+    @SerializedName("view_time")
+    private String viewTime;
+
+    public String getEmail() {
+        return email;
     }
 
-    public int getId() {
-        return id;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public String getStudentContact() {
+        return StudentContact;
     }
 
-    public int getHostId() {
-        return hostId;
+    public void setStudentContact(String studentContact) {
+        StudentContact = studentContact;
     }
 
-    public void setHostId(int hostId) {
-        this.hostId = hostId;
+    public String getLocation() {
+        return location;
     }
 
-    public int getUserId() {
-        return userId;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public String getRoomType() {
+        return roomType;
     }
 
-    public int getRunnerId() {
-        return runnerId;
+    public void setRoomType(String roomType) {
+        this.roomType = roomType;
     }
 
-    public void setRunnerId(int runnerId) {
-        this.runnerId = runnerId;
+    public int getAccomViews() {
+        return accomViews;
     }
 
-    public int getAccommodationId() {
-        return accommodationId;
+    public void setAccomViews(int accomViews) {
+        this.accomViews = accomViews;
     }
 
-    public void setAccommodationId(int accommodationId) {
-        this.accommodationId = accommodationId;
+    public String getHostName() {
+        return hostName;
     }
 
-    public boolean isPaid() {
-        return paid;
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
     }
 
-    public void setPaid(boolean paid) {
-        this.paid = paid;
+    public String getViewDate() {
+        return viewDate;
     }
 
-    public boolean isBookingType() {
-        return bookingType;
+    public void setViewDate(String viewDate) {
+        this.viewDate = viewDate;
     }
 
-    public void setBookingType(boolean bookingType) {
-        this.bookingType = bookingType;
+    public String getViewTime() {
+        return viewTime;
     }
 
-    public boolean isStdConfirm() {
-        return stdConfirm;
-    }
-
-    public void setStdConfirm(boolean stdConfirm) {
-        this.stdConfirm = stdConfirm;
-    }
-
-    public String getMonth() {
-        return month;
-    }
-
-    public void setMonth(String month) {
-        this.month = month;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
+    public void setViewTime(String viewTime) {
+        this.viewTime = viewTime;
     }
 }

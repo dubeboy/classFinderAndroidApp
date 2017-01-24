@@ -2,6 +2,7 @@ package za.co.metalojiq.classfinder.someapp.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,8 +82,9 @@ public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHol
             String price = "R " + accommodation.getPrice();
             tvTitle.setText(price);
             tvRoomType.setText(accommodation.getRoomType());
+            Log.d(TAG,ApiClient.DEV_HOST + accommodation.getPicture(0).getImageUrl() + "^END%");
             Picasso.with(itemView.getContext())
-                    .load(ApiClient.HOST_URL + accommodation.getPicture(0).getImageUrl()).into(accomImageThumb);
+                    .load(ApiClient.DEV_HOST + accommodation.getPicture(0).getImageUrl()).into(accomImageThumb);
 //            built in onClick listener for a view.. nice!!
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

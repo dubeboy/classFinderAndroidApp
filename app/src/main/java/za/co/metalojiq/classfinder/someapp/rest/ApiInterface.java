@@ -16,6 +16,8 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import za.co.metalojiq.classfinder.someapp.model.AccommodationResponse;
+import za.co.metalojiq.classfinder.someapp.model.Transaction;
+import za.co.metalojiq.classfinder.someapp.model.TransactionResponse;
 import za.co.metalojiq.classfinder.someapp.model.User;
 import za.co.metalojiq.classfinder.someapp.model.UserResponse;
 
@@ -31,6 +33,7 @@ public interface ApiInterface {
                                                      @Query("price_from") int priceFrom,
                                                      @Query("price_to") int priceTo );
 
+    @Deprecated //TODO Should change to api/v1/accommodation
     @GET("/accommodations/{id}.json")
     Call<AccommodationResponse> getAccommodationDetails(@Path("id") int id);
 
@@ -41,4 +44,8 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("/api/v1/sessions")
     Call<UserResponse> signIn(@Field("email") String email, @Field("password") String  password);
+
+    @Headers({ "Accept: application/json"}) //Todo: should remove this -> redundant
+    @GET("/api/v1/users/{id}")
+    Call<TransactionResponse> getRunner(@Path("id") int id, @Query("run") int run);
 }

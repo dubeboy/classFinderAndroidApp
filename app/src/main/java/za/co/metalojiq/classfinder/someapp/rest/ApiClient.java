@@ -1,11 +1,8 @@
 package za.co.metalojiq.classfinder.someapp.rest;
 
-import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -16,34 +13,24 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiClient {
 
     //todo make this a gradle task
+
+    //shuold not include the ending forward slash ;)
     //todo:  this should be calling the api domain /api/v1/...
-    public static final String HOST_URL = "http://192.168.56.1:3000";
+    public static final String PROD_HOST = "www.classfinderpp.com";
+    public static final String DEV_HOST = "http://192.168.0.101:3000";
 //    public static final String BASE_URL = HOST_URL + "/accommodations" ; not required man retrofit is cool
     private static Retrofit retrofit = null;
-
-
-
     public static Retrofit getClient() {
+        final OkHttpClient okHttp = new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .build();
         if (retrofit==null) {
-            retrofit = new Retrofit.Builder().baseUrl(HOST_URL)
+            retrofit = new Retrofit.Builder().baseUrl(DEV_HOST)
+                    .client(okHttp)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
         return retrofit;
-    }
-
-    private  static OkHttpClient  interc() {
-        OkHttpClient httpClient = new OkHttpClient();
-        httpClient.networkInterceptors().add(
-                new Interceptor() {
-            @Override
-            //todo should be com.squareup.okhttp.Response
-            public Response intercept(Chain chain) throws IOException {
-                Request.Builder requestBuilder = chain.request().newBuilder();
-                requestBuilder.header("Content-Type", "application/json");
-                return chain.proceed(requestBuilder.build());
-            }
-        });
-        return httpClient;
     }
 }

@@ -101,4 +101,6 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_runner">Runner</string>
+    <string name="runner_panel">Runner panel</string>
+    <string name="action_string_sign_out">Log out</string>
 </resources>

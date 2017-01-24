@@ -14,7 +14,6 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -32,7 +31,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,13 +38,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import za.co.metalojiq.classfinder.someapp.R;
-import za.co.metalojiq.classfinder.someapp.model.AccommodationResponse;
-import za.co.metalojiq.classfinder.someapp.model.User;
 import za.co.metalojiq.classfinder.someapp.model.UserResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
 
 import static android.Manifest.permission.READ_CONTACTS;
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A login screen that offers login via email/password.
@@ -59,6 +56,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final int REQUEST_READ_CONTACTS = 0;
 
     private static final String TAG = LoginActivity.class.getSimpleName();
+    //
+    public static final String LOGIN_PREF_EMAIL = TAG + "EMAIL";
+    public static final String LOGIN_PREF_USER_ID = TAG + "ID";
+    public static final String LOGIN_PREF_FILENAME = TAG + "USER_LOGIN";
+    public static final String LOGIN_IS_RUNNER = TAG + "IS_RUNNER";
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -69,6 +71,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private LoginActivity loginActivity = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,7 +172,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (TextUtils.isEmpty(password) || !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -195,7 +198,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // perform the user login attempt.
             showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            mAuthTask.login();
 //            Toast.makeText(this, "You have successfully logged in dankie boss", Toast.LENGTH_SHORT).show();
         }
     }
@@ -207,7 +210,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() >= 4;
     }
 
     /**
@@ -289,13 +292,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView.setAdapter(adapter);
     }
 
-
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
                 ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
         };
-
         int ADDRESS = 0;
         int IS_PRIMARY = 1;
     }
@@ -304,24 +305,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask {
 
         private final String mEmail;
         private final String mPassword;
-        private boolean yes = false;
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
         }
 
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
 
-
-
+         void login () {
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
             Call<UserResponse> call = apiService.signIn(mEmail, mPassword);
+            final boolean yes[] = {false};
             call.enqueue(new Callback<UserResponse>() {
                 @Override
                 public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
@@ -329,45 +326,38 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     Log.d(TAG + " ERRoR USER LOGIN", "stuff do if null: " + response.body().getUser().getEmail());
                     //todo: bad code!!!!!!! i think...
 
-                    UserLoginTask.this.yes = response.body().isStatus();
+                    Log.d(TAG, "is its a yes: 10000 " + yes[0]);
+                    yes[0]= response.body().isStatus();
+                    Log.d(TAG, "is its a yes: 20000 " + yes[0]);
                     Toast.makeText(LoginActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
-                    if (yes) {
-                        SharedPreferences sharedPreferences  = getSharedPreferences("userLogin", MODE_PRIVATE) ;
+                    if (response.body().isStatus()) {
+                        SharedPreferences sharedPreferences  = getSharedPreferences(LOGIN_PREF_FILENAME, MODE_PRIVATE) ;
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("email", response.body().getUser().getEmail());
-                        editor.putInt("id", response.body().getUser().getId());
-
-                        editor.apply(); //fixme does this backgroud thing effect any thing
+                        editor.putString(LOGIN_PREF_EMAIL, response.body().getUser().getEmail());
+                        editor.putInt(LOGIN_PREF_USER_ID, response.body().getUser().getId());
+                        editor.putBoolean(LOGIN_IS_RUNNER, response.body().getUser().isRunner());
+                        editor.commit(); //fixme does this backgroud thing effect any thing
+                        Log.d(TAG,sharedPreferences.getString(LOGIN_PREF_EMAIL, "YOHHHHHHH this is a problem NO EMAIL MAN DAMN!!!"));
+                        // only here you should finish
+                        showProgress(false);
+                        finish();
+                    } else {
+                        showProgress(false);
+                        mEmailView.requestFocus();
+                        Toast.makeText(loginActivity, "Sorry your password or username is correct", Toast.LENGTH_SHORT).show();
                     }
-
+                    mAuthTask = null;  //this will enable the user to login again there was an error
                 }
-
                 @Override
                 public void onFailure(Call<UserResponse> call, Throwable t) {
                     Log.d(TAG, t.toString());
+                    showProgress(false);
+                    mPasswordView.setError(getString(R.string.error_incorrect_password));
+                    mPasswordView.requestFocus();
                 }
             });
-            return yes;
-        }
+        } // end login
 
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
     }
 }
 

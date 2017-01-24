@@ -2,6 +2,7 @@ package za.co.metalojiq.classfinder.someapp.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,22 +11,29 @@ import android.widget.TextView;
 import java.util.List;
 
 import za.co.metalojiq.classfinder.someapp.R;
-import za.co.metalojiq.classfinder.someapp.model.User;
+import za.co.metalojiq.classfinder.someapp.model.Transaction;
 
 /**
  * Created by divine on 1/18/17.
  */
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
+    private static final String TAG = UserAdapter.class.getSimpleName() ;
     //row row of data
     private int rowLayout;
-    private List<User> users;
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
+    }
+
+    private List<Transaction> transactions;
     private Context context;
 
 
-    public UserAdapter(List<User> users, int rowLayout, Context context) {
+    public UserAdapter(List<Transaction> transactions, int rowLayout, Context context) {
+        Log.d(TAG, "here are the transactions" + transactions); 
         this.rowLayout = rowLayout;
-        this.users = users;
+        this.transactions = transactions;
         this.context = context;
     }
 
@@ -37,32 +45,35 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     @Override
     public void onBindViewHolder(UserViewHolder holder, int position) {
-        holder.bind(users.get(position));
+        Log.d(TAG, "GEtting the transaction for item: " + transactions.get(position).getEmail());
+        holder.bind(transactions.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return users.size();
+        Log.d(TAG, "the number of eleemts for runner is " + transactions.size() );
+        return transactions.size() ;
     }
 
      static class UserViewHolder extends RecyclerView.ViewHolder {
          TextView runnerLocation;
-         TextView runnerEmail;
-         TextView runnerCell;
+         TextView runnerStudentEmail;
+         TextView runnerStudentCell;
          TextView runnerTime;
          public UserViewHolder(View itemView) {
              super(itemView);
              runnerLocation = (TextView) itemView.findViewById(R.id.runnerLocation);
-             runnerEmail = (TextView) itemView.findViewById(R.id.runnerEmail);
-             runnerCell = (TextView) itemView.findViewById(R.id.runnerCell);
+             runnerStudentEmail = (TextView) itemView.findViewById(R.id.runnerEmail);
+             runnerStudentCell = (TextView) itemView.findViewById(R.id.runnerCell);
              runnerTime = (TextView) itemView.findViewById(R.id.runnerTime);
          }
 
-         void bind(User user) {
-            runnerLocation.setText(user.getLocation);
-            runnerEmail.setText(user.getEmail());
-            runnerCell.setText(user.getCell);
-            runnerTime.setText(user.getTime());
+         void bind(Transaction transaction) {
+             Log.d(TAG, "JUJUJUJUJUJJUJUJU " + transaction.getEmail());
+            runnerLocation.setText(transaction.getLocation());
+            runnerStudentEmail.setText(transaction.getEmail());
+            runnerStudentCell.setText(transaction.getStudentContact());
+            runnerTime.setText(transaction.getViewTime());
          }
      }
 }

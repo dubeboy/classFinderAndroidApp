@@ -6,4 +6,5 @@
     android:layout_height="match_parent"
     tools:context="za.co.metalojiq.classfinder.someapp.activity.SearchResults">
 
+
 </RelativeLayout>

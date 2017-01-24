@@ -44,7 +44,7 @@ public class AccomImageAdapter extends PagerAdapter{
         mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
         Picasso.with(mContext) //// TODO: move this to a util class
-                .load(ApiClient.HOST_URL + picturesUrls.get(i)).into(mImageView);
+                .load(ApiClient.DEV_HOST + picturesUrls.get(i)).into(mImageView);
         ((ViewPager) container).addView(mImageView, 0);
         return mImageView;
     }
