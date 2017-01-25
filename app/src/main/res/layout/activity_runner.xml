@@ -32,7 +32,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <!-- runner transactions load!!!!!!!! -->
+    <!-- runner transactions load!!!!!!!! TODO REMOVE DEPRECATED -->
     <ProgressBar
             android:id="@+id/runnerTransLoad"
             style="?android:attr/progressBarStyleLarge"

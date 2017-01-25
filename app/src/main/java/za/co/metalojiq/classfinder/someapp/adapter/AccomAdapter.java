@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import za.co.metalojiq.classfinder.someapp.R;
@@ -24,11 +25,6 @@ import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 
 //view holder is a inner class which actually has instancies of our xml elements
 public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHolder> {
-
-    public interface OnItemClickListener {
-        void onItemClick(Accommodation accommodation);
-    }
-
     private static final String TAG = AccomAdapter.class.getSimpleName();
     List<Accommodation> accommodations;
     private int rowLayout;
@@ -62,6 +58,10 @@ public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHol
         return accommodations.size();
     }
 
+    public interface OnItemClickListener {
+        void onItemClick(Accommodation accommodation);
+    }
+
     static class AccomViewHolder extends RecyclerView.ViewHolder {
 
         ImageView accomImageThumb;
@@ -72,7 +72,7 @@ public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHol
             super(itemView);
             accomImageThumb = (ImageView) itemView.findViewById(R.id.img_thumbnail);
             tvTitle = (TextView) itemView.findViewById(R.id.tv_title);
-            tvdesc = (TextView) itemView.findViewById(R.id.tv_desc);
+            tvdesc = (TextView) itemView.findViewById(R.id.tv_location);
             tvRoomType = (TextView) itemView.findViewById(R.id.tv_room_type);
         }
 
@@ -84,7 +84,8 @@ public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHol
             tvRoomType.setText(accommodation.getRoomType());
             Log.d(TAG,ApiClient.DEV_HOST + accommodation.getPicture(0).getImageUrl() + "^END%");
             Picasso.with(itemView.getContext())
-                    .load(ApiClient.DEV_HOST + accommodation.getPicture(0).getImageUrl()).into(accomImageThumb);
+                    .load(ApiClient.DEV_HOST + accommodation.getPicture(0)
+                            .getImageUrl()).into(accomImageThumb);
 //            built in onClick listener for a view.. nice!!
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -95,4 +96,13 @@ public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHol
         }
     }
 
+    public void clear() {
+        accommodations.clear();
+        notifyDataSetChanged();
+    }
+
+    public void addAll(ArrayList<Accommodation> accoms) {
+        accommodations.addAll(accoms);
+        notifyDataSetChanged();
+    }
 }

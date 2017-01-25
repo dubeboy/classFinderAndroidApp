@@ -22,19 +22,19 @@ import za.co.metalojiq.classfinder.someapp.model.User;
 import za.co.metalojiq.classfinder.someapp.model.UserResponse;
 
 public interface ApiInterface {
-    @GET("/accommodations.json")
-    Call<AccommodationResponse> getAllAccommodations();
+    @GET("/api/v1/accommodations.json")
+    Call<AccommodationResponse> getAllAccommodations(@Query("page") int page);
 
     @Headers({"Accept: application/json"})
-    @GET("/accommodations/search")
+    @GET("/api/v1/accommodations/search") //TODO Should change to api/v1/accommodation
     Call<AccommodationResponse> searchAccommodations(@Query(value ="name", encoded=true) String location,
                                                      @Query("room_type" )String roomType,
                                                      @Query("auck_location")  String auckLocation,
                                                      @Query("price_from") int priceFrom,
                                                      @Query("price_to") int priceTo );
 
-    @Deprecated //TODO Should change to api/v1/accommodation
-    @GET("/accommodations/{id}.json")
+    @Deprecated
+    @GET("/api/v1/accommodations/{id}.json")
     Call<AccommodationResponse> getAccommodationDetails(@Path("id") int id);
 
     @GET("/users/{id}.json")

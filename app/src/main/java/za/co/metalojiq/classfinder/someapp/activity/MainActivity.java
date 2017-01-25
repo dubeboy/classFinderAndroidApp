@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        Call<AccommodationResponse> call = apiService.getAllAccommodations();
+        Call<AccommodationResponse> call = apiService.getAllAccommodations(1); //just get the first 6 elements
 
         call.enqueue(new Callback<AccommodationResponse>() {
 
@@ -130,9 +130,9 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(Call<AccommodationResponse> call, Throwable t) {
                 Log.e(TAG, t.toString());
                 GetAccomFailed getAccomFailed = new GetAccomFailed();
-                setTitle(R.string.app_name);
+                setTitle("Error");
                 fragmentTransaction.add(R.id.activity_main, getAccomFailed, "ACCOM_FAIL_FRAGMENT");
-                fragmentTransaction.commit();
+                fragmentTransaction.commit(); //TODO remove this rather just set an Error text
             }
         });
 

@@ -17,7 +17,7 @@ public class ApiClient {
     //shuold not include the ending forward slash ;)
     //todo:  this should be calling the api domain /api/v1/...
     public static final String PROD_HOST = "www.classfinderpp.com";
-    public static final String DEV_HOST = "http://192.168.0.101:3000";
+    public static final String DEV_HOST = "http://192.168.0.101:3001";
 //    public static final String BASE_URL = HOST_URL + "/accommodations" ; not required man retrofit is cool
     private static Retrofit retrofit = null;
     public static Retrofit getClient() {

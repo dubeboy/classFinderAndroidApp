@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+              xmlns:card_view="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              android:layout_marginTop="9dp"
+              android:layout_marginLeft="@dimen/margin_body_to_elemenet"
+              android:layout_marginRight="@dimen/margin_body_to_elemenet"
+              android:layout_marginBottom="9dp">
 
     <android.support.v7.widget.CardView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         card_view:cardCornerRadius="3dp"
-        android:layout_marginTop="9dp"
-        android:layout_marginLeft="@dimen/margin_body_to_elemenet"
-        android:layout_marginRight="@dimen/margin_body_to_elemenet"
-        android:layout_marginBottom="9dp"
+
         card_view:cardElevation="0.3dp">
         <RelativeLayout
             android:id="@+id/top_layout"
@@ -22,7 +23,7 @@
             <ImageView
                 android:id="@+id/img_thumbnail"
                 android:layout_width="fill_parent"
-                android:layout_height="250dp"
+                android:layout_height="150dp"
                 android:scaleType="fitXY"
                 android:layout_marginBottom="50dp"/>
             <TextView
@@ -35,7 +36,7 @@
                 android:gravity="center_vertical"
                 android:background="#5c1b1b1b"
                 android:alpha="10"
-                android:textSize="22dp"
+                android:textSize="20sp"
                 android:textColor="@color/price_color"
                 android:textStyle="bold"
                 android:text="@string/accom_price"
@@ -45,23 +46,7 @@
 
 
             <TextView
-                android:id="@+id/tv_room_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:alpha="1"
-                android:textSize="22sp"
-                android:textColor="#f1f0f0"
-                android:textStyle="bold"
-                android:text="Sharing"
-                android:layout_alignBaseline="@+id/tv_title"
-                android:layout_alignBottom="@+id/tv_title"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
-
-            <TextView
-                android:id="@+id/tv_desc"
+                android:id="@+id/tv_location"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -70,10 +55,23 @@
                 android:paddingBottom="5dp"
                 android:textColor="#000"
                 android:textSize="15sp"
-                android:text="Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test"
+                android:text="Around Auckland Park, Westedene "
                 android:layout_below="@+id/tv_title"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
+            <TextView
+                    android:id="@+id/tv_room_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:alpha="1"
+                    android:textSize="17sp"
+                    android:textColor="#f1f0f0"
+                    android:textStyle="bold"
+                    android:text="Sharing"
+                    android:layout_above="@+id/tv_location" android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"/>
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 
