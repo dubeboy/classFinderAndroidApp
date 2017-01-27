@@ -1,4 +1,4 @@
-package za.co.metalojiq.classfinder.someapp.activity.fragment;
+package za.co.metalojiq.classfinder.someapp.activity.expirimental;
 
 import android.content.Context;
 import android.net.Uri;

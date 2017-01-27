@@ -1,6 +1,5 @@
 package za.co.metalojiq.classfinder.someapp.activity.fragment;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -17,6 +16,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import android.widget.Toast;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -34,14 +34,19 @@ import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
  * This displays all the available accommodations
  */
 public class AccomList extends Fragment {
-
+    private static final String TAG = AccomList.class.getSimpleName();
 
     public static final String PICTURES_ARRAY_EXTRA = MainActivity.TAG + ".PICTURES_ARRAY_LIST";
     public static final String DOUBLE_PRICE_EXTRA = MainActivity.TAG + ".DOUBLE_PRICE";
     public static final String STRING_ROOM_TYPE_EXTRA = MainActivity.TAG + ".STRING_ROOM_TYPE";
+    public static final String STRING_ROOM_DESC = MainActivity.TAG + ".STRING_ROOM_DESC";
     public static final String STRING_ROOM_LOCATION_EXTRA = MainActivity.TAG + ".STRING_ROOM_LOCATION";
-    private static final String TAG = AccomList.class.getSimpleName();
+    //Post strings for securing room----------------------------------------------------------------------
+    public static final String POST_INT_HOST_ID = MainActivity.TAG + ".POST_STRING_SECURING_ROOM";
     public static final String ACCOM_BUNDLE_KEY = TAG + ".ACCOM_KEY";
+    public static final String POST_ADVERT_ID = TAG + "POST_INT_ADVERT_ID";
+
+
     private EndlessRecyclerViewScrollListener scrollListener;
     private View linearLayout;
     private ProgressBar progressBar;
@@ -71,8 +76,10 @@ public class AccomList extends Fragment {
         final TextView textViewError = (TextView) linearLayout.findViewById(R.id.accomListTvError);
         progressBar = (ProgressBar) linearLayout.findViewById(R.id.accomLoad);
 
+
+
         StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2,
-                                                                                    StaggeredGridLayoutManager.VERTICAL);
+                StaggeredGridLayoutManager.VERTICAL);
         scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
@@ -83,7 +90,8 @@ public class AccomList extends Fragment {
         };
         recyclerView.addOnScrollListener(scrollListener); //TODO test if position matters
 
-        swipeRefreshLayout  = (SwipeRefreshLayout) linearLayout.findViewById(R.id.swipeContainer);
+        swipeRefreshLayout = (SwipeRefreshLayout) linearLayout.findViewById(R.id.swipeContainer);
+        //TODO not working man
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
@@ -92,38 +100,40 @@ public class AccomList extends Fragment {
             @Override
             public void onRefresh() {
                 fetchAccomData(0);
+                Toast.makeText(getActivity(), "Refresh", Toast.LENGTH_SHORT).show();
             }
         });
-
-
-
 
         recyclerView.setLayoutManager(gridLayoutManager);
 
         //// TODO: 1/13/17  make it better please move this the onCreate Hook
         ArrayList<Accommodation> accommodations =
-                                                (ArrayList<Accommodation>) getArguments().getSerializable(ACCOM_BUNDLE_KEY);
+                (ArrayList<Accommodation>) getArguments().getSerializable(ACCOM_BUNDLE_KEY);
 
         if (accommodations != null) {  //I think its redundant.
             Log.d(TAG, "Number of elemets =" + accommodations.size());
             // I need to load the recycler view only if there are items to load!!!
-
             if (accommodations.size() > 0) {
-                 accomAdapter = new AccomAdapter(accommodations,
-                        R.layout.list_item_accom, getActivity().getApplicationContext(), new AccomAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(Accommodation accommodation) {
-                        Intent intent = new Intent(getActivity().getApplicationContext(), AccomImageSlider.class);
-                        intent.putStringArrayListExtra(PICTURES_ARRAY_EXTRA, accommodation.getImagesUrls()); // TODO: 1/11/17 google how to add an arraylist to a put extra
-                        intent.putExtra(DOUBLE_PRICE_EXTRA, accommodation.getPrice());
-                        intent.putExtra(STRING_ROOM_TYPE_EXTRA, accommodation.getRoomType());
-                        intent.putExtra(STRING_ROOM_LOCATION_EXTRA, accommodation.getLocation());
-                        startActivity(intent);
-                    }
-                });
+                accomAdapter = new AccomAdapter(accommodations, R.layout.list_item_accom, getActivity().getApplicationContext(),
+                        new AccomAdapter.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(Accommodation accommodation) {
+                                Intent intent = new Intent(getActivity().getApplicationContext(), AccomImageSlider.class);
+                                intent.putStringArrayListExtra(PICTURES_ARRAY_EXTRA, accommodation.getImagesUrls()); // TODO: 1/11/17 google how to add an arraylist to a put extra
+                                intent.putExtra(DOUBLE_PRICE_EXTRA, accommodation.getPrice());
+                                intent.putExtra(STRING_ROOM_TYPE_EXTRA, accommodation.getRoomType());
+                                intent.putExtra(STRING_ROOM_LOCATION_EXTRA, accommodation.getLocation());
+                                intent.putExtra(STRING_ROOM_DESC, accommodation.getDescription());
+                                intent.putExtra(POST_INT_HOST_ID, accommodation.getHostId());
+                                Log.d(TAG, "Id of host is 3###################################" + accommodation.getHostId());
+                                intent.putExtra(POST_ADVERT_ID, accommodation.getId());
+                                startActivity(intent);
+                            }
+                        });
                 recyclerView.setAdapter(accomAdapter);
 
             } else {
+                //Todo Should be an If statement here to Id which fragment
                 textViewError.setVisibility(View.VISIBLE);
             }
         }
@@ -147,18 +157,15 @@ public class AccomList extends Fragment {
             call = apiService.getAllAccommodations(1);
         } else {
             Log.d(TAG, "The page is here > 0 " + page);
-            call = apiService.getAllAccommodations( page);
+            call = apiService.getAllAccommodations(page);
         }
-
-
-
+        //FIXME I am not sure if there are new item this top item will show thos new items
         call.enqueue(new Callback<AccommodationResponse>() {
             @Override
             public void onResponse(Call<AccommodationResponse> call, Response<AccommodationResponse> response) {
-                if (response.body().getResults().size() != 0 ) {
+                if (response.body().getResults().size() != 0) {
                     ArrayList<Accommodation> accommodations;
                     ArrayList<Accommodation> accommodationResults = response.body().getResults();
-
 
                     if (page == 0) {
                         Log.d(TAG, "Page is here reload");
@@ -166,7 +173,7 @@ public class AccomList extends Fragment {
                         accomAdapter.addAll(accommodationResults);
                         scrollListener.resetState();
                         swipeRefreshLayout.setRefreshing(false);
-                    }else {
+                    } else {
                         Log.d(TAG, "Page is here loadMore");
                         accommodations = (ArrayList<Accommodation>) getArguments().getSerializable(ACCOM_BUNDLE_KEY);
                         Log.d(TAG, "onResponse: Accommodations" + accommodations.size());
@@ -174,7 +181,7 @@ public class AccomList extends Fragment {
                         for (Accommodation newAccom : accommodationResults) {
                             accommodations.add(newAccom);
                         }
-                        accomAdapter.notifyItemRangeInserted(accomAdapter.getItemCount()+ 1, response.body().getResults().size());
+                        accomAdapter.notifyItemRangeInserted(accomAdapter.getItemCount() + 1, response.body().getResults().size());
                     }
                     progressBar.setVisibility(View.GONE);
                 } else {

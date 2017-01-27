@@ -10,5 +10,13 @@
 
     <!--Fragments transactions handle placing of the contents here man
     so go the class for more information-->
+    <ProgressBar
+            android:id="@+id/accomLoad"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:visibility="visible" />
 
 </LinearLayout>

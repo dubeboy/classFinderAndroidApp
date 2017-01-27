@@ -22,7 +22,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.AccomImageSlider" />
+        <activity android:name=".activity.AccomImageSlider"
+                  android:label="Accommodation Images"
+        />
         <activity
             android:name=".activity.Search"
             android:label="@string/search_accommodation" />
@@ -43,7 +45,7 @@
         <activity
             android:name=".activity.Runner"
             android:label="@string/title_activity_runner"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

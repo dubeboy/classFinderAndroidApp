@@ -18,6 +18,10 @@ public class AccommodationResponse {
     @SerializedName("results")
     private ArrayList<Accommodation> results;
 
+
+    @SerializedName("status")
+    private boolean status;
+
 //    public int getPage() {
 //        return page;
 //    }
@@ -32,6 +36,14 @@ public class AccommodationResponse {
 
     public void setResults(ArrayList<Accommodation> results) {
         this.results = results;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
 //    public int getTotalResults() {

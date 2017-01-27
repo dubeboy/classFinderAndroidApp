@@ -66,19 +66,19 @@ public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHol
 
         ImageView accomImageThumb;
         TextView tvTitle;
-        TextView tvdesc;
+        TextView tvLocation;
         TextView tvRoomType;
         AccomViewHolder(View itemView) {
             super(itemView);
             accomImageThumb = (ImageView) itemView.findViewById(R.id.img_thumbnail);
             tvTitle = (TextView) itemView.findViewById(R.id.tv_title);
-            tvdesc = (TextView) itemView.findViewById(R.id.tv_location);
+            tvLocation = (TextView) itemView.findViewById(R.id.tv_location);
             tvRoomType = (TextView) itemView.findViewById(R.id.tv_room_type);
         }
 
 //        this function will do all the binding to the each item list todo: a bit inefficient
         void bind(final Accommodation accommodation, final OnItemClickListener listener) {
-            tvdesc.setText(accommodation.getDescription());
+            tvLocation.setText(accommodation.getLocation());
             String price = "R " + accommodation.getPrice();
             tvTitle.setText(price);
             tvRoomType.setText(accommodation.getRoomType());

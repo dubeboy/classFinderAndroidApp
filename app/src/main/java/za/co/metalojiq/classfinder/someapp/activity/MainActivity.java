@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import android.view.View;
+import android.widget.ProgressBar;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,16 +48,16 @@ public class MainActivity extends AppCompatActivity {
             itemRunner.setVisible(false);
             itemLogin.setVisible(true);
             itemSignOut.setVisible(false);
-        } else if (isRunner){
+        } else if (isRunner) {
             itemRunner.setVisible(true);
             itemLogin.setVisible(false);
             itemSignOut.setVisible(true);
         } else {
             itemSignOut.setVisible(true);
         }
-        supportInvalidateOptionsMenu();
         return true;
     }
+
 
 
     private void signOut(SharedPreferences sharedPreferences) {
@@ -97,7 +99,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.accomLoad);
+        supportInvalidateOptionsMenu();  //TODO Called in the wrong places
         FragmentManager fragmentManager = getSupportFragmentManager();
         final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
@@ -106,24 +109,27 @@ public class MainActivity extends AppCompatActivity {
 
         call.enqueue(new Callback<AccommodationResponse>() {
 
-            //todo: please make this wait a bit so that it does not time out fast
             @Override
             public void onResponse(Call<AccommodationResponse> call, Response<AccommodationResponse> response) {
 
                 try {
                     if (response != null && response.errorBody() != null)
-                        Log.d(TAG, "RAW RESONSE OF UNSUCCESFUl ==>" + response.errorBody().string());
+                        Log.d(TAG, "RAW RESPONSE OF UNSUCCESSFUL ==>" + response.errorBody().string());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
+//
+//              TODO  should refactor this so that we can just pass another argument id from which class so if an error happens
+//                so that we just show the msg
                 if (response.body() != null) {
                     ArrayList<Accommodation> accommodations = response.body().getResults();
+                    Log.d(TAG, "host id "+ accommodations.get(0).getHostId());
                     AccomList accomList = AccomList.newInstance(accommodations);
                     setTitle(R.string.app_name);
                     fragmentTransaction.add(R.id.activity_main, accomList, "ACCOM_LIST_FRAGMENT");
                     fragmentTransaction.commit();
                 }
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
@@ -133,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 setTitle("Error");
                 fragmentTransaction.add(R.id.activity_main, getAccomFailed, "ACCOM_FAIL_FRAGMENT");
                 fragmentTransaction.commit(); //TODO remove this rather just set an Error text
+                progressBar.setVisibility(View.GONE);
             }
         });
 

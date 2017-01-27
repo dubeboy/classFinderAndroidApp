@@ -11,6 +11,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.model.Picture;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 
@@ -41,10 +42,13 @@ public class AccomImageAdapter extends PagerAdapter{
     public Object instantiateItem(ViewGroup container, int i) {
 
         ImageView mImageView = new ImageView(mContext);
-        mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        mImageView.setAdjustViewBounds(true);
+        mImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 
         Picasso.with(mContext) //// TODO: move this to a util class
-                .load(ApiClient.DEV_HOST + picturesUrls.get(i)).into(mImageView);
+                .load(ApiClient.DEV_HOST + picturesUrls.get(i))
+                .placeholder(R.drawable.loader2).fit()
+                .into(mImageView);
         ((ViewPager) container).addView(mImageView, 0);
         return mImageView;
     }

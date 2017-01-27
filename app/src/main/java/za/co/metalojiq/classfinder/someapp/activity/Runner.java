@@ -93,7 +93,7 @@ public class Runner extends AppCompatActivity {
             return;
         }
 
-
+        //Todo fix this
         mProgressBar = (ProgressBar) findViewById(R.id.runnerTransLoad);
         //should set the loading thing to gon here
 

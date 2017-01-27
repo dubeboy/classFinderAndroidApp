@@ -15,11 +15,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-import za.co.metalojiq.classfinder.someapp.model.AccommodationResponse;
-import za.co.metalojiq.classfinder.someapp.model.Transaction;
-import za.co.metalojiq.classfinder.someapp.model.TransactionResponse;
-import za.co.metalojiq.classfinder.someapp.model.User;
-import za.co.metalojiq.classfinder.someapp.model.UserResponse;
+import za.co.metalojiq.classfinder.someapp.model.*;
 
 public interface ApiInterface {
     @GET("/api/v1/accommodations.json")
@@ -33,12 +29,16 @@ public interface ApiInterface {
                                                      @Query("price_from") int priceFrom,
                                                      @Query("price_to") int priceTo );
 
-    @Deprecated
     @GET("/api/v1/accommodations/{id}.json")
     Call<AccommodationResponse> getAccommodationDetails(@Path("id") int id);
 
-    @GET("/users/{id}.json")
-    Call<User> getUser(@Path("id") int id);
+    @POST("/api/v1/accommodations/{advert_id}/secure_room")
+    @Headers({ "Accept: application/json"})
+    Call<AccommodationResponse> secureRoom(@Path("advert_id") int advertId,
+                                           @Query("host_id") int hostId, @Query("std_id") int studentId,
+                                           @Query("booking_type") int bookingType,
+                                           //month in the format mm/dd/yy time -> xx:xx
+                                           @Query("month") String month, @Query("time") String time);
 
     @Headers({ "Accept: application/json"})
     @FormUrlEncoded
