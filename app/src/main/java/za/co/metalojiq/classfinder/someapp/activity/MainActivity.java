@@ -2,6 +2,7 @@ package za.co.metalojiq.classfinder.someapp.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 
 import android.view.View;
 import android.widget.ProgressBar;
+import gun0912.tedbottompicker.TedBottomPicker;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -42,9 +44,9 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "The ID of the user  is: " + id);
         boolean isRunner = sharedPreferences.getBoolean(LoginActivity.LOGIN_IS_RUNNER, false);
         MenuItem itemLogin = menu.findItem(R.id.action_login);
-        MenuItem itemRunner = menu.findItem(R.id.action_runner) ;
-        MenuItem itemSignOut = menu.findItem(R.id.action_sign_out) ;
-        if (id == 0)  { // means that the user is not logged in !!!
+        MenuItem itemRunner = menu.findItem(R.id.action_runner);
+        MenuItem itemSignOut = menu.findItem(R.id.action_sign_out);
+        if (id == 0) { // means that the user is not logged in !!!
             itemRunner.setVisible(false);
             itemLogin.setVisible(true);
             itemSignOut.setVisible(false);
@@ -53,11 +55,11 @@ public class MainActivity extends AppCompatActivity {
             itemLogin.setVisible(false);
             itemSignOut.setVisible(true);
         } else {
+            itemRunner.setVisible(true);
             itemSignOut.setVisible(true);
         }
         return true;
     }
-
 
 
     private void signOut(SharedPreferences sharedPreferences) {
@@ -123,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
 //                so that we just show the msg
                 if (response.body() != null) {
                     ArrayList<Accommodation> accommodations = response.body().getResults();
-                    Log.d(TAG, "host id "+ accommodations.get(0).getHostId());
+                    Log.d(TAG, "host id " + accommodations.get(0).getHostId());
                     AccomList accomList = AccomList.newInstance(accommodations);
                     setTitle(R.string.app_name);
                     fragmentTransaction.add(R.id.activity_main, accomList, "ACCOM_LIST_FRAGMENT");
@@ -144,4 +146,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+
+
 }

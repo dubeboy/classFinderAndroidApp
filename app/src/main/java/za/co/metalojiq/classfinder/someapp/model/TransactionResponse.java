@@ -42,4 +42,8 @@ public class TransactionResponse {
     public void setTimeSlots(List<String> timeSlots) {
         this.timeSlots = timeSlots;
     }
+
+    public void setTransactions(ArrayList<Transaction> transactions) {
+        this.transactions = transactions;
+    }
 }

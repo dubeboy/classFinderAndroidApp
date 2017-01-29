@@ -1,7 +1,14 @@
 package za.co.metalojiq.classfinder.someapp.activity.fragment;
 
+import android.Manifest;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -17,6 +24,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import android.widget.Toast;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
+import gun0912.tedbottompicker.TedBottomPicker;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -52,6 +62,7 @@ public class AccomList extends Fragment {
     private ProgressBar progressBar;
     private AccomAdapter accomAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private boolean mCamPermissionGranted;
 
     public AccomList() {
         // Required empty public constructor
@@ -125,7 +136,7 @@ public class AccomList extends Fragment {
                                 intent.putExtra(STRING_ROOM_LOCATION_EXTRA, accommodation.getLocation());
                                 intent.putExtra(STRING_ROOM_DESC, accommodation.getDescription());
                                 intent.putExtra(POST_INT_HOST_ID, accommodation.getHostId());
-                                Log.d(TAG, "Id of host is 3###################################" + accommodation.getHostId());
+                                Log.d(TAG, "Id of host is 3################################### " + accommodation.getHostId());
                                 intent.putExtra(POST_ADVERT_ID, accommodation.getId());
                                 startActivity(intent);
                             }
@@ -137,6 +148,22 @@ public class AccomList extends Fragment {
                 textViewError.setVisibility(View.VISIBLE);
             }
         }
+        FloatingActionButton fab = (FloatingActionButton) linearLayout.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+            @Override
+            public void onClick(View view) {
+                requestCameraPermissions();
+                if (mCamPermissionGranted) {
+                    Snackbar.make(view, "Please pick the images you would like to upload", Snackbar.LENGTH_SHORT).show();
+                    createImagesBottomPicker();
+                } else {
+
+                }
+
+
+            }
+        });
         return linearLayout;
 
     }
@@ -198,5 +225,50 @@ public class AccomList extends Fragment {
                         Snackbar.LENGTH_SHORT).show();
             }
         });
+    }
+
+    //Todo should be moved to Utils the books might also need it
+    private void createImagesBottomPicker() {
+        TedBottomPicker bottomSheetDialogFragment = new TedBottomPicker.Builder(getActivity())
+                .setOnMultiImageSelectedListener(new TedBottomPicker.OnMultiImageSelectedListener() {
+
+                    @Override
+                    public void onImagesSelected(ArrayList<Uri> uriList) {
+                        Bitmap[] bitmaps = new Bitmap[uriList.size()];
+                        for (int i = 0; i < uriList.size(); i++) {
+                            bitmaps[i] = BitmapFactory.decodeFile(uriList.get(i).getPath());
+
+                        }
+                    }
+                })
+                .setPeekHeight(1600)
+                .showTitle(false)
+                .setCompleteButtonText("Done")
+                .setEmptySelectionText("No Select")
+                .create();
+
+        bottomSheetDialogFragment.show(getActivity().getSupportFragmentManager());
+    }
+
+    private void requestCameraPermissions() {
+        PermissionListener permissionlistener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+                Toast.makeText(getActivity(), "Permission Granted", Toast.LENGTH_SHORT).show();
+                mCamPermissionGranted = true;
+            }
+
+            @Override
+            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+                Toast.makeText(getActivity(), "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+                mCamPermissionGranted = false;
+            }
+        };
+
+        new TedPermission(getActivity())
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .check();
     }
 }

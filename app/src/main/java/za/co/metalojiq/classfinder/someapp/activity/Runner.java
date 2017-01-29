@@ -9,6 +9,7 @@ import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,7 +37,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import za.co.metalojiq.classfinder.someapp.R;
-import za.co.metalojiq.classfinder.someapp.adapter.UserAdapter;
+import za.co.metalojiq.classfinder.someapp.activity.fragment.StudentPanel;
+import za.co.metalojiq.classfinder.someapp.adapter.TransactionAdapter;
 import za.co.metalojiq.classfinder.someapp.model.Transaction;
 import za.co.metalojiq.classfinder.someapp.model.TransactionResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
@@ -71,6 +73,8 @@ public class Runner extends AppCompatActivity {
         setContentView(R.layout.activity_runner);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+
         setSupportActionBar(toolbar);
         SharedPreferences sharedPreferences = getSharedPreferences(LoginActivity.LOGIN_PREF_FILENAME, MODE_PRIVATE);
         int id = sharedPreferences.getInt(LoginActivity.LOGIN_PREF_USER_ID, 0);
@@ -78,6 +82,8 @@ public class Runner extends AppCompatActivity {
         boolean runner = sharedPreferences.getBoolean(LoginActivity.LOGIN_IS_RUNNER, false);
         Log.d(TAG,"User Email ma nikkka " +  sharedPreferences.getString(LoginActivity.LOGIN_PREF_EMAIL, "NO email oops"));
 
+        //Todo fix this should be removed
+        mProgressBar = (ProgressBar) findViewById(R.id.runnerTransLoad);
 
         if (id == 0) {
             Toast.makeText(this, "Please make sure that you signed in First", Toast.LENGTH_LONG).show();
@@ -87,14 +93,17 @@ public class Runner extends AppCompatActivity {
         }
 
         if (!runner) {
-            Toast.makeText(this, "You are not a runner", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            mProgressBar.setVisibility(View.GONE);
+            tabLayout.setVisibility(View.GONE);
+            StudentPanel stdPanel = StudentPanel.newInstance(id);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.main_content, stdPanel, "ACCOM_LIST_FRAGMENT");
+            fragmentTransaction.commit();
             return;
         }
 
-        //Todo fix this
-        mProgressBar = (ProgressBar) findViewById(R.id.runnerTransLoad);
+
         //should set the loading thing to gon here
 
         // Create the adapter that will return a fragment for each of the three
@@ -111,17 +120,16 @@ public class Runner extends AppCompatActivity {
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.runnerTransLoad);
         progressBar.setVisibility(View.INVISIBLE);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
     }
 
@@ -161,7 +169,7 @@ public class Runner extends AppCompatActivity {
         RecyclerView recyclerView;
         TextView tvError;
         ProgressBar mProgressBar;
-        UserAdapter userAdapter;
+        TransactionAdapter userAdapter;
 
 
         public PlaceholderFragment() {
@@ -201,7 +209,7 @@ public class Runner extends AppCompatActivity {
 //                    textView.setText("You have no current jobs.");
 //                    textView.setVisibility(View.VISIBLE);
 //                } else {
-//                    recyclerView.setAdapter(new UserAdapter(transactions, R.layout.list_item_runner, getActivity()));
+//                    recyclerView.setAdapter(new TransactionAdapter(transactions, R.layout.list_item_runner, getActivity()));
 //
 //                }
 //            } else {
@@ -212,7 +220,7 @@ public class Runner extends AppCompatActivity {
         }
 
 
-            public void load(final int position, final int runnerId) {
+          private void load(final int position, final int runnerId) {
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
                 switch (position) {
                     case 0:
@@ -229,7 +237,7 @@ public class Runner extends AppCompatActivity {
             @Override
             public void onResponse(Call<TransactionResponse> call, Response<TransactionResponse> response) {  //TOdo can produce NullPointerException
                 ArrayList<Transaction> transactions = response.body().getTransactions();
-                userAdapter = new UserAdapter(transactions, R.layout.list_item_runner, getActivity());
+                userAdapter = new TransactionAdapter(transactions, R.layout.list_item_runner, getActivity());
                 recyclerView.setAdapter(userAdapter);
 //                recyclerView.postInvalidate();
                 showProgress(false);
@@ -337,7 +345,4 @@ public class Runner extends AppCompatActivity {
             return null;
         }
     }
-
-
-
 }

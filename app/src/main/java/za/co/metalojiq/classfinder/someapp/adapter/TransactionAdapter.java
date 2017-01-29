@@ -17,20 +17,16 @@ import za.co.metalojiq.classfinder.someapp.model.Transaction;
  * Created by divine on 1/18/17.
  */
 
-public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
-    private static final String TAG = UserAdapter.class.getSimpleName() ;
+public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.UserViewHolder> {
+    private static final String TAG = TransactionAdapter.class.getSimpleName() ;
     //row row of data
     private int rowLayout;
-
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
-    }
 
     private List<Transaction> transactions;
     private Context context;
 
 
-    public UserAdapter(List<Transaction> transactions, int rowLayout, Context context) {
+    public TransactionAdapter(List<Transaction> transactions, int rowLayout, Context context) {
         Log.d(TAG, "here are the transactions" + transactions); 
         this.rowLayout = rowLayout;
         this.transactions = transactions;
@@ -69,7 +65,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
          }
 
          void bind(Transaction transaction) {
-             Log.d(TAG, "JUJUJUJUJUJJUJUJU " + transaction.getEmail());
+             Log.d(TAG, "JEJUNUM " + transaction.getEmail());
             runnerLocation.setText(transaction.getLocation());
             runnerStudentEmail.setText(transaction.getEmail());
             runnerStudentCell.setText(transaction.getStudentContact());

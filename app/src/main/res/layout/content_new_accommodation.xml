@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/content_new_accommodation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:showIn="@layout/activity_new_accommodation"
+        tools:context="za.co.metalojiq.classfinder.someapp.activity.NewAccommodation">
+
+    <TextView
+            android:text="Location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true" android:layout_alignParentStart="true" android:layout_marginTop="18dp"
+            android:id="@+id/newTvLocation"/>
+    <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/newTvLocation"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="14dp"
+            android:id="@+id/newSpinnerLocation"/>
+    <TextView
+            android:text="Auckland Park Areas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/newSpinnerLocation"
+            android:layout_alignRight="@+id/newTvLocation"
+            android:layout_alignEnd="@+id/newTvLocation"
+            android:layout_marginTop="16dp"
+            android:id="@+id/newAuckAreas"/>
+    <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/newAuckAreas"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp"
+            android:id="@+id/newSpinnerAuckAreas"/>
+    <TextView
+            android:text="Select room type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/newSpinnerAuckAreas"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="14dp"
+            android:id="@+id/newRoomType"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
+    <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/newRoomType"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="14dp"
+            android:id="@+id/newSpinnerRoomType"/>
+    <TextView
+            android:text="Price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/newTvPrice"
+            android:layout_centerVertical="true" android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"/>
+    <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:hint="Accommodation Description"
+            android:ems="10"
+            android:layout_below="@+id/editText6" android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" android:layout_marginTop="15dp" android:id="@+id/editText7"/>
+    <TextView
+            android:text="R"
+            android:layout_marginRight="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/newTvCurrency"
+            android:textSize="36sp"
+            android:layout_above="@+id/editText7"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"/>
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:hint="2400.67"
+            android:ems="10"
+            android:layout_marginTop="22dp" android:id="@+id/editText6"
+            android:layout_below="@+id/newTvPrice" android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" android:layout_toRightOf="@+id/newTvCurrency"
+            android:layout_toEndOf="@+id/newTvCurrency"/>
+    <Button
+            android:text="Add Images"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/editText7"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/newBtnAddImages"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
+    <Button
+            android:text="Save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/newBtnSave"
+            android:layout_alignParentRight="true" android:layout_alignParentEnd="true"/>
+</RelativeLayout>

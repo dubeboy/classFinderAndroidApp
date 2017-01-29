@@ -1,5 +1,6 @@
 package za.co.metalojiq.classfinder.someapp.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.ArrayRes;
 import android.support.annotation.IdRes;
@@ -26,6 +27,8 @@ import za.co.metalojiq.classfinder.someapp.model.AccommodationResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
 
+import static za.co.metalojiq.classfinder.someapp.util.utils.setupSpinner;
+
 public class Search extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = Search.class.getSimpleName();
@@ -35,12 +38,12 @@ public class Search extends AppCompatActivity implements AdapterView.OnItemSelec
 
     ;
     private String[] locations = {"Auckland Park", "Braamfontein", "Doornfontein", "Soweto"};
-    Spinner auckAreaSpinner;
-    Spinner roomTypeSpinner;
-    Spinner locationSpinner;
-    EditText priceFrom;
-    EditText priceTo;
-    TextView tvAuck;
+    private Spinner auckAreaSpinner;
+    private Spinner roomTypeSpinner;
+    private Spinner locationSpinner;
+    private EditText priceFrom;
+    private EditText priceTo;
+    private TextView tvAuck;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +51,9 @@ public class Search extends AppCompatActivity implements AdapterView.OnItemSelec
         setContentView(R.layout.activity_search);
         tvAuck = (TextView) findViewById(R.id.search_tv_auck_areas);
 
-        locationSpinner = setupSpinner(R.id.search_location_spinner, R.array.locations_array);
-        roomTypeSpinner = setupSpinner(R.id.search_spinner_room_type, R.array.room_type);
-        auckAreaSpinner = setupSpinner(R.id.search_spinner_auck_areas, R.array.auck_areas);
+        locationSpinner = setupSpinner(this, R.id.search_location_spinner, R.array.locations_array);
+        roomTypeSpinner = setupSpinner(this, R.id.search_spinner_room_type, R.array.room_type);
+        auckAreaSpinner = setupSpinner(this, R.id.search_spinner_auck_areas, R.array.auck_areas);
 
 
         locationSpinner.setOnItemSelectedListener(this);
@@ -58,16 +61,6 @@ public class Search extends AppCompatActivity implements AdapterView.OnItemSelec
         priceTo = (EditText) findViewById(R.id.search_price_to);
     }
 
-
-    private Spinner setupSpinner(@IdRes int resId, @ArrayRes int arrResId) {
-        Spinner spinner = (Spinner) findViewById(resId);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter
-                .createFromResource(this, arrResId, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        spinner.setAdapter(adapter);
-        return spinner;
-    }
 
 
     @Override

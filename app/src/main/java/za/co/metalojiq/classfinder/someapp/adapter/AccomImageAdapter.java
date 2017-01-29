@@ -45,7 +45,7 @@ public class AccomImageAdapter extends PagerAdapter{
         mImageView.setAdjustViewBounds(true);
         mImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 
-        Picasso.with(mContext) //// TODO: move this to a util class
+        Picasso.with(mContext) //// TODO: move this to a utils class
                 .load(ApiClient.DEV_HOST + picturesUrls.get(i))
                 .placeholder(R.drawable.loader2).fit()
                 .into(mImageView);

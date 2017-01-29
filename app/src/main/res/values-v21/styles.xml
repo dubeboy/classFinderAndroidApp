@@ -12,7 +12,7 @@
     </style>
 
     <!--<style name="AppTheme.ActionBar" parent="AppTheme">-->
-        <!--<item name="colorPrimaryDark">@color/bg_colorPrimaryDark</item>-->
-        <!--<item name="colorPrimary">@color/default_yellow</item>-->
+    <!--<item name="colorPrimaryDark">@color/bg_colorPrimaryDark</item>-->
+    <!--<item name="colorPrimary">@color/default_yellow</item>-->
     <!--</style>-->
 </resources>

@@ -8,7 +8,7 @@
         android:orderInCategory="200"
         android:title="Search"
         app:showAsAction="ifRoom"
-        android:icon="@android:drawable/ic_menu_search"
+        android:icon="@drawable/ic_search_black"
         />
     <item
         android:id="@+id/action_login"
@@ -22,6 +22,7 @@
         android:id="@+id/action_runner"
         android:orderInCategory="200"
         android:title="@string/runner_panel"
+        android:icon="@drawable/ic_panel"
         android:visible="false"
         app:showAsAction="ifRoom" />
 

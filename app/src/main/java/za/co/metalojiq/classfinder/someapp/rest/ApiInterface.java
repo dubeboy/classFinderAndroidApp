@@ -17,6 +17,8 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 import za.co.metalojiq.classfinder.someapp.model.*;
 
+
+//this is a class containing all my api class, sweet
 public interface ApiInterface {
     @GET("/api/v1/accommodations.json")
     Call<AccommodationResponse> getAllAccommodations(@Query("page") int page);
@@ -48,4 +50,10 @@ public interface ApiInterface {
     @Headers({ "Accept: application/json"}) //Todo: should remove this -> redundant
     @GET("/api/v1/users/{id}")
     Call<TransactionResponse> getRunner(@Path("id") int id, @Query("run") int run);
+
+    @Headers({ "Accept: application/json"})
+    @GET("/api/v1/users/{id}/panel")
+    Call<TransactionResponse> getBookings(@Path("id") int id);
+
+    Call<Result>
 }

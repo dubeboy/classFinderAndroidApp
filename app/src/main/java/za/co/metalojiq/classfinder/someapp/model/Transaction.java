@@ -9,6 +9,9 @@ import com.google.gson.annotations.SerializedName;
 
 //Transaction is a very good mixed up object which gets data from an Accommodation and User
 public class Transaction {
+    //Todo these mapping should change because they are now generic
+    @SerializedName("accom_id")
+    private String id;
     @SerializedName("student_email")
     private String email;
     @SerializedName("student_contact")
@@ -82,6 +85,7 @@ public class Transaction {
         this.viewDate = viewDate;
     }
 
+    // todo this should include month
     public String getViewTime() {
         return viewTime;
     }
