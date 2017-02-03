@@ -1,5 +1,7 @@
 package za.co.metalojiq.classfinder.someapp.rest;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 
 /**
@@ -7,15 +9,10 @@ import retrofit2.Call;
  */
 
 
-import retrofit2.http.Body;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.GET;
-import retrofit2.http.Headers;
-import retrofit2.http.POST;
-import retrofit2.http.Path;
-import retrofit2.http.Query;
+import retrofit2.http.*;
 import za.co.metalojiq.classfinder.someapp.model.*;
+
+import java.util.List;
 
 
 //this is a class containing all my api class, sweet
@@ -28,8 +25,7 @@ public interface ApiInterface {
     Call<AccommodationResponse> searchAccommodations(@Query(value ="name", encoded=true) String location,
                                                      @Query("room_type" )String roomType,
                                                      @Query("auck_location")  String auckLocation,
-                                                     @Query("price_from") int priceFrom,
-                                                     @Query("price_to") int priceTo );
+                                                     @Query("price_from") int priceFrom, @Query("price_to") int priceTo );
 
     @GET("/api/v1/accommodations/{id}.json")
     Call<AccommodationResponse> getAccommodationDetails(@Path("id") int id);
@@ -55,5 +51,12 @@ public interface ApiInterface {
     @GET("/api/v1/users/{id}/panel")
     Call<TransactionResponse> getBookings(@Path("id") int id);
 
-    Call<Result>
+    @Multipart
+    @Headers({ "Accept: application/json"})
+    @POST("/api/v1/accommodations")
+    Call<AccommodationResponse> postAccommodation(@Part("user_id") RequestBody userId, @Part("location") RequestBody location,
+                                                  @Part("room_type") RequestBody roomType, @Part("institution") RequestBody auckArea,
+                                                  @Part("price") RequestBody price, @Part("description") RequestBody description,
+                                                  @Part List<MultipartBody.Part> images);
+
 }

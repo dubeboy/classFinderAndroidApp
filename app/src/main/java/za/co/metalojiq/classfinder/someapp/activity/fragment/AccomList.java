@@ -33,6 +33,7 @@ import retrofit2.Response;
 import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.activity.AccomImageSlider;
 import za.co.metalojiq.classfinder.someapp.activity.MainActivity;
+import za.co.metalojiq.classfinder.someapp.activity.NewAccommodation;
 import za.co.metalojiq.classfinder.someapp.adapter.AccomAdapter;
 import za.co.metalojiq.classfinder.someapp.adapter.EndlessRecyclerViewScrollListener;
 import za.co.metalojiq.classfinder.someapp.model.Accommodation;
@@ -153,15 +154,8 @@ public class AccomList extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
             @Override
             public void onClick(View view) {
-                requestCameraPermissions();
-                if (mCamPermissionGranted) {
-                    Snackbar.make(view, "Please pick the images you would like to upload", Snackbar.LENGTH_SHORT).show();
-                    createImagesBottomPicker();
-                } else {
-
-                }
-
-
+                Intent intent = new Intent(AccomList.this.getActivity(), NewAccommodation.class);
+                startActivity(intent);
             }
         });
         return linearLayout;
@@ -228,47 +222,5 @@ public class AccomList extends Fragment {
     }
 
     //Todo should be moved to Utils the books might also need it
-    private void createImagesBottomPicker() {
-        TedBottomPicker bottomSheetDialogFragment = new TedBottomPicker.Builder(getActivity())
-                .setOnMultiImageSelectedListener(new TedBottomPicker.OnMultiImageSelectedListener() {
 
-                    @Override
-                    public void onImagesSelected(ArrayList<Uri> uriList) {
-                        Bitmap[] bitmaps = new Bitmap[uriList.size()];
-                        for (int i = 0; i < uriList.size(); i++) {
-                            bitmaps[i] = BitmapFactory.decodeFile(uriList.get(i).getPath());
-
-                        }
-                    }
-                })
-                .setPeekHeight(1600)
-                .showTitle(false)
-                .setCompleteButtonText("Done")
-                .setEmptySelectionText("No Select")
-                .create();
-
-        bottomSheetDialogFragment.show(getActivity().getSupportFragmentManager());
-    }
-
-    private void requestCameraPermissions() {
-        PermissionListener permissionlistener = new PermissionListener() {
-            @Override
-            public void onPermissionGranted() {
-                Toast.makeText(getActivity(), "Permission Granted", Toast.LENGTH_SHORT).show();
-                mCamPermissionGranted = true;
-            }
-
-            @Override
-            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
-                Toast.makeText(getActivity(), "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
-                mCamPermissionGranted = false;
-            }
-        };
-
-        new TedPermission(getActivity())
-                .setPermissionListener(permissionlistener)
-                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
-                .setPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .check();
-    }
 }

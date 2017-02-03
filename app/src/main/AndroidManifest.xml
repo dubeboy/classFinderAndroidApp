@@ -51,7 +51,7 @@
         <activity
                 android:name=".activity.NewAccommodation"
                 android:label="@string/title_activity_new_accommodation"
-                android:theme="@style/AppTheme.NoActionBar">
+              >
         </activity>
     </application>
 

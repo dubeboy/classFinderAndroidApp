@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
                     AccomList accomList = AccomList.newInstance(accommodations);
                     setTitle(R.string.app_name);
                     fragmentTransaction.add(R.id.activity_main, accomList, "ACCOM_LIST_FRAGMENT");
-                    fragmentTransaction.commit();
+                    fragmentTransaction.commit(); //this is causing problem #Fixme
                 }
                 progressBar.setVisibility(View.GONE);
             }

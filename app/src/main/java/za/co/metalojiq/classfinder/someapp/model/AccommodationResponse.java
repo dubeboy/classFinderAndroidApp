@@ -10,7 +10,7 @@ import java.util.List;
  */
 
 
-//this class is useful when recieving extra data with the json
+//this class is useful when receiving extra data with the json
 public class AccommodationResponse {
 
 //    @SerializedName("page")

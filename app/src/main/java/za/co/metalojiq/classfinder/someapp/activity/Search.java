@@ -1,22 +1,15 @@
 package za.co.metalojiq.classfinder.someapp.activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.ArrayRes;
-import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-
-import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,10 +19,13 @@ import za.co.metalojiq.classfinder.someapp.activity.fragment.AccomList;
 import za.co.metalojiq.classfinder.someapp.model.AccommodationResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
+import za.co.metalojiq.classfinder.someapp.util.Utils;
 
-import static za.co.metalojiq.classfinder.someapp.util.utils.setupSpinner;
+import static za.co.metalojiq.classfinder.someapp.util.Utils.AUCK_AREA_PREFIX;
+import static za.co.metalojiq.classfinder.someapp.util.Utils.LOCATIONS;
+import static za.co.metalojiq.classfinder.someapp.util.Utils.setupSpinner;
 
-public class Search extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class Search extends AppCompatActivity {
 
     private static final String TAG = Search.class.getSimpleName();
     public static final String INTENT_RESPONSE_EXTRA = TAG + ".response";
@@ -37,7 +33,7 @@ public class Search extends AppCompatActivity implements AdapterView.OnItemSelec
     public enum INTENT_RESPONSE {SUCCESS, FAILURE}
 
     ;
-    private String[] locations = {"Auckland Park", "Braamfontein", "Doornfontein", "Soweto"};
+
     private Spinner auckAreaSpinner;
     private Spinner roomTypeSpinner;
     private Spinner locationSpinner;
@@ -56,28 +52,9 @@ public class Search extends AppCompatActivity implements AdapterView.OnItemSelec
         auckAreaSpinner = setupSpinner(this, R.id.search_spinner_auck_areas, R.array.auck_areas);
 
 
-        locationSpinner.setOnItemSelectedListener(this);
+        locationSpinner.setOnItemSelectedListener(new Utils.LocationItemListener(tvAuck, auckAreaSpinner));
         priceFrom = (EditText) findViewById(R.id.search_price_from);
         priceTo = (EditText) findViewById(R.id.search_price_to);
-    }
-
-
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String selected = (String) parent.getItemAtPosition(position);
-        if (selected.equals(locations[0])) {
-            tvAuck.setVisibility(View.VISIBLE);
-            auckAreaSpinner.setVisibility(View.VISIBLE);
-        } else {
-            tvAuck.setVisibility(View.GONE);
-            auckAreaSpinner.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
     }
 
     public void search(View view) {
@@ -85,9 +62,9 @@ public class Search extends AppCompatActivity implements AdapterView.OnItemSelec
 
         String location = (String) locationSpinner.getSelectedItem();
 
-        if (location.equals(locations[0])) {
+        if (location.equals(LOCATIONS[0])) {
             String rawArea = (String) auckAreaSpinner.getSelectedItem();
-            auckArea = "Auckland Park, " + rawArea; //YAK MAN bad code need better thought man.
+            auckArea = AUCK_AREA_PREFIX + rawArea; //YAK MAN bad code need better thought man.
         }
 
         String roomType = (String) roomTypeSpinner.getSelectedItem();
