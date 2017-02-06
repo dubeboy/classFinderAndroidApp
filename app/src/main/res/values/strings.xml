@@ -18,7 +18,7 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
@@ -105,4 +105,6 @@
     <string name="runner_panel">Panel</string>
     <string name="action_string_sign_out">Log out</string>
     <string name="title_activity_new_accommodation">Add New Accommodation</string>
+    <string name="enter_phone_number">Enter phone number</string>
+    <string name="title_activity_books_list">All Books</string>
 </resources>

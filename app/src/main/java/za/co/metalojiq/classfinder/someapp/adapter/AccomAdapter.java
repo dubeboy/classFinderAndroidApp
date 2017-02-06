@@ -31,7 +31,8 @@ public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHol
     private Context context;
     private final OnItemClickListener listener;
 
-    public AccomAdapter(List<Accommodation> accommodations, int rowLayout, Context context, OnItemClickListener listener) {
+    public AccomAdapter(List<Accommodation> accommodations, int rowLayout, Context context,
+                                                                                    OnItemClickListener listener) {
         this.accommodations = accommodations;
         this.rowLayout = rowLayout;
         this.context = context;

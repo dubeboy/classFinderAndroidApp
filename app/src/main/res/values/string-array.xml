@@ -21,4 +21,12 @@
         <item>Mellville</item>
         <item>Vrededorp</item>
     </string-array>
+
+    <string-array name="runner_times">
+        <item>08:00</item>
+        <item>10:00</item>
+        <item>12:00</item>
+        <item>14:00</item>
+        <item>16:00</item>
+    </string-array>
 </resources>

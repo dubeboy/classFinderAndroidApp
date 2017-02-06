@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "928443959691",
+    "project_id": "firebase-classfinder"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:928443959691:android:e3eec232238e92e4",
+        "android_client_info": {
+          "package_name": "za.co.metalojiq.classfinder.someapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "928443959691-bvf8ptbuphctke0sfcifocms8ejogchi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6Z-w1eCk0R0Vu42zsx-Xl7YCuvL12Z14"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

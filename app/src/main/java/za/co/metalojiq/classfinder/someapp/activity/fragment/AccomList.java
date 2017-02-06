@@ -41,6 +41,9 @@ import za.co.metalojiq.classfinder.someapp.model.AccommodationResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
 
+import static za.co.metalojiq.classfinder.someapp.util.Utils.isLoggedIn;
+import static za.co.metalojiq.classfinder.someapp.util.Utils.makeToast;
+
 /**
  * This displays all the available accommodations
  */
@@ -145,19 +148,27 @@ public class AccomList extends Fragment {
                 recyclerView.setAdapter(accomAdapter);
 
             } else {
-                //Todo Should be an If statement here to Id which fragment
+                //Todo(FRAGMENT COMMIT ERROR) Should be an If statement here to Id which fragment
+                //so that we can change the text to match wheather a person is just loading all accommodation
                 textViewError.setVisibility(View.VISIBLE);
             }
         }
-        FloatingActionButton fab = (FloatingActionButton) linearLayout.findViewById(R.id.fab);
+
+        final FloatingActionButton fab = (FloatingActionButton) linearLayout.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(AccomList.this.getActivity(), NewAccommodation.class);
-                startActivity(intent);
+                if (isLoggedIn(getActivity())) {
+                    Intent intent = new Intent(AccomList.this.getActivity(), NewAccommodation.class);
+                    startActivity(intent);
+                } else {
+                    fab.setVisibility(View.GONE);
+                }
             }
         });
+
+
         return linearLayout;
 
     }
@@ -220,7 +231,4 @@ public class AccomList extends Fragment {
             }
         });
     }
-
-    //Todo should be moved to Utils the books might also need it
-
 }

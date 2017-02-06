@@ -3,6 +3,7 @@ package za.co.metalojiq.classfinder.someapp.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -34,6 +35,15 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -43,12 +53,12 @@ import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
 
 import static android.Manifest.permission.READ_CONTACTS;
-import static android.content.Context.MODE_PRIVATE;
+import static za.co.metalojiq.classfinder.someapp.util.Utils.*;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, GoogleApiClient.OnConnectionFailedListener {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -56,11 +66,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final int REQUEST_READ_CONTACTS = 0;
 
     private static final String TAG = LoginActivity.class.getSimpleName();
-    //
+
+    //TAG Is useles because it does not uniquely identify the the constants its like a 0
+
     public static final String LOGIN_PREF_EMAIL = TAG + "EMAIL";
     public static final String LOGIN_PREF_USER_ID = TAG + "ID";
     public static final String LOGIN_PREF_FILENAME = TAG + "USER_LOGIN";
     public static final String LOGIN_IS_RUNNER = TAG + "IS_RUNNER";
+    private static final int RC_SIGN_IN = 1011;
+    public static final String IS_GOOGLE_LOGIN = TAG + "IS_GOOGLE_SIGN_IN";
+    public static final String GOOGLE_USER_TOKEN = "GOOGLE_USER_TOKEN";
+    public static final String GOOGLE_USER_EMAIL = "GOOGLE_USER_EMAIL";
+    public static final String GOOGLE_USER_NAME = "GOOGLE_USER_NAME";
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -72,6 +89,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
     private LoginActivity loginActivity = this;
+    private GoogleApiClient mGoogleApiClient;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +123,77 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+        mGoogleApiClient = getGoogleSignUp(this, this);
+        SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
+        signInButton.setSize(SignInButton.SIZE_WIDE);
+
+        Button signUpButton = (Button) findViewById(R.id.email_sign_up_button);
+
+        signInButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signIn();
+            }
+        });
+
+        signUpButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), SignUp.class);
+                startActivity(intent);
+
+            }
+        });
+//        (findViewById(R.id.google_sign_out_button)).setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                signOut();
+//            }
+//        });
+    }
+
+
+
+
+    private  void signIn() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
+        }
+    }
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
+        if (result.isSuccess()) {
+            // Signed in successfully, show authenticated UI.
+            GoogleSignInAccount acct = result.getSignInAccount();
+            makeToast("Hello You have signed in using google " + acct.getDisplayName(), this);
+            makeToast("Hello Your token is this " + acct.getId(), this);
+            makeToast("Hello Your Email  is this " + acct.getEmail(), this);
+            Log.d("TOKEN ", acct.getIdToken());
+            Log.d("TOKEN ", acct.getId());
+
+            //in this method I should send the user Id to the login activity man
+            Intent intent = new Intent(this, SignUp.class);
+            intent.putExtra(IS_GOOGLE_LOGIN, true);
+            intent.putExtra(GOOGLE_USER_TOKEN, acct.getId());
+            intent.putExtra(GOOGLE_USER_NAME, acct.getDisplayName());
+            intent.putExtra(GOOGLE_USER_EMAIL, acct.getEmail());
+            makeToast("Please provide your number so that we can contact you", this);
+            startActivity(intent);
+//            updateUI(true);
+        } else {
+            // Signed out, show unauthenticated UI.
+//            updateUI(false);
+            makeToast("Sign In failed, please try again. ", this);
+        }
     }
 
     private void populateAutoComplete() {
@@ -203,15 +293,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-    private boolean isEmailValid(String email) {
-        //TODO: Replace regex NB!!!!!!!!
-        return email.contains("@");
-    }
 
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() >= 4;
-    }
+
+
 
     /**
      * Shows the progress UI and hides the login form.
@@ -255,12 +339,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 // Retrieve data rows for the device user's 'profile' contact.
                 Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
                         ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
-
                 // Select only email addresses.
                 ContactsContract.Contacts.Data.MIMETYPE +
                         " = ?", new String[]{ContactsContract.CommonDataKinds.Email
                 .CONTENT_ITEM_TYPE},
-
                 // Show primary email addresses first. Note that there won't be
                 // a primary email address if the user hasn't specified one.
                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
@@ -292,6 +374,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView.setAdapter(adapter);
     }
 
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        makeToast("Please connect to the internet", this);
+    }
+
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -306,14 +393,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * the user.
      */
     public class UserLoginTask {
-
         private final String mEmail;
         private final String mPassword;
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
         }
-
 
          void login () {
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
@@ -336,7 +421,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         editor.putString(LOGIN_PREF_EMAIL, response.body().getUser().getEmail());
                         editor.putInt(LOGIN_PREF_USER_ID, response.body().getUser().getId());
                         editor.putBoolean(LOGIN_IS_RUNNER, response.body().getUser().isRunner());
-                        editor.commit(); //fixme does this backgroud thing effect any thing
+                        editor.apply(); //fixme does this backgroud thing effect any thing
                         Log.d(TAG,sharedPreferences.getString(LOGIN_PREF_EMAIL, "YOHHHHHHH this is a problem NO EMAIL MAN DAMN!!!"));
                         // only here you should finish
                         showProgress(false);
@@ -357,7 +442,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
             });
         } // end login
-
     }
 }
 

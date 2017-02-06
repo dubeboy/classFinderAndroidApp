@@ -59,4 +59,20 @@ public interface ApiInterface {
                                                   @Part("price") RequestBody price, @Part("description") RequestBody description,
                                                   @Part List<MultipartBody.Part> images);
 
+    @Headers({ "Accept: application/json"})
+    @FormUrlEncoded
+    @POST("/api/v1/users")
+    Call<UserResponse>  signUp(@Field("email") String email, @Field("name") String name,
+                               @Field("phone") String phone, @Field("password") String password,
+                               @Field("is_runner") boolean selected,
+                               @Field("time_slots_ids") byte[] times, @Field("run_location") String runLocation);
+
+    @Headers({ "Accept: application/json"})
+    @FormUrlEncoded
+    @POST("/api/v1/users")
+    Call<UserResponse>  googleUserSignUp(@Field("email") String email, @Field("name") String name,
+                                         @Field("phone") String phone, @Field("token") String token,
+                                         @Field("is_runner") boolean selected,
+                                         @Field("time_slots_ids") byte[] times, @Field("run_location") String runLocation);
+
 }

@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="za.co.metalojiq.classfinder.someapp.activity.BooksList">
+
+    <item android:id="@+id/action_books_search"
+          android:title="Search For "
+          android:icon="@drawable/ic_search_black"
+          app:showAsAction="collapseActionView|ifRoom"
+          android:actionViewClass="android.widget.SearchView" android:layout_width="match_parent"/>
+
+</menu>
