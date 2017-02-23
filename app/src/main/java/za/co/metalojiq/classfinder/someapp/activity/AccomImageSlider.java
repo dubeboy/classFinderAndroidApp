@@ -28,6 +28,7 @@ import retrofit2.Response;
 import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.AccomList;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.DatePickerFragment;
+import za.co.metalojiq.classfinder.someapp.activity.fragment.ListBottomSheet;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.TimePickerFragment;
 import za.co.metalojiq.classfinder.someapp.adapter.AccomImageAdapter;
 import za.co.metalojiq.classfinder.someapp.model.AccommodationResponse;
@@ -171,7 +172,7 @@ public class AccomImageSlider extends AppCompatActivity implements
     }
 
     private void startTimePickerFrag() {
-        TimePickerFragment timePickerFragment = new TimePickerFragment();
+        ListBottomSheet timePickerFragment = ListBottomSheet.newInstance("Select view time", TimePickerFragment.times);
         timePickerFragment.setListener(this);
         timePickerFragment.show(getSupportFragmentManager(), "timePicker");
     }
@@ -212,7 +213,7 @@ public class AccomImageSlider extends AppCompatActivity implements
     }
 
     @Override
-    public void onTimeSelected(String time) {
+    public void onItemSelected(String time) {
         int mYear = c.get(Calendar.YEAR);
         int mMonth = c.get(Calendar.MONTH);
         int mDay = c.get(Calendar.DAY_OF_MONTH);

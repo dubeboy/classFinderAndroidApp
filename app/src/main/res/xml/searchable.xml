@@ -2,4 +2,6 @@
 
 <searchable xmlns:android="http://schemas.android.com/apk/res/android"
             android:label="@string/title_activity_books_list"
-            android:hint="Search for books" />
+            android:hint="Search books" >
+</searchable>
+

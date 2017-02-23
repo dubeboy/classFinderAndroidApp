@@ -57,7 +57,7 @@
                 android:hint="Accommodation Description"
                 android:ems="10"
                 android:layout_marginTop="15dp"
-                android:id="@+id/newEtAccomDesc"/>
+                android:id="@+id/newBooksDesc"/>
 
         <TextView
                 android:text="Price"

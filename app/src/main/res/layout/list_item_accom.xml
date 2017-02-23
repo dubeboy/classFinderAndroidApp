@@ -13,8 +13,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         card_view:cardCornerRadius="3dp"
-
         card_view:cardElevation="0.3dp">
+
         <RelativeLayout
             android:id="@+id/top_layout"
             android:layout_width="fill_parent"

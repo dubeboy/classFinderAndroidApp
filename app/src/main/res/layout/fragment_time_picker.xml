@@ -8,6 +8,7 @@
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:textStyle="bold"
+              android:id="@+id/title_frag_time"
               android:textSize="18sp"
               android:textColor="@color/primary"
               android:text="Select view time"

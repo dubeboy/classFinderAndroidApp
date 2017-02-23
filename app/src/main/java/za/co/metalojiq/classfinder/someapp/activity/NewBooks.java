@@ -5,8 +5,9 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -22,49 +23,57 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import za.co.metalojiq.classfinder.someapp.R;
-import za.co.metalojiq.classfinder.someapp.model.AccommodationResponse;
+import za.co.metalojiq.classfinder.someapp.activity.fragment.BooksPricesDialog;
+import za.co.metalojiq.classfinder.someapp.model.Book;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
-import za.co.metalojiq.classfinder.someapp.util.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
 
 import static za.co.metalojiq.classfinder.someapp.util.Utils.*;
 
-public class NewAccommodation extends AppCompatActivity {
 
-    private static final String TAG = NewAccommodation.class.getSimpleName();
-    private Spinner locationSpinner;
-    private Spinner roomTypeSpinner;
-    private Spinner auckAreaSpinner;
+public class NewBooks extends AppCompatActivity {
+
     private Bitmap[] bitmaps;
+    private LinearLayout imagesContainer;
     private String[] imageUris;
+    private ProgressDialog dialog;
+    private Spinner facultySpinner;
+    private Spinner newBookSpinnerInstitution;
     private EditText etPrice;
     private EditText etDescription;
-    private LinearLayout imagesContainer;
-    private ProgressDialog dialog;
-
+    private String TAG = NewBooks.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_accommodation);
-        TextView tvAuck = (TextView) findViewById(R.id.newAuckAreas);
-        locationSpinner = setupSpinner(this, R.id.newSpinnerLocation, R.array.locations_array);
-        roomTypeSpinner = setupSpinner(this, R.id.newSpinnerRoomType, R.array.room_type);
-        auckAreaSpinner = setupSpinner(this, R.id.newSpinnerAuckAreas, R.array.auck_areas);
-        imagesContainer = (LinearLayout) findViewById(R.id.newImagesHorizontalScroll);
+        setContentView(R.layout.activity_new_books);
 
-        locationSpinner.setOnItemSelectedListener(new Utils.LocationItemListener(tvAuck, auckAreaSpinner));
+        imagesContainer = (LinearLayout) findViewById(R.id.newImagesHorizontalScroll);
+         facultySpinner = setupSpinner(this, R.id.newBookSpinnerFaculty, R.array.books_faculty);
+         newBookSpinnerInstitution =  setupSpinner(this, R.id.newBookSpinnerInstitution, R.array.institution);
+
         etPrice = (EditText) findViewById(R.id.newEtPrice);
         etDescription = (EditText) findViewById(R.id.newBooksDesc);
+        Button pricesBtn = (Button) findViewById(R.id.books_btn_prices);
+
+        pricesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment dialogFragment = new BooksPricesDialog();
+                dialogFragment.show(getSupportFragmentManager(), "Prices");
+                Log.d(TAG, "onClick: prices btn clecked");
+
+            }
+        });
 
         Button btnPickImages = (Button) findViewById(R.id.newBtnAddImages);
         btnPickImages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makeToast("Starting image Picker", NewAccommodation.this);
+                makeToast("Starting image Picker", getApplicationContext());
                 launchImagesPicker();
             }
         });
@@ -75,22 +84,24 @@ public class NewAccommodation extends AppCompatActivity {
             public void onClick(View v) {
                 if (bitmaps != null) {
                     //TODO should be a notification
-                     dialog = ProgressDialog.show(NewAccommodation.this, "",
+                    dialog = ProgressDialog.show(getApplicationContext(), "",
                             "Uploading images, please wait...", true);
                     uploadData();
                 } else {
-                    Toast.makeText(NewAccommodation.this,
-                            "you have to also include images.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),
+                            "Please attach an image with the book", Toast.LENGTH_LONG).show();
                 }
             }
         });
 
     }
 
+
     private void uploadData() {
-        String loc = (String) locationSpinner.getSelectedItem();
-        String roomT= (String) roomTypeSpinner.getSelectedItem();
-        String rawArea = (String) auckAreaSpinner.getSelectedItem();
+        String bookTitle = ((EditText) findViewById(R.id.newBookTitle)).getText().toString();
+        String author = ((EditText) findViewById(R.id.newBookEtAuthor)).getText().toString();
+        String bookFaculty = (String) facultySpinner.getSelectedItem();
+        String institution = (String) newBookSpinnerInstitution.getSelectedItem();
         int prc =  Integer.valueOf((etPrice.getText().toString()).equals("") ? "0" : etPrice.getText().toString());
         String desc = etDescription.getText().toString();
 
@@ -108,34 +119,34 @@ public class NewAccommodation extends AppCompatActivity {
                 builderNew.addFormDataPart("images[]", file.getName(), reqFile);
             }
             int uId = getUserSharedPreferences(this).getInt(LoginActivity.LOGIN_PREF_USER_ID, 0);
-            String aA = AUCK_AREA_PREFIX + rawArea;
+            RequestBody bookTte = RequestBody.create(MediaType.parse("text/plain"), bookTitle);
             RequestBody userId = RequestBody.create(MediaType.parse("text/plain"),((Integer) uId).toString() );
-            RequestBody location = RequestBody.create(MediaType.parse("text/plain"), loc);
-            RequestBody roomType = RequestBody.create(MediaType.parse("text/plain"), roomT);
-            RequestBody auckArea = RequestBody.create(MediaType.parse("text/plain"), aA);
+            RequestBody authr = RequestBody.create(MediaType.parse("text/plain"), author);
+            RequestBody bkFaculty = RequestBody.create(MediaType.parse("text/plain"), bookFaculty);
+            RequestBody inst= RequestBody.create(MediaType.parse("text/plain"), institution);
             RequestBody price = RequestBody.create(MediaType.parse("text/plain"), ((Integer) prc).toString() );
             RequestBody description = RequestBody.create(MediaType.parse("text/plain"), desc);
             MultipartBody requestBody = builderNew.build();
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
 
-            Call<AccommodationResponse> call = apiService.postAccommodation(userId, location, roomType, auckArea,
+            Call<Book> call = apiService.postBook(userId, bookTte, authr, bkFaculty, inst,
                     price, description, requestBody.parts());
-            call.enqueue(new Callback<AccommodationResponse>() {
+            call.enqueue(new Callback<Book>() {
                 @Override
-                public void onResponse(Call<AccommodationResponse> call, Response<AccommodationResponse> response) {
+                public void onResponse(Call<Book> call, Response<Book> response) {
                     if (response.body().isStatus()) {
-                        makeToast("uploaded", NewAccommodation.this);
+                        makeToast("uploaded ", getApplicationContext());
                         dialog.dismiss();
                         finish();
                     } else {
-                        makeToast("Sorry please try again something went wrong double check your submission", NewAccommodation.this);
+                        makeToast("Sorry please try again something went wrong double check your submission", getApplicationContext());
                     }
                 }
                 @Override
-                public void onFailure(Call<AccommodationResponse> call, Throwable t) {
+                public void onFailure(Call<Book> call, Throwable t) {
                     Log.e(TAG, t.toString());
-                    makeToast("Please connect to the internet  ", NewAccommodation.this);
+                    makeToast("Please connect to the internet  ", getApplicationContext());
                 }
             });
         } else {
@@ -177,7 +188,7 @@ public class NewAccommodation extends AppCompatActivity {
                             for (int i = 0; i < numImages; i++) {
                                 bitmaps[i] = BitmapFactory.decodeFile(uriList.get(i).getPath());
                                 imageUris[i] = uriList.get(i).getPath();
-                                previewImages[i] = new ImageView(NewAccommodation.this);
+                                previewImages[i] = new ImageView(getApplicationContext());
                                 previewImages[i].setAdjustViewBounds(true);
                                 previewImages[i].setLayoutParams(new ViewGroup.LayoutParams(240, 240));
                                 previewImages[i].setPadding(5, 0, 5, 0);
@@ -200,15 +211,15 @@ public class NewAccommodation extends AppCompatActivity {
         PermissionListener permissionlistener = new PermissionListener() {
             @Override
             public void onPermissionGranted() {
-                Toast.makeText(NewAccommodation.this, "Please select images ypu want to upload.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Please select images ypu want to upload.", Toast.LENGTH_SHORT).show();
                 createImagesBottomPicker();
             }
             public void onPermissionDenied(ArrayList<String> deniedPermissions) {
-                Toast.makeText(NewAccommodation.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
             }
         };
 
-        new TedPermission(NewAccommodation.this)
+        new TedPermission(getApplicationContext())
                 .setPermissionListener(permissionlistener)
                 .setGotoSettingButton(true)
                 .setDeniedMessage("If you reject permission,you can not upload Images\n\nPlease turn on permissions at [Setting] > [Permission]")

@@ -2,6 +2,7 @@ package za.co.metalojiq.classfinder.someapp.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import android.view.View;
 import android.widget.ProgressBar;
@@ -75,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
+                        //Fixme remove at production
                         makeToast("Hello there man " + status, getApplicationContext());
                     }
                 });
@@ -153,27 +156,32 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 if (response.body() != null) {
                     ArrayList<Accommodation> accommodations = response.body().getResults();
                     Log.d(TAG, "host id " + accommodations.get(0).getHostId());
-                    AccomList accomList = AccomList.newInstance(accommodations);
+                    final AccomList accomList = AccomList.newInstance(accommodations);
                     setTitle(R.string.app_name);
-                    fragmentTransaction.add(R.id.activity_main, accomList, "ACCOM_LIST_FRAGMENT");
-                    fragmentTransaction.commit(); //this is causing problem #Fixme
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            fragmentTransaction.add(R.id.activity_main, accomList, "ACCOM_LIST_FRAGMENT");
+                            fragmentTransaction.commit(); //this is causing problem #Fixme
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    });
+
                 }
-                progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<AccommodationResponse> call, Throwable t) {
-                Log.e(TAG, t.toString());
-                GetAccomFailed getAccomFailed = new GetAccomFailed();
-                setTitle("Error");
-                fragmentTransaction.add(R.id.activity_main, getAccomFailed, "ACCOM_FAIL_FRAGMENT");
-                fragmentTransaction.commit(); //TODO remove this rather just set an Error text
                 progressBar.setVisibility(View.GONE);
+                ArrayList<Accommodation> accommodations = new ArrayList<>();
+                AccomList accomList = AccomList.newInstance(accommodations);
+                setTitle("Error");
+                fragmentTransaction.add(R.id.activity_main, accomList, "ACCOM_LIST_FRAGMENT");
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit(); //this is causing problem #Fixme should check if activity is activen and then commit!!
             }
         });
-
     }
-
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {

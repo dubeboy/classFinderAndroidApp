@@ -8,6 +8,12 @@
     <string name="no_connection_error">Please connect to the internet before trying to view available accommodations.
     </string>
 
+    <string name="books_prices_terms">Classfinder++ will find you a buyer and arrange a meeting between you and
+        the buyer(Within designated times). A Classfinder representative will be present to broker the trade.
+        The meeting point for trade is at any convenient spot on the campus(Library or convenience stores). The
+        following are the fees payable to Classfinder according to the text book price
+    </string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="search_enter_start_price">Enter start price</string>
@@ -107,4 +113,16 @@
     <string name="title_activity_new_accommodation">Add New Accommodation</string>
     <string name="enter_phone_number">Enter phone number</string>
     <string name="title_activity_books_list">All Books</string>
+    <string name="books_prices">
+        R10 for textbooks between the price range R100-R300 \n
+        R20 for textbooks between the price range R301-R600 \n
+        R30 for textbooks between the price range R601-R900 \n
+        R40 for textbooks between the price range R901-R1200 \n
+    </string>
+    <string name="books_meetup_times_lables">The times of meetup are and place is infront of the library</string>
+    <string name="books_meetup_times">
+        7:00-8:00 \n
+        13:00-14:00 \n
+        16:00-17:00 \n
+    </string>
 </resources>

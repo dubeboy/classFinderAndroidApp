@@ -32,6 +32,17 @@ public class Utils {
 
     public static final String[] LOCATIONS = {"Auckland Park", "Braamfontein", "Doornfontein", "Soweto"};
     public static final String AUCK_AREA_PREFIX = "Auckland Park, ";
+
+    /**
+     *
+     * this method setup a general spinner
+     *
+     * @param context - the activity which is going to render this spinner
+     * @param resId - the spinner that we dealing with :)
+     * @param arrResId - the xml res ID which as an array of elements to populate the array with
+     * @return - the spinner which has been created, so that we can make any required modification :)
+     */
+
     public static Spinner setupSpinner(AppCompatActivity context, @IdRes int resId, @ArrayRes int arrResId) {
         Spinner spinner = (Spinner) context.findViewById(resId);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter

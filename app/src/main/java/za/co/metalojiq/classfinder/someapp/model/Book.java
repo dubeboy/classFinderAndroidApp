@@ -2,10 +2,12 @@ package za.co.metalojiq.classfinder.someapp.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by divine on 2/5/17.
  */
-public class Book {
+public class Book implements Serializable{
 
     @SerializedName("name")
     private String name;
@@ -22,8 +24,11 @@ public class Book {
     @SerializedName("price")
     private String price;
 
-    @SerializedName("cover_picture")
+    @SerializedName("thumb")
     private String thumb;
+
+    @SerializedName("status")
+    private boolean status;
 
 
     public String getName() {
@@ -72,5 +77,14 @@ public class Book {
 
     public void setThumb(String thumb) {
         this.thumb = thumb;
+    }
+
+    @Override
+    public String toString() {
+        return " { " + name + ", " + email + ", " + phone + ", " + price  + " }";
+    }
+
+    public boolean isStatus() {
+        return status;
     }
 }

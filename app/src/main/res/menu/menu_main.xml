@@ -41,7 +41,7 @@
     <item
             android:id="@+id/action_books"
             android:orderInCategory="800"
-            android:title="books"
+            android:title="Books"
             app:showAsAction="never" />
 
 

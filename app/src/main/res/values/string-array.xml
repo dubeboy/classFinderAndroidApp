@@ -7,6 +7,26 @@
         <item>Soweto</item>
     </string-array>
 
+    <string-array name="books_faculty">
+        <item>Science</item>
+        <item>Engineering</item>
+        <item>Law</item>
+        <item>Architecture And Design</item>
+        <item>Education</item>
+        <item>Humanities</item>
+        <item>Medicine</item>
+        <item>Commerce</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="institution">
+        <item>Wits</item>
+        <item>UJ-Auckland Park</item>
+        <item>UJ-DFC</item>
+        <item>UJ-Soweto</item>
+        <item>Other</item>
+    </string-array>
+
     <string-array name="room_type">
         <item>Single</item>
         <item>Sharing</item>
