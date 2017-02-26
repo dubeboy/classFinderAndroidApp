@@ -128,7 +128,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
                     android:layout_toRightOf="@+id/newTvCurrency"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginBottom="10dp"
                     android:layout_toEndOf="@+id/newTvCurrency"/>
 
         </RelativeLayout>

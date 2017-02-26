@@ -3,6 +3,7 @@ package za.co.metalojiq.classfinder.someapp.activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
@@ -32,12 +33,13 @@ import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
 
 import static za.co.metalojiq.classfinder.someapp.util.Utils.makeToast;
 
-public class BooksList extends AppCompatActivity implements ListBottomSheet.OnSelectTime {
+public class BooksList extends AppCompatActivity{
 
+    private static final String BOOKS_FACULTY = "books_faculty";
     private String TAG = BooksList.class.getSimpleName();
     private ProgressBar progressBar;
     private ListBottomSheet bookSearchFaculty;
-    private String selectedFaculty;
+    private SearchView searchView;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -45,7 +47,7 @@ public class BooksList extends AppCompatActivity implements ListBottomSheet.OnSe
 
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_books_search));
+        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_books_search));
         // Assumes current activity is the searchable activity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(true); // Do not iconify the widget; expand it by default
@@ -58,8 +60,7 @@ public class BooksList extends AppCompatActivity implements ListBottomSheet.OnSe
         switch (item.getItemId()) {
             case R.id.action_books_search:
                 Log.d(TAG, "In here");
-                bookSearchFaculty = ListBottomSheet.newInstance("Select faculty to search", BookSearchFaculty.FACULTIES);
-                bookSearchFaculty.setListener(this);
+
                 bookSearchFaculty.show(getSupportFragmentManager(), "Books_faculty_btm_s");
                 Log.d(TAG, "onOptionsItemSelected: its clicked");
                 return true;
@@ -84,12 +85,36 @@ public class BooksList extends AppCompatActivity implements ListBottomSheet.OnSe
         });
 
         //this is where we get the data!!
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
+        bookSearchFaculty = ListBottomSheet.newInstance("Select faculty to search", BookSearchFaculty.FACULTIES);
+        bookSearchFaculty.setCancelable(false);
+        bookSearchFaculty.setOnCancelFragmentListener(new ListBottomSheet.OnCancelFragment() {
+            @Override
+            public void onCancelCallback() {
+                makeToast("Please select faculty", BooksList.this);
+            }
+        });
+        bookSearchFaculty.setListener(new ListBottomSheet.OnSelectTime() {
+
+            @Override
+            public void onItemSelected(String faculty) {
+                SharedPreferences sharedPreferences = getSharedPreferences("BOOK_LIST_PREF", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("FACULTY", faculty);
+                editor.commit();
+            }
+        });
+
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             Log.d(TAG, "onCreate: Search result's" + query);
-
-            getInitBooks(query, selectedFaculty);
+            String selectedFaculty = getSharedPreferences("BOOK_LIST_PREF", MODE_PRIVATE).getString("FACULTY", null);
+            if (selectedFaculty == null) {
+                makeToast("Please select faculty", this);
+            } else {
+                Log.d(TAG, "onCreate: the selected faculty by choice!!!" + selectedFaculty);
+                getInitBooks(query, selectedFaculty);
+            }
         } else {
             getInitBooks( null, null);
         }
@@ -130,12 +155,6 @@ public class BooksList extends AppCompatActivity implements ListBottomSheet.OnSe
                 progressBar.setVisibility(View.GONE);
             }
         });
-    }
-
-    @Override
-    public void onItemSelected(String faculty) {
-        Log.d(TAG, "onItemSelected: the faculty is " + faculty);
-        selectedFaculty = faculty;
     }
     private int genIDForSelectedFaculty(String faculty) {
         Log.d(TAG, "genIDForSelectedFaculty: faculty" + faculty);

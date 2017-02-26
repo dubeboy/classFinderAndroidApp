@@ -2,6 +2,7 @@ package za.co.metalojiq.classfinder.someapp.activity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -73,7 +74,7 @@ public class NewBooks extends AppCompatActivity {
         btnPickImages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makeToast("Starting image Picker", getApplicationContext());
+                makeToast("Starting image Picker", (Context) NewBooks.this);
                 launchImagesPicker();
             }
         });
@@ -84,8 +85,8 @@ public class NewBooks extends AppCompatActivity {
             public void onClick(View v) {
                 if (bitmaps != null) {
                     //TODO should be a notification
-                    dialog = ProgressDialog.show(getApplicationContext(), "",
-                            "Uploading images, please wait...", true);
+                    dialog = ProgressDialog.show(NewBooks.this, "",
+                            "Uploading book images, please wait...", true);
                     uploadData();
                 } else {
                     Toast.makeText(getApplicationContext(),
@@ -93,9 +94,7 @@ public class NewBooks extends AppCompatActivity {
                 }
             }
         });
-
     }
-
 
     private void uploadData() {
         String bookTitle = ((EditText) findViewById(R.id.newBookTitle)).getText().toString();
@@ -146,7 +145,8 @@ public class NewBooks extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<Book> call, Throwable t) {
                     Log.e(TAG, t.toString());
-                    makeToast("Please connect to the internet  ", getApplicationContext());
+                    dialog.dismiss();
+                    makeToast("Please connect to the internet", getApplicationContext());
                 }
             });
         } else {
@@ -192,7 +192,7 @@ public class NewBooks extends AppCompatActivity {
                                 previewImages[i].setAdjustViewBounds(true);
                                 previewImages[i].setLayoutParams(new ViewGroup.LayoutParams(240, 240));
                                 previewImages[i].setPadding(5, 0, 5, 0);
-                                previewImages[i].setScaleType(ImageView.ScaleType.FIT_CENTER);
+                                previewImages[i].setScaleType(ImageView.ScaleType.FIT_XY);
                                 previewImages[i].setImageBitmap(bitmaps[i]);
                                 imagesContainer.addView(previewImages[i]);
                             }

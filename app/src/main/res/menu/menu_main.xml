@@ -7,7 +7,7 @@
         android:id="@+id/action_search"
         android:orderInCategory="200"
         android:title="Search"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         android:icon="@drawable/ic_search_black"
         />
     <item
@@ -42,7 +42,8 @@
             android:id="@+id/action_books"
             android:orderInCategory="800"
             android:title="Books"
-            app:showAsAction="never" />
+            android:icon="@drawable/ic_book_black_24dp"
+            app:showAsAction="always" />
 
 
 </menu>

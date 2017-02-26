@@ -1,6 +1,7 @@
 package za.co.metalojiq.classfinder.someapp.activity.fragment;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,9 +25,14 @@ public class ListBottomSheet extends BottomSheetDialogFragment {
     private static final String NAME = "sheet_name";
     private  String[] items;
     private ListBottomSheet.OnSelectTime listener;
+    private ListBottomSheet.OnCancelFragment onCancelFragmentListener;
 
     public interface OnSelectTime {
         void onItemSelected(String time);
+    }
+
+    public interface OnCancelFragment {
+        public void onCancelCallback();
     }
 
 
@@ -53,12 +59,27 @@ public class ListBottomSheet extends BottomSheetDialogFragment {
     }
 
     @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        Log.d(TAG, "onCancel: LIstBotton sheet on onCancelCallback");
+        onCancelFragmentListener.onCancelCallback();
+    }
+
+    @Override
+    public boolean getShowsDialog() {
+        return super.getShowsDialog();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
         return inflater.inflate(R.layout.fragment_time_picker, container);
     }
 
     public  void setListener(ListBottomSheet.OnSelectTime listener) {
         this.listener = listener;
+    }
+    public void setOnCancelFragmentListener(ListBottomSheet.OnCancelFragment onCancelFragmentListener) {
+        this.onCancelFragmentListener = onCancelFragmentListener;
     }
 
     @Override

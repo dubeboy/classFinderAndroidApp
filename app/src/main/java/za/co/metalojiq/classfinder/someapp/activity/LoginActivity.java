@@ -79,7 +79,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public static final String GOOGLE_USER_EMAIL = "GOOGLE_USER_EMAIL";
     public static final String GOOGLE_USER_NAME = "GOOGLE_USER_NAME";
     /**
-     * Keep track of the login task to ensure we can cancel it if requested.
+     * Keep track of the login task to ensure we can onCancelCallback it if requested.
      */
     private UserLoginTask mAuthTask = null;
 
