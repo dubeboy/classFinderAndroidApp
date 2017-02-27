@@ -62,7 +62,10 @@ public class ListBottomSheet extends BottomSheetDialogFragment {
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
         Log.d(TAG, "onCancel: LIstBotton sheet on onCancelCallback");
-        onCancelFragmentListener.onCancelCallback();
+        if (onCancelFragmentListener != null)
+            onCancelFragmentListener.onCancelCallback();
+        else
+            Log.e(TAG, "onCancel:called but on null reference");
     }
 
     @Override

@@ -73,8 +73,8 @@ public interface ApiInterface {
     Call<Book> postBook(@Part("user_id") RequestBody id,
                         @Part("book_title") RequestBody bookTitle,
                         @Part("author") RequestBody authr,
-                        @Part("book_faculty") RequestBody bkFaculty,
-                        @Part("category_id") RequestBody inst, // this is an ID
+                        @Part("category_id") RequestBody bkFaculty,
+                        @Part("institution_id") RequestBody inst, // this is an ID
                         @Part("price") RequestBody price,
                         @Part("description") RequestBody description,
                         @Part List<MultipartBody.Part> images); // should default to images

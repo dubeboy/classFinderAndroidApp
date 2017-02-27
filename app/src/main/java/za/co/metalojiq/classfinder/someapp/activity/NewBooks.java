@@ -2,13 +2,13 @@ package za.co.metalojiq.classfinder.someapp.activity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -46,15 +46,22 @@ public class NewBooks extends AppCompatActivity {
     private EditText etPrice;
     private EditText etDescription;
     private String TAG = NewBooks.class.getSimpleName();
+    private EditText etBookTitle;
+    private EditText etAuthor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_books);
 
+        if (!isLoggedIn(this)) {
+            makeToast("You need to be logged in to upload books", this);
+        }
         imagesContainer = (LinearLayout) findViewById(R.id.newImagesHorizontalScroll);
-         facultySpinner = setupSpinner(this, R.id.newBookSpinnerFaculty, R.array.books_faculty);
-         newBookSpinnerInstitution =  setupSpinner(this, R.id.newBookSpinnerInstitution, R.array.institution);
+        facultySpinner = setupSpinner(this, R.id.newBookSpinnerFaculty, R.array.books_faculty);
+        etBookTitle = ((EditText) findViewById(R.id.newBookTitle));
+        etAuthor = ((EditText) findViewById(R.id.newBookEtAuthor));
+        newBookSpinnerInstitution = setupSpinner(this, R.id.newBookSpinnerInstitution, R.array.institution);
 
         etPrice = (EditText) findViewById(R.id.newEtPrice);
         etDescription = (EditText) findViewById(R.id.newBooksDesc);
@@ -74,7 +81,7 @@ public class NewBooks extends AppCompatActivity {
         btnPickImages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makeToast("Starting image Picker", (Context) NewBooks.this);
+                makeToast("Starting image Picker", NewBooks.this);
                 launchImagesPicker();
             }
         });
@@ -83,30 +90,56 @@ public class NewBooks extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (bitmaps != null) {
+                if(!isLoggedIn(NewBooks.this)) {
+                    makeToast("Please login before continuing", NewBooks.this);
+                    Intent intent = new Intent(NewBooks.this, LoginActivity.class);
+                    startActivity(intent);
+                    return;
+                }
+                if (isFormValid()) {
                     //TODO should be a notification
                     dialog = ProgressDialog.show(NewBooks.this, "",
                             "Uploading book images, please wait...", true);
                     uploadData();
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            "Please attach an image with the book", Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
 
+    private boolean isFormValid() {
+
+        if (bitmaps == null) {
+            Toast.makeText(getApplicationContext(),
+                    "Please attach an image with the book", Toast.LENGTH_LONG).show();
+            return false;
+        } else if (TextUtils.isEmpty(etPrice.getText().toString())) {
+            etPrice.setError("Please input price");
+            return false;
+        } else if (TextUtils.isEmpty(etDescription.getText().toString())) {
+            etDescription.setError("Please input the description");
+            return false;
+        } else if (TextUtils.isEmpty(etBookTitle.getText().toString())) {
+            etBookTitle.setError("Please input book title");
+            return false;
+        } else if (TextUtils.isEmpty(etAuthor.getText().toString())) {
+            etBookTitle.setError("Please input book author");
+            return false;
+        }
+
+        return true;
+    }
+
     private void uploadData() {
-        String bookTitle = ((EditText) findViewById(R.id.newBookTitle)).getText().toString();
-        String author = ((EditText) findViewById(R.id.newBookEtAuthor)).getText().toString();
+        String bookTitle = etBookTitle.getText().toString();
+        String author = etAuthor.getText().toString();
         String bookFaculty = (String) facultySpinner.getSelectedItem();
         String institution = (String) newBookSpinnerInstitution.getSelectedItem();
-        int prc =  Integer.valueOf((etPrice.getText().toString()).equals("") ? "0" : etPrice.getText().toString());
+        double prc = Double.valueOf((etPrice.getText().toString()).equals("") ? "0" : etPrice.getText().toString());
         String desc = etDescription.getText().toString();
 
 
         // we want to upload only if there are images
-        if (!(bitmaps.length == 0 && prc <= 0 && TextUtils.isEmpty(desc))) {
+        if (!(bitmaps.length == 0)) {
             //upload!!
             MultipartBody.Builder builderNew = new MultipartBody.Builder().setType(MultipartBody.FORM);
             for (String imageUri : imageUris) {
@@ -119,11 +152,11 @@ public class NewBooks extends AppCompatActivity {
             }
             int uId = getUserSharedPreferences(this).getInt(LoginActivity.LOGIN_PREF_USER_ID, 0);
             RequestBody bookTte = RequestBody.create(MediaType.parse("text/plain"), bookTitle);
-            RequestBody userId = RequestBody.create(MediaType.parse("text/plain"),((Integer) uId).toString() );
+            RequestBody userId = RequestBody.create(MediaType.parse("text/plain"), Integer.valueOf(uId).toString());
             RequestBody authr = RequestBody.create(MediaType.parse("text/plain"), author);
-            RequestBody bkFaculty = RequestBody.create(MediaType.parse("text/plain"), bookFaculty);
-            RequestBody inst= RequestBody.create(MediaType.parse("text/plain"), institution);
-            RequestBody price = RequestBody.create(MediaType.parse("text/plain"), ((Integer) prc).toString() );
+            RequestBody bkFaculty = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(genIDForSelectedFaculty(bookFaculty)));
+            RequestBody inst = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(genIDForSelectedInstitution(institution)));
+            RequestBody price = RequestBody.create(MediaType.parse("text/plain"), Double.valueOf(prc).toString());
             RequestBody description = RequestBody.create(MediaType.parse("text/plain"), desc);
             MultipartBody requestBody = builderNew.build();
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
@@ -140,8 +173,10 @@ public class NewBooks extends AppCompatActivity {
                         finish();
                     } else {
                         makeToast("Sorry please try again something went wrong double check your submission", getApplicationContext());
+                        dialog.dismiss();
                     }
                 }
+
                 @Override
                 public void onFailure(Call<Book> call, Throwable t) {
                     Log.e(TAG, t.toString());
@@ -149,24 +184,11 @@ public class NewBooks extends AppCompatActivity {
                     makeToast("Please connect to the internet", getApplicationContext());
                 }
             });
-        } else {
-            if (TextUtils.isEmpty(desc))  {
-                Toast.makeText(this, "Description has to have something", Toast.LENGTH_SHORT).show();
-
-            }
-            if (prc == 0)  {
-                Toast.makeText(this, "Price has to be more than 0", Toast.LENGTH_SHORT).show();
-
-            }
-            if (bitmaps.length == 0)  {
-                Toast.makeText(this, "you have to also include images.", Toast.LENGTH_SHORT).show();
-
-            }
         }
     }
 
 
-    private  void launchImagesPicker() {
+    private void launchImagesPicker() {
         requestCameraPermissions();
     }
 
@@ -177,7 +199,7 @@ public class NewBooks extends AppCompatActivity {
                     @Override
                     public void onImagesSelected(ArrayList<Uri> uriList) {
                         int numImages = uriList.size();
-                        bitmaps  = new Bitmap[numImages];
+                        bitmaps = new Bitmap[numImages];
                         if (numImages > 0) {
                             imagesContainer.removeAllViews();
                             imageUris = new String[numImages];
@@ -207,6 +229,7 @@ public class NewBooks extends AppCompatActivity {
 
         bottomSheetDialogFragment.show(getSupportFragmentManager());
     }
+
     private void requestCameraPermissions() {
         PermissionListener permissionlistener = new PermissionListener() {
             @Override
@@ -214,6 +237,7 @@ public class NewBooks extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Please select images ypu want to upload.", Toast.LENGTH_SHORT).show();
                 createImagesBottomPicker();
             }
+
             public void onPermissionDenied(ArrayList<String> deniedPermissions) {
                 Toast.makeText(getApplicationContext(), "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
             }

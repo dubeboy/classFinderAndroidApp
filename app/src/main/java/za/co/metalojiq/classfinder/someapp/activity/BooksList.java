@@ -31,12 +31,13 @@ import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
 
 
+import static za.co.metalojiq.classfinder.someapp.util.Utils.genIDForSelectedFaculty;
 import static za.co.metalojiq.classfinder.someapp.util.Utils.makeToast;
 
 public class BooksList extends AppCompatActivity{
 
     private static final String BOOKS_FACULTY = "books_faculty";
-    private String TAG = BooksList.class.getSimpleName();
+    private static String TAG = BooksList.class.getSimpleName();
     private ProgressBar progressBar;
     private ListBottomSheet bookSearchFaculty;
     private SearchView searchView;
@@ -156,12 +157,5 @@ public class BooksList extends AppCompatActivity{
             }
         });
     }
-    private int genIDForSelectedFaculty(String faculty) {
-        Log.d(TAG, "genIDForSelectedFaculty: faculty" + faculty);
-       for (int i = 0; i < BookSearchFaculty.FACULTIES.length; i++) {
-           if(BookSearchFaculty.FACULTIES[i].equals(faculty))
-               return i;
-       }
-       return -1;
-    }
+
 }

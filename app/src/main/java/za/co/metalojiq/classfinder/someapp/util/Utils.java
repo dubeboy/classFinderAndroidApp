@@ -17,6 +17,7 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import za.co.metalojiq.classfinder.someapp.activity.LoginActivity;
+import za.co.metalojiq.classfinder.someapp.activity.fragment.BookSearchFaculty;
 
 import java.io.File;
 
@@ -31,6 +32,7 @@ import static za.co.metalojiq.classfinder.someapp.activity.LoginActivity.LOGIN_P
 public class Utils {
 
     public static final String[] LOCATIONS = {"Auckland Park", "Braamfontein", "Doornfontein", "Soweto"};
+    public static final String[] INSTITUTIONS = {"Wits", "UJ-Auckland Park", "UJ-DFC", "UJ-Soweto", "Other"};
     public static final String AUCK_AREA_PREFIX = "Auckland Park, ";
 
     /**
@@ -51,6 +53,23 @@ public class Utils {
 
         spinner.setAdapter(adapter);
         return spinner;
+    }
+
+    //These 2 can be combined
+    public static int genIDForSelectedFaculty(String faculty) {
+        for (int i = 0; i < BookSearchFaculty.FACULTIES.length; i++) {
+            if(BookSearchFaculty.FACULTIES[i].equals(faculty))
+                return i+2; // the server is 1 based an the first element is accommodation
+        }
+        return -1;
+    }
+
+    public static int genIDForSelectedInstitution(String institution) {
+        for (int i = 0; i < INSTITUTIONS.length; i++) {
+            if(INSTITUTIONS[i].equals(institution))
+                return i+1;
+        }
+        return -1;
     }
 
 
@@ -95,8 +114,6 @@ public class Utils {
     public static void makeToast(String msg, Context context) {
         Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
     }
-
-
 
     public static void L(String msg) {
         Log.d("Debug", msg);

@@ -163,7 +163,7 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
         });
     }
 
-    void toggleShowRunnerInfo(boolean show) {
+    private void toggleShowRunnerInfo(boolean show) {
          horScroll = (HorizontalScrollView) findViewById(R.id.SignUpHorizontalTimes);
         TextView tvSelectTime = (TextView)  findViewById(R.id.signUpTvSelectTime);
         TextView signUpSelectTime = (TextView)  findViewById(R.id.signUpSelectTime);
@@ -208,7 +208,7 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
         return false;
     }
 
-    void showTooltip(String msg, View anchorView) {
+    private void showTooltip(String msg, View anchorView) {
         new SimpleTooltip.Builder(this)
                 .anchorView(anchorView)
                 .text(msg)

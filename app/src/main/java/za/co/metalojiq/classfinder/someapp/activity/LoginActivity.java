@@ -132,6 +132,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         signInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                makeToast("Signing in using google", LoginActivity.this);
                 signIn();
             }
         });
