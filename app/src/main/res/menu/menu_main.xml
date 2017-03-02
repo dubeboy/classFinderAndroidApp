@@ -17,6 +17,11 @@
         android:visible="false"
         android:orderInCategory="230"
         />
+    <item
+            android:id="@+id/action_venues"
+            android:title="Open Venues"
+            android:orderInCategory="233"
+    />
 
     <item
         android:id="@+id/action_runner"

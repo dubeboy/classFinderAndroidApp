@@ -28,10 +28,10 @@ public class ApiClient {
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         final OkHttpClient okHttp = new OkHttpClient.Builder()
-                .readTimeout(60, TimeUnit.SECONDS).addInterceptor(interceptor)
-                .connectTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS).addInterceptor(interceptor)
+                .connectTimeout(30, TimeUnit.SECONDS)
                 .build();
-        if (retrofit==null) {
+        if (retrofit == null) {
             retrofit = new Retrofit.Builder().baseUrl(DEV_HOST)
                     .client(okHttp)
                     .addConverterFactory(GsonConverterFactory.create())

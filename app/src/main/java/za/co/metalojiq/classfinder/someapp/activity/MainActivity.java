@@ -14,7 +14,6 @@ import android.view.MenuItem;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import android.view.View;
 import android.widget.ProgressBar;
@@ -30,7 +29,6 @@ import retrofit2.Response;
 import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.activity.expirimental.SettingsActivity;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.AccomList;
-import za.co.metalojiq.classfinder.someapp.activity.fragment.GetAccomFailed;
 import za.co.metalojiq.classfinder.someapp.model.Accommodation;
 import za.co.metalojiq.classfinder.someapp.model.AccommodationResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
@@ -113,6 +111,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             case R.id.action_books:
                 Intent books = new Intent(this, BooksList.class);
                 startActivity(books);
+                return true;
+            case R.id.action_venues:
+                Intent venues = new Intent(this, VenueFinder.class);
+                startActivity(venues);
                 return true;
             case R.id.action_sign_out:
                 SharedPreferences sharedPreferences = getSharedPreferences(LoginActivity.LOGIN_PREF_FILENAME, MODE_PRIVATE);

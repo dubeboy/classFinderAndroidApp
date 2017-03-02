@@ -59,6 +59,10 @@ public interface ApiInterface {
     @GET("/api/v1/users/{id}/panel")
     Call<TransactionResponse> getBookings(@Path("id") int id);
 
+    @Headers({"Accept: application/json"})
+    @GET("/api/v1/venue_finder/index")
+    Call<VenuesRespose> getVenues(@Query("time") String time);
+
     @Multipart
     @Headers({"Accept: application/json"})
     @POST("/api/v1/accommodations")
