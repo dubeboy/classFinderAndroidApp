@@ -1,21 +1,20 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
+                android:id="@+id/swipeContainer"
                 android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
                 tools:context="za.co.metalojiq.classfinder.someapp.activity.fragment.AccomList">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swipeContainer"
+    <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
         <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/recycler_view"
         />
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+
 
 
     <ProgressBar
@@ -35,7 +34,7 @@
         android:layout_margin="25dp"
         android:textSize="20sp"
         android:layout_gravity="center_vertical|center_horizontal"
-        android:text="Sorry your search does not match any available accommodations."
+        android:text="Nothing found, 0 results"
         android:visibility="gone"/>
 
     <android.support.design.widget.FloatingActionButton
@@ -48,4 +47,5 @@
             android:layout_alignParentRight="true"
             android:layout_margin="@dimen/fab_margin"
             app:srcCompat="@drawable/ic_add_black" />
-</RelativeLayout>
+    </RelativeLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

@@ -10,9 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import za.co.metalojiq.classfinder.someapp.R;
-import za.co.metalojiq.classfinder.someapp.model.Accommodation;
 import za.co.metalojiq.classfinder.someapp.model.Book;
-import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,9 +74,9 @@ public class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BooksViewHol
         }
 
         void bind(final Book book, final BooksAdapter.OnItemClickListener listener) {
-            Log.d(TAG, "bind: " + ApiClient.DEV_HOST + book.getThumb() );
+            Log.d(TAG, "bind: " + book.getThumb() );
             Picasso.with(itemView.getContext())
-                    .load(ApiClient.DEV_HOST + book.getThumb()).into(booksIcon);
+                    .load( book.getThumb()).into(booksIcon);
             booksTitle.setText(book.getName());
             booksInfo.setText(book .getPhone() + "-" + book.getEmail());
             booksDesc.setText(book.getDesc());
@@ -91,8 +89,8 @@ public class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BooksViewHol
         notifyDataSetChanged();
     }
 
-    public void addAll(ArrayList<Book> books) {
-        books.addAll(books);
+    public void addAll(ArrayList<Book> bos) {
+        books.addAll(bos);
         notifyDataSetChanged();
     }
 }

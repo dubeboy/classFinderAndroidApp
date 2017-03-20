@@ -20,6 +20,7 @@
     <string name="search_enter_limit_price">Enter limit price</string>
     <string name="search_accommodation">Search for accommodation</string>
     <string name="title_activity_login">Sign in</string>
+    <string name="title_networks">Classfinder Networks</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -121,8 +122,9 @@
     </string>
     <string name="books_meetup_times_lables">The times of meetup are and place is infront of the library</string>
     <string name="books_meetup_times">
-        7:00-8:00 \n
-        13:00-14:00 \n
-        16:00-17:00 \n
+        \n
+        07:00-8:00\n
+        13:00-14:00\n
+        16:00-17:00\n
     </string>
 </resources>

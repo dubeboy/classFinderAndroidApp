@@ -3,47 +3,33 @@ package za.co.metalojiq.classfinder.someapp.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.LoaderManager.LoaderCallbacks;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-
-import android.content.CursorLoader;
-import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import android.widget.*;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -51,6 +37,9 @@ import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.model.UserResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
 import static za.co.metalojiq.classfinder.someapp.util.Utils.*;
@@ -154,7 +143,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
 
-
+    /*
+    * Sign in using google yoh
+    *
+    * */
 
     private  void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
@@ -175,9 +167,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
-            makeToast("Hello You have signed in using google " + acct.getDisplayName(), this);
-            makeToast("Hello Your token is this " + acct.getId(), this);
-            makeToast("Hello Your Email  is this " + acct.getEmail(), this);
+            //Todo remove this is bad!!
+            Log.d(TAG, "Hello You have signed in using google " + acct.getDisplayName());
+            Log.d(TAG,"Hello Your token is this " + acct.getId());
+          //  makeToast("Hello " + acct.getEmail(), this);
             Log.d("TOKEN ", acct.getIdToken());
             Log.d("TOKEN ", acct.getId());
 
@@ -189,6 +182,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             intent.putExtra(GOOGLE_USER_EMAIL, acct.getEmail());
             makeToast("Please provide your number so that we can contact you", this);
             startActivity(intent);
+
 //            updateUI(true);
         } else {
             // Signed out, show unauthenticated UI.

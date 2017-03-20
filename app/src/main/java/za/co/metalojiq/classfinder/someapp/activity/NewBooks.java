@@ -167,8 +167,10 @@ public class NewBooks extends AppCompatActivity {
             call.enqueue(new Callback<Book>() {
                 @Override
                 public void onResponse(Call<Book> call, Response<Book> response) {
+                    Log.d(TAG, "onResponse: the satus is:" + response.body().isStatus());
                     if (response.body().isStatus()) {
-                        makeToast("uploaded ", getApplicationContext());
+
+                        makeToast("uploaded, pull down to see your book!", getApplicationContext());
                         dialog.dismiss();
                         finish();
                     } else {

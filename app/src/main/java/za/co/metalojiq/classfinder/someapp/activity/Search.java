@@ -1,5 +1,6 @@
 package za.co.metalojiq.classfinder.someapp.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,18 +22,16 @@ import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
 import za.co.metalojiq.classfinder.someapp.util.Utils;
 
-import static za.co.metalojiq.classfinder.someapp.util.Utils.AUCK_AREA_PREFIX;
-import static za.co.metalojiq.classfinder.someapp.util.Utils.LOCATIONS;
-import static za.co.metalojiq.classfinder.someapp.util.Utils.setupSpinner;
+import static za.co.metalojiq.classfinder.someapp.util.Utils.*;
 
 public class Search extends AppCompatActivity {
 
     private static final String TAG = Search.class.getSimpleName();
     public static final String INTENT_RESPONSE_EXTRA = TAG + ".response";
+    private ProgressDialog dialog;
 
     public enum INTENT_RESPONSE {SUCCESS, FAILURE}
 
-    ;
 
     private Spinner auckAreaSpinner;
     private Spinner roomTypeSpinner;
@@ -58,6 +57,8 @@ public class Search extends AppCompatActivity {
     }
 
     public void search(View view) {
+        dialog = ProgressDialog.show(Search.this, "",
+                "Uploading book images, please wait...", true);
         String auckArea = "";
 
         String location = (String) locationSpinner.getSelectedItem();
@@ -69,7 +70,7 @@ public class Search extends AppCompatActivity {
 
         String roomType = (String) roomTypeSpinner.getSelectedItem();
 
-        int priceT = Integer.valueOf(TextUtils.isEmpty(priceTo.getText().toString()) ? "0" : priceTo.getText().toString());
+        int  priceT = Integer.valueOf(TextUtils.isEmpty(priceTo.getText().toString()) ? "0" : priceTo.getText().toString());
         int priceF = Integer.valueOf(TextUtils.isEmpty(priceFrom.getText().toString()) ? "0" : priceFrom.getText().toString());
 
         //put this in a runner so that we will just get the result from thread
@@ -81,15 +82,21 @@ public class Search extends AppCompatActivity {
         call.enqueue(new Callback<AccommodationResponse>() {
             @Override
             public void onResponse(Call<AccommodationResponse> call, Response<AccommodationResponse> response){
-                intent.putExtra(AccomList.ACCOM_BUNDLE_KEY, response.body().getResults());
-                intent.putExtra(INTENT_RESPONSE_EXTRA, INTENT_RESPONSE.SUCCESS);
-                startActivity(intent);
+                if (response.body() != null) {
+                    intent.putExtra(AccomList.ACCOM_BUNDLE_KEY, response.body().getResults());
+                    intent.putExtra(INTENT_RESPONSE_EXTRA, INTENT_RESPONSE.SUCCESS);
+                    dialog.hide();
+                    startActivity(intent);
+                } else {
+                    makeToast("Nothing was found!", Search.this);
+                }
             }
 
             @Override
             public void onFailure(Call<AccommodationResponse> call, Throwable t) {
                 Log.e(TAG + " RRRRR", t.toString());
                 intent.putExtra(INTENT_RESPONSE_EXTRA, INTENT_RESPONSE.FAILURE);
+                dialog.hide();
                 startActivity(intent);
             }
         });

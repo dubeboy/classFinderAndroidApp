@@ -1,9 +1,7 @@
 package za.co.metalojiq.classfinder.someapp.util;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.support.annotation.ArrayRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -11,7 +9,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.widget.*;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -19,11 +16,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import za.co.metalojiq.classfinder.someapp.activity.LoginActivity;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.BookSearchFaculty;
 
-import java.io.File;
-
 import static android.content.Context.MODE_PRIVATE;
 import static za.co.metalojiq.classfinder.someapp.activity.LoginActivity.LOGIN_IS_RUNNER;
-import static za.co.metalojiq.classfinder.someapp.activity.LoginActivity.LOGIN_PREF_EMAIL;
 import static za.co.metalojiq.classfinder.someapp.activity.LoginActivity.LOGIN_PREF_USER_ID;
 
 /**
@@ -163,4 +157,7 @@ public class Utils {
 
         }
     }
+
+
+
 }

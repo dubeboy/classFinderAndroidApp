@@ -8,15 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.squareup.picasso.Picasso;
+import za.co.metalojiq.classfinder.someapp.R;
+import za.co.metalojiq.classfinder.someapp.model.Accommodation;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import za.co.metalojiq.classfinder.someapp.R;
-import za.co.metalojiq.classfinder.someapp.model.Accommodation;
-import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 
 
 /**
@@ -83,9 +80,9 @@ public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHol
             String price = "R " + accommodation.getPrice();
             tvTitle.setText(price);
             tvRoomType.setText(accommodation.getRoomType());
-            Log.d(TAG,ApiClient.DEV_HOST + accommodation.getPicture(0).getImageUrl() + "^END%");
+            Log.d(TAG,accommodation.getPicture(0).getImageUrl() + "^END%");
             Picasso.with(itemView.getContext())
-                    .load(ApiClient.DEV_HOST + accommodation.getPicture(0)
+                    .load( accommodation.getPicture(0)
                             .getImageUrl()).into(accomImageThumb);
 //            built in onClick listener for a view.. nice!!
             itemView.setOnClickListener(new View.OnClickListener() {

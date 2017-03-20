@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
@@ -21,7 +20,6 @@ import android.widget.TextView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.BookSearchFaculty;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.Books;
@@ -29,7 +27,6 @@ import za.co.metalojiq.classfinder.someapp.activity.fragment.ListBottomSheet;
 import za.co.metalojiq.classfinder.someapp.model.BooksResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
-
 
 import static za.co.metalojiq.classfinder.someapp.util.Utils.genIDForSelectedFaculty;
 import static za.co.metalojiq.classfinder.someapp.util.Utils.makeToast;
@@ -76,14 +73,7 @@ public class BooksList extends AppCompatActivity{
         progressBar = (ProgressBar) findViewById(R.id.booksLoad);
         Log.d(TAG, "onCreate: BEING CREATED");
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               Intent intent = new Intent(getApplicationContext(), NewBooks.class);
-               startActivity(intent);
-            }
-        });
+
 
         //this is where we get the data!!
         final Intent intent = getIntent();
@@ -149,7 +139,7 @@ public class BooksList extends AppCompatActivity{
 
             @Override
             public void onFailure(Call<BooksResponse> call, Throwable t) {
-                makeToast("Error occured mate in onResponse of getting books", BooksList.this);
+                makeToast("Error occured mate while getting list of books", BooksList.this);
                 Log.d(TAG, "onFailure: it failed" + t.toString());
                 TextView tvError = (TextView) findViewById(R.id.tvBooksError);
                 tvError.setVisibility(View.VISIBLE);

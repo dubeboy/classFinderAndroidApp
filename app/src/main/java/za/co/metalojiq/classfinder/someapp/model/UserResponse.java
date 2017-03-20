@@ -2,8 +2,6 @@ package za.co.metalojiq.classfinder.someapp.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-
 /**
  * Created by divine on 1/15/17.
  */
@@ -15,6 +13,9 @@ public class UserResponse {
 
     @SerializedName("status")
     private boolean status;
+
+    @SerializedName("exits")
+    private boolean exits;
 
     @SerializedName("message")
     private String message;
@@ -41,5 +42,13 @@ public class UserResponse {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public boolean isExits() {
+        return exits;
+    }
+
+    public void setExits(boolean exits) {
+        this.exits = exits;
     }
 }

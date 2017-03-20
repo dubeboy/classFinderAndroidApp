@@ -1,10 +1,6 @@
 package za.co.metalojiq.classfinder.someapp.activity.fragment;
 
-import android.Manifest;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -20,13 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-
 import android.widget.Toast;
-import com.gun0912.tedpermission.PermissionListener;
-import com.gun0912.tedpermission.TedPermission;
-import gun0912.tedbottompicker.TedBottomPicker;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,6 +30,8 @@ import za.co.metalojiq.classfinder.someapp.model.Accommodation;
 import za.co.metalojiq.classfinder.someapp.model.AccommodationResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
+
+import java.util.ArrayList;
 
 import static za.co.metalojiq.classfinder.someapp.util.Utils.isLoggedIn;
 import static za.co.metalojiq.classfinder.someapp.util.Utils.makeToast;
@@ -106,7 +98,7 @@ public class AccomList extends Fragment {
         recyclerView.addOnScrollListener(scrollListener); //TODO test if position matters
 
         swipeRefreshLayout = (SwipeRefreshLayout) linearLayout.findViewById(R.id.swipeContainer);
-        //TODO not working man
+        //TODO not working man on emulator
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
@@ -164,6 +156,7 @@ public class AccomList extends Fragment {
                     startActivity(intent);
                 } else {
                     fab.setVisibility(View.GONE);
+                    makeToast("Please sign in to access this action", getContext());
                 }
             }
         });

@@ -9,6 +9,10 @@ import java.util.ArrayList;
  */
 public class BooksResponse {
 
+
+    //TODO BAD  BOOK SHOULD HAVE THE STATUS NOT THE BOOK it self what!!!
+
+
     @SerializedName("books")
     private ArrayList<Book> books;
 

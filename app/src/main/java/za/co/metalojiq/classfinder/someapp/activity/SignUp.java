@@ -37,14 +37,9 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
     private ImageButton mRunnerQuestion;
     private CheckBox mCheckIsRunner;
     private boolean isGoogleUser;
-    private CheckBox mCheckBox8;
-    private CheckBox mCheckBox10;
-    private CheckBox mCheckBox12;
-    private CheckBox mCheckBox14;
-    private CheckBox mCheckBox16;
-    HorizontalScrollView horScroll;
+    private HorizontalScrollView horScroll;
     //array of timeSlot the are like ids of time slots!!! 1 means that the time is selected 0 off
-    private byte times[] = {0,0,0,0,0};
+    private byte times[] = {0,0,0,0,0};  //clever neh??
 
 
     @Override
@@ -60,13 +55,15 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
         mRunnerQuestion = (ImageButton) findViewById(R.id.signUpHelpBtn);
         mCheckIsRunner = (CheckBox) findViewById(R.id.signUpIsRunner);
         Button signIn = (Button) findViewById(R.id.signUpLogin);
-        Button signUp = (Button) findViewById(R.id.signUpBtn);
+        final Button signUp = (Button) findViewById(R.id.signUpBtn);
 
-        mCheckBox8 = (CheckBox) findViewById(R.id.signUpRadio8);
-        mCheckBox10 = (CheckBox) findViewById(R.id.signUpRadio10);
-        mCheckBox12 = (CheckBox) findViewById(R.id.signUpRadio12);
-        mCheckBox14 = (CheckBox) findViewById(R.id.signUpRadio14);
-        mCheckBox16 = (CheckBox) findViewById(R.id.signUpRadio16);
+
+        //should be an array but lazed it out
+        CheckBox mCheckBox8 = (CheckBox) findViewById(R.id.signUpRadio8);
+        CheckBox mCheckBox10 = (CheckBox) findViewById(R.id.signUpRadio10);
+        CheckBox mCheckBox12 = (CheckBox) findViewById(R.id.signUpRadio12);
+        CheckBox mCheckBox14 = (CheckBox) findViewById(R.id.signUpRadio14);
+        CheckBox mCheckBox16 = (CheckBox) findViewById(R.id.signUpRadio16);
 
         mCheckBox8.setOnCheckedChangeListener(this);
         mCheckBox10.setOnCheckedChangeListener(this);
@@ -106,29 +103,60 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
             email = intent.getStringExtra(LoginActivity.GOOGLE_USER_EMAIL);
             name = intent.getStringExtra(LoginActivity.GOOGLE_USER_NAME);
             googleUserToken = intent.getStringExtra(LoginActivity.GOOGLE_USER_TOKEN);
-            hideAllFieldsExceptPhone();
 
-            signUp.setOnClickListener(new OnClickListener() {
+//            showProgressDialog();
+
+            ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+            // we just calling the user to see if they exit or not if they do just get their details that it
+            Call<UserResponse> call = apiService.doesUserExit(email);
+            call.enqueue(new Callback<UserResponse>() {
                 @Override
-                public void onClick(View v) {
-                    if (checkPhone()) {
-                        if (mCheckIsRunner.isChecked()) {
-                            //this makes sure atleast one is checked and then sets message if not checked
-                            if (!isSelectedAtleastOneTimePeriod()) {
-                                return;
-                            }
-                            googleSignUp(googleUserToken, email, name,
-                                    mPhone.getText().toString().trim(),
-                                    mCheckIsRunner.isSelected(), times, ((String) locationsSpinner.getSelectedItem()));
-                        } else { // this part is for when a user does not want to be a runner
-                            googleSignUp(googleUserToken, email, name,
-                                    mPhone.getText().toString().trim(),
-                                    mCheckIsRunner.isSelected(), null, null);
+                public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+  //                  hideProgressDialog();
+                    if(response.body() != null) {
+                        boolean exits = response.body().isExits();
+                        if (exits) {
+                            saveUserInfo(email, response.body().getUser().getId(), response.body().getUser().isRunner(), isGoogleUser);
+                            finish();
+                        } else {  // if the google user does not exit
+                            hideAllFieldsExceptPhone();
+                            signUp.setOnClickListener(new OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if (checkPhone()) {
+                                        // all these actions are for a new user
+                                        if (mCheckIsRunner.isChecked()) {
+                                            //this makes sure atleast one is checked and then sets message if not checked
+                                            if (!isSelectedAtleastOneTimePeriod()) {
+                                                return;
+                                            }
+                                            googleSignUp(googleUserToken, email, name,
+                                                    mPhone.getText().toString().trim(),
+                                                    mCheckIsRunner.isSelected(), times, ((String) locationsSpinner.getSelectedItem()));
+                                        } else { // this part is for when a user does not want to be a runner
+                                            googleSignUp(googleUserToken, email, name,
+                                                    mPhone.getText().toString().trim(),
+                                                    mCheckIsRunner.isSelected(), null, null);
+                                        }
+                                    }
+                                }
+                            });
                         }
+                    } else {
+           //             hideProgressDialog();
+                        makeToast("Fetal error sorry for the inconvenience.", SignUp.this);
                     }
-
                 }
-            });  //END GOOGLE USER
+
+                @Override
+                public void onFailure(Call<UserResponse> call, Throwable t) {
+             //       hideProgressDialog();
+                    makeToast("Sorry  internet problem, please connect to the internet tu!", SignUp.this);
+                }
+            });
+
+              //END GOOGLE USER
         }  else {
             final String email = mEmail.getText().toString().trim();
             final String name = mName.getText().toString().trim();
@@ -161,6 +189,10 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
                 finish();
             }
         });
+    }
+
+    private void makeGoogleUserExperienceBetter(String phone) {
+
     }
 
     private void toggleShowRunnerInfo(boolean show) {
@@ -213,7 +245,7 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
                 .anchorView(anchorView)
                 .text(msg)
                 .gravity(Gravity.BOTTOM)
-                .animated(true)
+                .animated(false)
                 .transparentOverlay(true)
                 .build()
                 .show();
@@ -268,8 +300,7 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
         if (response.body().isStatus()) {
             saveUserInfo(email, response.body().getUser().getId(), response.body().getUser().isRunner(), isGoogleUser);
             makeToast("Thank you you have signed up successfully", this);
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            finish(); // we want to go back to the last activity
         } else {
             makeToast("Please try again this account already exists, or rather sign in", this);
         }
@@ -293,53 +324,6 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
         Log.d(TAG, "onFailure: " + t.getMessage());
         hideProgressDialog();
     }
-
-    //fixme make it neater please!!!!!
-//    @Override
-//    public void onClick(View v) {
-//        switch (v.getId()) {
-//            case R.id.signUpRadio8:
-//                if (mCheckBox8.isChecked()) {
-//                    Log.d(TAG, "this one should have been selected8");
-//                    times[0] = 1;
-//                } else {
-//                    Log.d(TAG, "this one should have been unselected8");
-//                    times[0] = 0;
-//                }
-//                break;
-//            case R.id.signUpRadio10:
-//                if (mCheckBox10.isChecked()) {
-//                    Log.d(TAG, "this one should have been selected10");
-//                    times[1] = 1;
-//                } else {
-//                    Log.d(TAG, "this one should have been unselected10");
-//                    times[1] = 0;
-//                }
-//                break;
-//            case R.id.signUpRadio12:
-//
-//                if (mCheckBox12.isChecked()) {
-//                    Log.d(TAG, "this one should have been selected12");
-//                    times[2] = 1;
-//                } else {
-//                    Log.d(TAG, "this one should have been unselected10");
-//                    times[2] = 0;
-//                }
-//                break;
-//            case R.id.signUpRadio14:
-//                if (mCheckBox12.isChecked()) {
-//                    Log.d(TAG, "this one should have been selected14");
-//                    times[3] = 1;
-//                } else {
-//                    Log.d(TAG, "this one should have been unselected14");
-//                    times[3] = 0;
-//                }
-//                break;
-//            case R.id.signUpRadio16:
-//
-//                break;
-//        }
-//    }
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

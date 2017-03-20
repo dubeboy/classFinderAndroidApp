@@ -1,7 +1,5 @@
 package za.co.metalojiq.classfinder.someapp.rest;
 
-import java.util.concurrent.TimeUnit;
-
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -18,8 +16,8 @@ public class ApiClient {
 
     //shuold not include the ending forward slash ;)
     //todo:  this should be calling the api domain /api/v1/...
-    public static final String PROD_HOST = "www.classfinderpp.com";
-    public static final String DEV_HOST = "http://10.0.0.10:3000";
+    public static final String PROD_HOST = "https://ancient-journey-18261.herokuapp.com/";
+    public static final String DEV_HOST = "http://10.0.0.20:3000";
 //    public static final String BASE_URL = HOST_URL + "/accommodations" ; not required man retrofit is cool
     private static Retrofit retrofit = null;
 
@@ -28,8 +26,9 @@ public class ApiClient {
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         final OkHttpClient okHttp = new OkHttpClient.Builder()
-                .readTimeout(30, TimeUnit.SECONDS).addInterceptor(interceptor)
-                .connectTimeout(30, TimeUnit.SECONDS)
+//                .readTimeout(30, TimeUnit.SECONDS)
+                .addInterceptor(interceptor)
+                //.connectTimeout(30, TimeUnit.SECONDS)
                 .build();
         if (retrofit == null) {
             retrofit = new Retrofit.Builder().baseUrl(DEV_HOST)

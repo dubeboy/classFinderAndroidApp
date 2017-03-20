@@ -2,19 +2,15 @@ package za.co.metalojiq.classfinder.someapp.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Handler;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
 import android.view.View;
 import android.widget.ProgressBar;
 import com.google.android.gms.auth.api.Auth;
@@ -25,14 +21,17 @@ import com.google.android.gms.common.api.Status;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 import za.co.metalojiq.classfinder.someapp.R;
+import za.co.metalojiq.classfinder.someapp.activity.Network.Networks;
 import za.co.metalojiq.classfinder.someapp.activity.expirimental.SettingsActivity;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.AccomList;
 import za.co.metalojiq.classfinder.someapp.model.Accommodation;
 import za.co.metalojiq.classfinder.someapp.model.AccommodationResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 import static za.co.metalojiq.classfinder.someapp.util.Utils.getGoogleSignUp;
 import static za.co.metalojiq.classfinder.someapp.util.Utils.makeToast;
@@ -54,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         MenuItem itemLogin = menu.findItem(R.id.action_login);
         MenuItem itemRunner = menu.findItem(R.id.action_runner);
         MenuItem itemSignOut = menu.findItem(R.id.action_sign_out);
+        MenuItem itemNetworks = menu.findItem(R.id.action_networks);
         if (id == 0) { // means that the user is not logged in !!!
             itemRunner.setVisible(false);
             itemLogin.setVisible(true);
@@ -62,9 +62,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             itemRunner.setVisible(true);
             itemLogin.setVisible(false);
             itemSignOut.setVisible(true);
+            itemNetworks.setVisible(true);
         } else {
             itemRunner.setVisible(true);
+            itemNetworks.setVisible(true);
             itemSignOut.setVisible(true);
+
         }
         return true;
     }
@@ -80,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     }
                 });
     }
+
     private void signOut(SharedPreferences sharedPreferences) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove(LoginActivity.LOGIN_PREF_USER_ID);
@@ -120,6 +124,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 SharedPreferences sharedPreferences = getSharedPreferences(LoginActivity.LOGIN_PREF_FILENAME, MODE_PRIVATE);
                 signOut(sharedPreferences);
                 return true;
+            case R.id.action_networks   :
+                Intent networksIntent = new Intent(this, Networks.class);
+                startActivity(networksIntent);
+                return true;
 
         }
         // the fas
@@ -134,7 +142,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         supportInvalidateOptionsMenu();  //TODO Called in the wrong places
         FragmentManager fragmentManager = getSupportFragmentManager();
         final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
         mGoogleApiClient = getGoogleSignUp(this, this);
 
 
@@ -145,30 +152,24 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
             @Override
             public void onResponse(Call<AccommodationResponse> call, Response<AccommodationResponse> response) {
+                progressBar.setVisibility(View.GONE);
 
                 try {
                     if (response != null && response.errorBody() != null)
                         Log.d(TAG, "RAW RESPONSE OF UNSUCCESSFUL ==>" + response.errorBody().string());
+                    Snackbar.make(findViewById(R.id.activity_main), "Ops!, an Error happened!", Snackbar.LENGTH_LONG);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 //
 //              TODO  should refactor this so that we can just pass another argument id from which class so if an error happens
 //                so that we just show the msg
-                if (response.body() != null) {
+                if ((response != null ? response.body() : null) != null) {
                     ArrayList<Accommodation> accommodations = response.body().getResults();
                     Log.d(TAG, "host id " + accommodations.get(0).getHostId());
                     final AccomList accomList = AccomList.newInstance(accommodations);
                     setTitle(R.string.app_name);
-                    new Handler().post(new Runnable() {
-                        @Override
-                        public void run() {
-                            fragmentTransaction.add(R.id.activity_main, accomList, "ACCOM_LIST_FRAGMENT");
-                            fragmentTransaction.commit(); //this is causing problem #Fixme
-                            progressBar.setVisibility(View.GONE);
-                        }
-                    });
-
+                    startAccomListActivity(accomList, fragmentTransaction);
                 }
             }
 
@@ -176,13 +177,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             public void onFailure(Call<AccommodationResponse> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
                 ArrayList<Accommodation> accommodations = new ArrayList<>();
-                AccomList accomList = AccomList.newInstance(accommodations);
+                final AccomList accomList = AccomList.newInstance(accommodations);
                 setTitle("Error");
-                fragmentTransaction.add(R.id.activity_main, accomList, "ACCOM_LIST_FRAGMENT");
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit(); //this is causing problem #Fixme should check if activity is activen and then commit!!
+                startAccomListActivity(accomList, fragmentTransaction);
             }
         });
+    }
+
+    private void startAccomListActivity(AccomList accomList, FragmentTransaction fragmentTransaction) {
+        fragmentTransaction.add(R.id.activity_main, accomList, "ACCOM_LIST_FRAGMENT");
+        fragmentTransaction.commitAllowingStateLoss(); //this is causing problem #Fixme
     }
 
     @Override

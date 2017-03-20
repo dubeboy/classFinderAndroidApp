@@ -21,11 +21,10 @@ public interface ApiInterface {
 
     @Headers({"Accept: application/json"})
     @GET("/api/v1/accommodations/search")
-        //TODO Should change to api/v1/accommodation
     Call<AccommodationResponse> searchAccommodations(@Query(value = "name", encoded = true) String location,
                                                      @Query("room_type") String roomType,
                                                      @Query("auck_location") String auckLocation,
-                                                     @Query("price_from") int priceFrom, @Query("price_to") int priceTo);
+                                                     @Query("price_from") Integer priceFrom, @Query("price_to") Integer priceTo);
 
     @GET("/api/v1/accommodations/{id}.json")
     Call<AccommodationResponse> getAccommodationDetails(@Path("id") int id);
@@ -98,5 +97,9 @@ public interface ApiInterface {
                                         @Field("phone") String phone, @Field("token") String token,
                                         @Field("is_runner") boolean selected,
                                         @Field("time_slots_ids") byte[] times, @Field("run_location") String runLocation);
+
+    @Headers({"Accept: application/json"})
+    @GET("/api/v1/users/user_exits")
+    Call<UserResponse> doesUserExit(@Query("email") String email);
 
 }
