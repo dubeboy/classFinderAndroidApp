@@ -7,9 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.squareup.picasso.Picasso;
 import za.co.metalojiq.classfinder.someapp.R;
-import za.co.metalojiq.classfinder.someapp.model.NetworkPost;
+import za.co.metalojiq.classfinder.someapp.model.NetworkPostModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,17 +20,18 @@ import java.util.List;
 public class NetworkPostAdapter extends RecyclerView.Adapter<NetworkPostAdapter.NetPostViewHolder> {
     private int rowLayout;
     private Context context;
-    private List<NetworkPost> networkPosts;
+    private List<NetworkPostModel> networkPostModels;
     private final NetworkPostAdapter.OnNetworkPostClickListener listener;
 
-    public NetworkPostAdapter(int rowLayout, Context context, NetworkPostAdapter.OnNetworkPostClickListener listener) {
+    public NetworkPostAdapter(List<NetworkPostModel> networkPostModels, int rowLayout, Context context, NetworkPostAdapter.OnNetworkPostClickListener listener) {
+        this.networkPostModels = networkPostModels;
         this.rowLayout = rowLayout;
         this.context = context;
         this.listener = listener;
     }
 
     public interface OnNetworkPostClickListener {
-        void onNetworkPostClick();
+        void onNetworkPostClick(NetworkPostModel networkPostModel);
     }
 
     @Override
@@ -40,17 +43,17 @@ public class NetworkPostAdapter extends RecyclerView.Adapter<NetworkPostAdapter.
 
     @Override
     public void onBindViewHolder(NetPostViewHolder holder, int position) {
-        holder.bind(networkPosts.get(position), listener);
+        holder.bind(networkPostModels.get(position), listener);
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return networkPostModels.size();
     }
 
     public class NetPostViewHolder extends RecyclerView.ViewHolder {
         ImageView netProPic, postImage;
-        TextView tvPosterName, tvPostedTime, tvLikesCount, tvComments;
+        TextView tvPosterName, tvPostedTime, tvLikesCount, tvComments, tvPostDesc;
 
         public NetPostViewHolder(View itemView) {
             super(itemView);
@@ -62,8 +65,34 @@ public class NetworkPostAdapter extends RecyclerView.Adapter<NetworkPostAdapter.
             tvComments = (TextView) itemView.findViewById(R.id.comments);
         }
 
-        public void bind(NetworkPost networkPost, OnNetworkPostClickListener listener) {
+        public void bind(final NetworkPostModel networkPostModel, final OnNetworkPostClickListener listener) {
+            //The poster`s Image
+            Picasso.with(itemView.getContext())
+                    .load( networkPostModel.getPosterImgUrl()).into(netProPic);
+            Picasso.with(itemView.getContext())
+                    .load( networkPostModel.getPostImageUrl()).into(postImage);
 
+            tvPosterName.setText(networkPostModel.getName());
+            tvPostedTime.setText(networkPostModel.getTime());
+            tvLikesCount.setText(networkPostModel.getLikes());
+            tvComments.setText(networkPostModel.getComments()[0]); //TODO: should change as time goes on
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onNetworkPostClick(networkPostModel);
+                }
+            });
         }
+    }
+
+    public void clear() {
+        networkPostModels.clear();
+        notifyDataSetChanged();
+    }
+
+    public void addAll(ArrayList<NetworkPostModel> networkPosts) {
+        this.networkPostModels.addAll(networkPosts);
+        notifyDataSetChanged();
     }
 }

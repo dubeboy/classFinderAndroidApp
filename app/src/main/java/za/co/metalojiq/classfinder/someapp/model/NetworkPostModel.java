@@ -2,22 +2,31 @@ package za.co.metalojiq.classfinder.someapp.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+import java.util.List;
+
 /**
  * Created by divine on 3/20/17.
  */
-public class NetworkPost {
+public class NetworkPostModel implements Serializable {
     @SerializedName("poster_img_url")
     private String posterImgUrl;
     @SerializedName("poster_name")
     private String name;
     @SerializedName("comments")
-    private String[] comments;
+    private String[] comments;   // this should be deleted but for now lets see what we can do
     @SerializedName("post_img_url")
-    private String postImageUrl ;
+    private String postImageUrl;
+    @SerializedName("netComments") // mmmmh // this one should be used
+    private List<NetworkPostComments> networkPostComments;
     @SerializedName("time")
     private String time;
     @SerializedName("likes")
     private int likes;
+    @SerializedName("status")
+    private boolean status ; // status indicating a succes on any networkPost post!
+
+
 
     public String getPosterImgUrl() {
         return posterImgUrl;
@@ -66,5 +75,13 @@ public class NetworkPost {
 
     public void setComments(String[] comments) {
         this.comments = comments;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }

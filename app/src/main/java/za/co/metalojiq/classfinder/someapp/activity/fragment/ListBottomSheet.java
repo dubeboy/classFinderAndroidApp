@@ -32,7 +32,7 @@ public class ListBottomSheet extends BottomSheetDialogFragment {
     }
 
     public interface OnCancelFragment {
-        public void onCancelCallback();
+         void onCancelCallback();
     }
 
 

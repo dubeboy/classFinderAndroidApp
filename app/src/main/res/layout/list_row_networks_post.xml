@@ -85,7 +85,7 @@
                       android:id="@+id/comments"
                       android:textColor="#000"
                       android:paddingBottom="5dp"
-                      android:text="Johny Ivey This is the best there ever will be man This is the best there ever will be manThis is the best there ever will be man"
+                      android:text="Johny Ivey This is the best there ever will be man This is the best there ever will be man This is the best there ever will be man"
                       android:layout_height="wrap_content"/>
         </LinearLayout>
     </LinearLayout>

@@ -83,8 +83,6 @@ public class AccomList extends Fragment {
         final TextView textViewError = (TextView) linearLayout.findViewById(R.id.accomListTvError);
         progressBar = (ProgressBar) linearLayout.findViewById(R.id.accomLoad);
 
-
-
         StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2,
                 StaggeredGridLayoutManager.VERTICAL);
         scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {

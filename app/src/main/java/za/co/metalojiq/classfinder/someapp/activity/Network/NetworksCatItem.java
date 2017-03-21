@@ -4,12 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.NetworkPost;
+import za.co.metalojiq.classfinder.someapp.model.NetworkPostModel;
+
+import java.util.ArrayList;
 
 public class NetworksCatItem extends AppCompatActivity {
 
@@ -46,13 +48,13 @@ public class NetworksCatItem extends AppCompatActivity {
         //I have to load the fragment here giving it the id of the network + 1
         //and it will handle the fetching of the data depending on the position
 
-        NetworkPost networkPost = NetworkPost.newInstance(cat, netWorksName );
+        NetworkPost networkPost = NetworkPost.newInstance(cat, netWorksName, new ArrayList<NetworkPostModel>());
 
 
         //TODO should be put in tye utils class
         FragmentManager fragmentManager = getSupportFragmentManager();
         final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.activity_networks_cat_item, networkPost, "NETWORK_POST_FRAGMENT");
-        fragmentTransaction.commit(); //this is causing problem #Fixme
+        fragmentTransaction.add(R.id.activity_networks_cat_item, networkPost, "NETWORK_POST_FRAGMENT_2");
+        fragmentTransaction.commit();
     }
 }

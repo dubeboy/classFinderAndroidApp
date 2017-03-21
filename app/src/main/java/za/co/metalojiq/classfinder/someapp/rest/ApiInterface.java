@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 /**
- * this is a class containing all my api class, sweet
+ * this is a class containing all my api class, sweet! is It...??
  */
 public interface ApiInterface {
     @GET("/api/v1/accommodations.json")
@@ -44,7 +44,6 @@ public interface ApiInterface {
                                            @Query("booking_type") int bookingType,
                                            //month in the format mm/dd/yy time -> xx:xx
                                            @Query("month") String month, @Query("time") String time);
-
     @Headers({"Accept: application/json"})
     @FormUrlEncoded
     @POST("/api/v1/sessions")
@@ -101,5 +100,21 @@ public interface ApiInterface {
     @Headers({"Accept: application/json"})
     @GET("/api/v1/users/user_exits")
     Call<UserResponse> doesUserExit(@Query("email") String email);
+
+
+    // Networks API REST points
+
+    @Headers({"Accept: application/json"})
+    @GET("/api/v1/networks_posts")
+    Call<NetworkPostsResponse> getAllNetworkPosts(int page, int catId);
+
+
+    @Multipart
+    @Headers({"Accept: application/json"})
+    @POST("/api/v1/books")
+    Call<NetworkPostModel> postNetworkPost(@Part("network_id") RequestBody catId,
+                        @Part("desc") RequestBody networkPostDesc,
+                        @Part("user_id") RequestBody userId,
+                        @Part List<MultipartBody.Part> images); // The network Images yoh
 
 }
