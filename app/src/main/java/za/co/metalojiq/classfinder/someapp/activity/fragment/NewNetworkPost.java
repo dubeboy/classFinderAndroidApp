@@ -122,15 +122,15 @@ public class NewNetworkPost extends BottomSheetDialogFragment {
         int catId = getArguments().getInt(ARGS_CAT_ID);
         MultipartBody.Builder builderNew = new MultipartBody.Builder().setType(MultipartBody.FORM);
         MultipartBody requestBody = null;
-        if (bitmaps.length != 0) {   //MMMH
+        if (bitmaps != null ) {   //MMMH
             for (String imageUri : imageUris) {
                 File file = new File(imageUri);
                 String mime = getMimeType(imageUri);
-                Log.d(TAG , "the mime is " + mime);
+                Log.d(TAG, "the mime is " + mime);
                 RequestBody reqFile = RequestBody.create(MediaType.parse(mime), file);
-//                 MultipartBody.Part body = MultipartBody.Part.createFormData("images", file.getName(), reqFile);
-                builderNew.addFormDataPart("images[]",  file.getName(), reqFile);
-                 requestBody = builderNew.build();
+                //                 MultipartBody.Part body = MultipartBody.Part.createFormData("images", file.getName(), reqFile);
+                builderNew.addFormDataPart("images[]", file.getName(), reqFile);
+                requestBody = builderNew.build();
             }
         }
 

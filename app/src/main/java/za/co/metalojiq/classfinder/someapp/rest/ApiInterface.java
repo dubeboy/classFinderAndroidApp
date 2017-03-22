@@ -111,8 +111,8 @@ public interface ApiInterface {
 
     @Multipart
     @Headers({"Accept: application/json"})
-    @POST("/api/v1/books")
-    Call<NetworkPostModel> postNetworkPost(@Part("network_id") RequestBody catId,
+    @POST("/api/v1/networks/{network_id}/network_posts")
+    Call<NetworkPostModel> postNetworkPost(@Part @Path("network_id") RequestBody catId,
                         @Part("desc") RequestBody networkPostDesc,
                         @Part("user_id") RequestBody userId,
                         @Part List<MultipartBody.Part> images); // The network Images yoh
