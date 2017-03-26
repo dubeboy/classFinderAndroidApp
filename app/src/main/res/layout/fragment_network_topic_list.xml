@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/list"
+        android:name="za.co.metalojiq.classfinder.someapp.activity.fragment.NetworkTopicFragment"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        tools:context="za.co.metalojiq.classfinder.someapp.activity.fragment.NetworkTopicFragment"
+        tools:listitem="@layout/fragment_network_topic">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+            android:layout_width="wrap_content"
+            android:id="@+id/swipeContainer"
+            android:layout_height="wrap_content" >
+
+        <android.support.v7.widget.RecyclerView android:layout_width="wrap_content"
+                                                android:id="@+id/networks_topics_list"
+                                                android:layout_height="wrap_content">
+
+
+        </android.support.v7.widget.RecyclerView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+</LinearLayout>
+
+

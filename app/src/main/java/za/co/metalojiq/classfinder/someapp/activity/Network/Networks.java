@@ -3,6 +3,7 @@ package za.co.metalojiq.classfinder.someapp.activity.Network;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ListView;
 import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.adapter.ImageAdapter;
@@ -14,6 +15,7 @@ public class Networks extends AppCompatActivity implements ImageAdapter.OnCatCli
     public static final String INTENT_EXTRA_CAT_NAME = "cat_name";
 
     private ListView lvCat;
+    private static final String TAG = Networks.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +33,7 @@ public class Networks extends AppCompatActivity implements ImageAdapter.OnCatCli
         Intent intent = new Intent(this, NetworksCatItem.class);
         intent.putExtra(INTENT_EXTRA_CAT_POS, position);
         intent.putExtra(INTENT_EXTRA_CAT_NAME, networksCategory.getName());
+        Log.d(TAG, "onCatClick: startActibty for posts");
         startActivity(intent);
-
-
-
     }
 }

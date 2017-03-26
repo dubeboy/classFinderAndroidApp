@@ -130,7 +130,7 @@ public class AccomList extends Fragment {
                                 intent.putExtra(STRING_ROOM_LOCATION_EXTRA, accommodation.getLocation());
                                 intent.putExtra(STRING_ROOM_DESC, accommodation.getDescription());
                                 intent.putExtra(POST_INT_HOST_ID, accommodation.getHostId());
-                                Log.d(TAG, "Id of host is 3################################### " + accommodation.getHostId());
+                                Log.d(TAG, "Id of host is ################################### " + accommodation.getHostId());
                                 intent.putExtra(POST_ADVERT_ID, accommodation.getId());
                                 startActivity(intent);
                             }

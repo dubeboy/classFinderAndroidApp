@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+            android:id="@+id/action_cf_networks"
+            android:enabled="true"
+            android:icon="@drawable/ic_comment_black_24dp"
+            android:title="CF Networks"
+            />
+    <item
+            android:id="@+id/action_cf_question"
+            android:enabled="true"
+            android:icon="@drawable/ic_live_help_black_24dp"
+            android:title="CF Questions"
+            />
+</menu>

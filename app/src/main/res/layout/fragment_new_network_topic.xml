@@ -1,0 +1,36 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+              android:padding="10dp"
+              android:layout_marginBottom="20dp"
+             android:layout_height="match_parent"
+              android:orientation="vertical"
+             tools:context="za.co.metalojiq.classfinder.someapp.activity.fragment.NewNetworkTopic">
+
+    <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+
+        <Button android:layout_width="wrap_content"
+                android:text="Add"
+                android:background="@drawable/card_layout"
+                android:id="@+id/btn_add_new_network_topic"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+
+    </RelativeLayout>
+
+    <EditText android:layout_width="match_parent"
+              android:hint="Add new topic"
+              android:inputType="text"
+              android:layout_height="wrap_content"
+              android:id="@+id/etNewTopic"/>
+
+    <EditText android:layout_width="match_parent"
+              android:hint="Add the network topic description"
+              android:inputType="text"
+              android:layout_height="wrap_content"
+              android:id="@+id/etDescription"/>
+
+</LinearLayout>

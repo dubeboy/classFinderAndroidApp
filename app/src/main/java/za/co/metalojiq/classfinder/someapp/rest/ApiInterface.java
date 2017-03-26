@@ -5,6 +5,7 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.*;
 import za.co.metalojiq.classfinder.someapp.model.*;
+import za.co.metalojiq.classfinder.someapp.model.network.NetworkResponse;
 
 import java.util.List;
 
@@ -102,17 +103,33 @@ public interface ApiInterface {
     Call<UserResponse> doesUserExit(@Query("email") String email);
 
 
-    // Networks API REST points
+    //-------------------------Networks API REST --------------------------------
+
+
+
+
+    //this get all the Topics
+    @Headers({"Accept: application/json"})
+    @GET("/api/v1/networks")
+    Call<NetworkResponse> getAllNetworks(@Query("page") int page, @Query("network_id") int catId);
+
+
+    // we need on to create a new post
+    @Headers({"Accept: application/json"})
+    @POST("/api/v1/networks")
+    Call<NetworkResponse> postNewNetwork(@Query("user_id") int userId,
+                                         @Query("net_cat") int catId,
+                                         @Query("network_name") String networkName,
+                                         @Query("desc") String description);
 
     @Headers({"Accept: application/json"})
     @GET("/api/v1/networks_posts")
-    Call<NetworkPostsResponse> getAllNetworkPosts(int page, int catId);
-
+    Call<NetworkPostsResponse> getAllNetworksPost(@Query("page") int page, @Query("network_id") int catId);
 
     @Multipart
     @Headers({"Accept: application/json"})
     @POST("/api/v1/networks/{network_id}/network_posts")
-    Call<NetworkPostModel> postNetworkPost(@Part @Path("network_id") RequestBody catId,
+    Call<NetworkPostModel> postNetworkPost(@Path("network_id") Integer catId,
                         @Part("desc") RequestBody networkPostDesc,
                         @Part("user_id") RequestBody userId,
                         @Part List<MultipartBody.Part> images); // The network Images yoh

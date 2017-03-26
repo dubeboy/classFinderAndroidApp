@@ -138,12 +138,12 @@ public class NewNetworkPost extends BottomSheetDialogFragment {
            int uId = getUserSharedPreferences(getContext()).getInt(LoginActivity.LOGIN_PREF_USER_ID, 0);
             RequestBody netDesc = RequestBody.create(MediaType.parse("text/plain"), networkDesc);
             RequestBody userId = RequestBody.create(MediaType.parse("text/plain"), Integer.valueOf(uId).toString());
-            RequestBody categoryId = RequestBody.create(MediaType.parse("text/plain"), Integer.valueOf(catId).toString()); // networks id
+          //  RequestBody categoryId = RequestBody.create(MediaType.parse("text/plain"), Integer.valueOf(catId).toString()); // networks id
 
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
-
-            Call<NetworkPostModel> call = apiService.postNetworkPost(categoryId,  netDesc, userId, requestBody == null ? null : requestBody.parts());
+           //catId + 1 becuase the server is one based fam!
+            Call<NetworkPostModel> call = apiService.postNetworkPost(catId + 1,  netDesc, userId, requestBody == null ? null : requestBody.parts());
             call.enqueue(new Callback<NetworkPostModel>() {
                 @Override
                 public void onResponse(Call<NetworkPostModel> call, Response<NetworkPostModel> response) {

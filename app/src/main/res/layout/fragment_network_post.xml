@@ -27,7 +27,7 @@
             android:layout_margin="25dp"
             android:textSize="20sp"
             android:layout_gravity="center_vertical|center_horizontal"
-            android:text="Nothing found, 0 results"
+            android:text="Server returned 0 results , it it should never do this is probably an error"
             android:visibility="gone"/>
 
     <android.support.v4.widget.SwipeRefreshLayout android:layout_width="match_parent"

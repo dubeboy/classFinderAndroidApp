@@ -101,6 +101,7 @@ public class Utils {
         return (getUserSharedPreferences(context).getInt(LOGIN_PREF_USER_ID, 0) > 0) ;
     }
 
+
     public static boolean isRunner(Context context) {
         return getUserSharedPreferences(context).getBoolean(LOGIN_IS_RUNNER, false);
     }
