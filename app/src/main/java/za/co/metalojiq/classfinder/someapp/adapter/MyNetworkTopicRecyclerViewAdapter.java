@@ -25,7 +25,7 @@ public class MyNetworkTopicRecyclerViewAdapter extends RecyclerView.Adapter<MyNe
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_network_topic_list, parent, false);
+                .inflate(R.layout.fragment_network_topic, parent, false);
         return new ViewHolder(view);
     }
 
@@ -97,6 +97,7 @@ public class MyNetworkTopicRecyclerViewAdapter extends RecyclerView.Adapter<MyNe
         mNetworks.addAll(networks);
         notifyDataSetChanged();
     }
+
 
 
 }

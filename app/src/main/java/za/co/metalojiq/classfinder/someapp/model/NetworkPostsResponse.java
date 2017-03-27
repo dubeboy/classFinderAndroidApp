@@ -12,7 +12,11 @@ public class NetworkPostsResponse {
     @SerializedName("network_posts")
     private ArrayList<NetworkPostModel> networkPosts;
 
+    @SerializedName("status")
+    private boolean status ; // status indicating a success on any networkPost post!
 
+    @SerializedName("liked")
+    private boolean liked ; // status indicating a succes on any networkPost post!
 
     public ArrayList<NetworkPostModel> getNetworkPosts() {
         return networkPosts;
@@ -24,4 +28,19 @@ public class NetworkPostsResponse {
     }
 
 
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public boolean isLiked() {
+        return liked;
+    }
+
+    public void setLiked(boolean liked) {
+        this.liked = liked;
+    }
 }

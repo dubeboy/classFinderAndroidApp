@@ -45,6 +45,7 @@ public interface ApiInterface {
                                            @Query("booking_type") int bookingType,
                                            //month in the format mm/dd/yy time -> xx:xx
                                            @Query("month") String month, @Query("time") String time);
+
     @Headers({"Accept: application/json"})
     @FormUrlEncoded
     @POST("/api/v1/sessions")
@@ -106,8 +107,6 @@ public interface ApiInterface {
     //-------------------------Networks API REST --------------------------------
 
 
-
-
     //this get all the Topics
     @Headers({"Accept: application/json"})
     @GET("/api/v1/networks")
@@ -123,15 +122,23 @@ public interface ApiInterface {
                                          @Query("desc") String description);
 
     @Headers({"Accept: application/json"})
-    @GET("/api/v1/networks_posts")
-    Call<NetworkPostsResponse> getAllNetworksPost(@Query("page") int page, @Query("network_id") int catId);
+    @GET("/api/v1/networks/{network_id}/network_posts")
+    Call<NetworkPostsResponse> getAllNetworksPost(@Path("network_id") int catId, @Query("page") int page);
 
     @Multipart
     @Headers({"Accept: application/json"})
     @POST("/api/v1/networks/{network_id}/network_posts")
     Call<NetworkPostModel> postNetworkPost(@Path("network_id") Integer catId,
-                        @Part("desc") RequestBody networkPostDesc,
-                        @Part("user_id") RequestBody userId,
-                        @Part List<MultipartBody.Part> images); // The network Images yoh
+                                           @Part("desc") RequestBody networkPostDesc,
+                                           @Part("user_id") RequestBody userId,
+                                           @Part List<MultipartBody.Part> images); // The network Images yoh
+
+
+    // we need on to create a new post
+    @Headers({"Accept: application/json"})
+    @POST("/api/v1/networks/{network_id}/network_posts/{id}/like")
+    Call<NetworkPostsResponse> likeNetworkPost(@Path("network_id") int networkId,
+                                          @Path("id") int postId,
+                                          @Query("user_id") int userId);
 
 }

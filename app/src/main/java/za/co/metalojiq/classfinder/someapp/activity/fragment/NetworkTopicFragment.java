@@ -1,9 +1,8 @@
 package za.co.metalojiq.classfinder.someapp.activity.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,14 +15,16 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import za.co.metalojiq.classfinder.someapp.R;
+import za.co.metalojiq.classfinder.someapp.activity.network.NetworkPostActivity;
 import za.co.metalojiq.classfinder.someapp.adapter.EndlessRecyclerViewScrollListener;
 import za.co.metalojiq.classfinder.someapp.adapter.MyNetworkTopicRecyclerViewAdapter;
-import za.co.metalojiq.classfinder.someapp.model.NetworkPostModel;
 import za.co.metalojiq.classfinder.someapp.model.network.Network;
 import za.co.metalojiq.classfinder.someapp.model.network.NetworkResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
+
 import java.util.ArrayList;
+
 import static za.co.metalojiq.classfinder.someapp.util.Utils.makeToast;
 
 public class NetworkTopicFragment extends Fragment {
@@ -40,6 +41,8 @@ public class NetworkTopicFragment extends Fragment {
     private EndlessRecyclerViewScrollListener scrollListener;
     private MyNetworkTopicRecyclerViewAdapter adapter;
     private String mNetworkName;
+    public static final String NETWORK_CAT_ID = "network_cat_id";
+    public static final String NETWORK_NAME = "network_name";
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -101,9 +104,6 @@ public class NetworkTopicFragment extends Fragment {
             }
         };
 
-
-        // Set the adapter
-        //  Context context = view.getContext();
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.networks_topics_list);
         recyclerView.addOnScrollListener(scrollListener); //TODO test if position matters
         recyclerView.setLayoutManager(linearLayout);
@@ -112,14 +112,13 @@ public class NetworkTopicFragment extends Fragment {
                 new ArrayList<Network>(), new MyNetworkTopicRecyclerViewAdapter.OnListFragmentInteractionListener() {
             @Override
             public void onListFragmentInteraction(Network item) {
-                NetworkPost networkPost = NetworkPost.newInstance(mNetworkCatId, mNetworkName, new ArrayList<NetworkPostModel>());
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.list, networkPost, TAG_FRAGMENT)
-                        .addToBackStack(null)
-                        .commit();
+                Intent intent = new Intent(getContext(), NetworkPostActivity.class);
+                intent.putExtra(NETWORK_CAT_ID, mNetworkCatId);
+                intent.putExtra(NETWORK_NAME, mNetworkName);
+                getActivity().startActivity(intent);
             }
         });
+
         recyclerView.setAdapter(adapter);
         fetchMoreNetworks(1);
         return view;
@@ -128,7 +127,7 @@ public class NetworkTopicFragment extends Fragment {
     //get all network caetogory networks ++
     private void fetchMoreNetworks(final int page) {
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        Call<NetworkResponse> call = apiService.getAllNetworks(page, mNetworkCatId);
+        Call<NetworkResponse> call = apiService.getAllNetworks(page, mNetworkCatId + 1); // +1 because server is 1 based
 
         call.enqueue(new Callback<NetworkResponse>() {
             @Override

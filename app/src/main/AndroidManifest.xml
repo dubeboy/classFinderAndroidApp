@@ -79,10 +79,12 @@
         <activity android:name=".activity.VenueFinder">
         </activity>
         <activity
-                android:name=".activity.Network.Networks"
+                android:name=".activity.network.Networks"
                 android:label="@string/title_networks">
         </activity>
-        <activity android:name=".activity.Network.NetworksCatItem">
+        <activity android:name=".activity.network.NetworksCatItem">
+        </activity>
+        <activity android:name=".activity.network.NetworkPostActivity">
         </activity>
     </application>
 

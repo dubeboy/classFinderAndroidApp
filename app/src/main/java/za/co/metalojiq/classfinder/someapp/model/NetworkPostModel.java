@@ -9,6 +9,8 @@ import java.util.List;
  * Created by divine on 3/20/17.
  */
 public class NetworkPostModel implements Serializable {
+    @SerializedName("id")
+    private int id;
     @SerializedName("poster_img_url")
     private String posterImgUrl;
     @SerializedName("poster_name")
@@ -23,8 +25,7 @@ public class NetworkPostModel implements Serializable {
     private String time;
     @SerializedName("likes")
     private int likes;
-    @SerializedName("status")
-    private boolean status ; // status indicating a succes on any networkPost post!
+
 
 
 
@@ -77,11 +78,11 @@ public class NetworkPostModel implements Serializable {
         this.comments = comments;
     }
 
-    public boolean isStatus() {
-        return status;
+    public int getId() {
+        return id;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setId(int id) {
+        this.id = id;
     }
 }

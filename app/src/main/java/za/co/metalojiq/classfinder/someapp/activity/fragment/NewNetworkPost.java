@@ -122,7 +122,7 @@ public class NewNetworkPost extends BottomSheetDialogFragment {
         int catId = getArguments().getInt(ARGS_CAT_ID);
         MultipartBody.Builder builderNew = new MultipartBody.Builder().setType(MultipartBody.FORM);
         MultipartBody requestBody = null;
-        if (bitmaps != null ) {   //MMMH
+        if (imageUris != null ) {   //MMMH
             for (String imageUri : imageUris) {
                 File file = new File(imageUri);
                 String mime = getMimeType(imageUri);

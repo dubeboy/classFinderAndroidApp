@@ -9,9 +9,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.amulyakhare.textdrawable.TextDrawable;
-import com.amulyakhare.textdrawable.util.ColorGenerator;
 import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.model.NetworksCategory;
+import za.co.metalojiq.classfinder.someapp.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,10 +41,6 @@ public class ImageAdapter extends ArrayAdapter<NetworksCategory> implements View
         networksCategories.add(new NetworksCategory("Religion"));
         networksCategories.add(new NetworksCategory("Entertainment"));
     }
-
-
-
-
     // View lookup cache
     private static class ViewHolder {
         TextView txtName;
@@ -115,9 +111,7 @@ public class ImageAdapter extends ArrayAdapter<NetworksCategory> implements View
 //        lastPosition = position;
 
 
-
-        TextDrawable drawable = TextDrawable.builder()
-                .buildRound(dataModel.getName().charAt(0) + "", genColor(dataModel.getName()));
+        TextDrawable drawable = Utils.getTextDrawable(dataModel);
 
         ImageView image = viewHolder.info;
         image.setImageDrawable(drawable);
@@ -138,9 +132,4 @@ public class ImageAdapter extends ArrayAdapter<NetworksCategory> implements View
     }
 
 
-    private int genColor(String key) {
-        ColorGenerator generator = ColorGenerator.MATERIAL;
-        return generator.getColor(key);
-
-    }
 }

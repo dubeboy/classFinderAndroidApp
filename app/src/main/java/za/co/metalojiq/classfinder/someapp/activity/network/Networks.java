@@ -1,4 +1,4 @@
-package za.co.metalojiq.classfinder.someapp.activity.Network;
+package za.co.metalojiq.classfinder.someapp.activity.network;
 
 import android.content.Intent;
 import android.os.Bundle;

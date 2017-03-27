@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-                                    xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+                                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                                    xmlns:tools="http://schemas.android.com/tools"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="25dp"
                                     android:layout_marginBottom="25dp"
-
+                                    app:cardCornerRadius="0dp"
                                     tools:context="za.co.metalojiq.classfinder.someapp.activity.fragment.NetworkPost">
 
     <LinearLayout android:layout_width="match_parent"
@@ -17,6 +18,7 @@
             <ImageView android:layout_width="40dp"
                        android:id="@+id/network_pro_pic_image"
                        tools:src="@drawable/sample_book"
+                       android:layout_marginRight="10dp"
                        android:layout_height="40dp"/>
 
             <TextView android:layout_width="wrap_content"
@@ -34,6 +36,7 @@
                       android:layout_alignParentRight="true"
                       android:layout_alignParentEnd="true"
                       android:text="3h"
+                      android:layout_marginRight="20dp"
                       android:layout_height="wrap_content"/>
         </RelativeLayout>
 
@@ -51,8 +54,8 @@
                         android:layout_height="40dp">
 
             <ImageView android:layout_width="wrap_content"
-                       android:onClick="like"
-                       android:id="@+id/like"
+                       android:id="@+id/btn_like"
+                       android:layout_marginLeft="15dp"
                        app:srcCompat="@drawable/ic_thumb_up_black_24dp"
                        android:layout_height="wrap_content"/>
 
@@ -61,16 +64,16 @@
                       android:paddingLeft="3dp"
                       android:text="100 likes"
                       android:id="@+id/likes_count"
-                      android:layout_toEndOf="@+id/like"
+                      android:layout_toEndOf="@+id/btn_like"
                       android:layout_height="wrap_content"
-                      android:layout_toRightOf="@+id/like"/>
+                      android:layout_toRightOf="@+id/btn_like"/>
 
             <ImageView android:layout_width="wrap_content"
                        android:layout_alignParentEnd="true"
                        app:srcCompat="@drawable/ic_comment_black_24dp"
-                       android:layout_marginRight="5dp"
-                       android:onClick="comment"
+                       android:layout_marginRight="20dp"
                        android:layout_height="wrap_content"
+                       android:id="@+id/btn_comment"
                        android:layout_alignParentRight="true"/>
 
         </RelativeLayout>
@@ -79,7 +82,7 @@
                 android:layout_width="match_parent"
                 android:id="@+id/comments_layout"
                 android:orientation="vertical"
-                android:padding="5dp"
+                android:padding="10dp"
                 android:layout_height="wrap_content">
             <TextView android:layout_width="wrap_content"
                       android:id="@+id/comments"

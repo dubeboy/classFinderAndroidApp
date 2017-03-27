@@ -10,11 +10,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import za.co.metalojiq.classfinder.someapp.activity.LoginActivity;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.BookSearchFaculty;
+import za.co.metalojiq.classfinder.someapp.model.NetworksCategory;
 
 import static android.content.Context.MODE_PRIVATE;
 import static za.co.metalojiq.classfinder.someapp.activity.LoginActivity.LOGIN_IS_RUNNER;
@@ -157,6 +160,27 @@ public class Utils {
         public void onNothingSelected(AdapterView<?> parent) {
 
         }
+    }
+
+
+
+    //For generating alphabets of the users profile
+
+    public static TextDrawable getTextDrawable(NetworksCategory dataModel) {
+        return TextDrawable.builder()
+                .buildRound(dataModel.getName().charAt(0) + "", genColor(dataModel.getName()));
+    }
+
+    public static TextDrawable getTextDrawable(String theWord) {
+        return TextDrawable.builder()
+                .buildRound(theWord.charAt(0) + "", genColor(theWord));
+    }
+
+
+    public static int genColor(String key) {
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+        return generator.getColor(key);
+
     }
 
 
