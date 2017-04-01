@@ -26,8 +26,8 @@ import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.activity.LoginActivity;
 import za.co.metalojiq.classfinder.someapp.adapter.EndlessRecyclerViewScrollListener;
 import za.co.metalojiq.classfinder.someapp.adapter.NetworkPostAdapter;
-import za.co.metalojiq.classfinder.someapp.model.NetworkPostModel;
 import za.co.metalojiq.classfinder.someapp.model.NetworkPostsResponse;
+import za.co.metalojiq.classfinder.someapp.model.network.NetworkPostModel;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
 import za.co.metalojiq.classfinder.someapp.util.Utils;
@@ -113,7 +113,8 @@ public class NetworkPost extends Fragment implements NetworkPostAdapter.OnNetwor
         networksPosts = new ArrayList<NetworkPostModel>();
         Log.d(TAG, "Number of elements =" + networksPosts.size()); // = 0
         // I need to load the recycler view only if there are items to load!!!
-        networkPostAdapter = new NetworkPostAdapter(networksPosts, R.layout.list_row_networks_post, getActivity().getApplicationContext(), this);
+        networkPostAdapter = new NetworkPostAdapter(networksPosts, R.layout.list_row_networks_post,
+                                                                    getActivity().getApplicationContext(), this);
         recyclerView.setAdapter(networkPostAdapter);
         textViewError.setVisibility(View.GONE);
         final FloatingActionButton fab = (FloatingActionButton) linearLayout.findViewById(R.id.fab);
@@ -164,10 +165,9 @@ public class NetworkPost extends Fragment implements NetworkPostAdapter.OnNetwor
                             netPosts = networksPosts;
                             Log.d(TAG, "onResponse: Networks" + netPosts.size());
                             //TODO sould use addALL
-                            for (NetworkPostModel networkPost : networksPostsResults) {
-                                netPosts.add(networkPost);
-                            }
-                            networkPostAdapter.notifyItemRangeInserted(networkPostAdapter.getItemCount() + 1, response.body().getNetworkPosts().size());
+                            netPosts.addAll(networksPostsResults);
+                            networkPostAdapter.notifyItemRangeInserted(networkPostAdapter.getItemCount() + 1,
+                                                                                    response.body().getNetworkPosts().size());
                         }
                         progressBar.setVisibility(View.GONE);
                     } else {
@@ -195,25 +195,28 @@ public class NetworkPost extends Fragment implements NetworkPostAdapter.OnNetwor
 
     @Override
     public void onNetworkPostClick(NetworkPostModel networkPostModel, NetworkPostAdapter.ITEM_TYPE_CLICK typeClick) {
+        SharedPreferences userSharedPreferences = Utils.getUserSharedPreferences(getContext());
+        int userId = userSharedPreferences.getInt(LoginActivity.LOGIN_PREF_USER_ID, 0);
+        int postId = networkPostModel.getId();
         switch (typeClick) {
             case POST_IMAGE:
                 // TODO this should show an image slider overlay view
                 break;
             case LIKE_BUTTON:
-                SharedPreferences userSharedPreferences = Utils.getUserSharedPreferences(getContext());
-                int userId = userSharedPreferences.getInt(LoginActivity.LOGIN_PREF_USER_ID, 0);
                 networkPostAdapter.like();
-                like(userId, networkPostModel.getId());
+                like(userId, postId);
                 break;
             case COMMENT_BUTTON:
-                //this should show a bottom sheet fragment where i could comment
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                Comment commentFragment = Comment.newInstance(mParamCatId, userId, postId);
+                commentFragment.show(fm, "Comments_frag");
                 break;
         }
     }
 
     private void like(int userID, int postId) {
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        Call<NetworkPostsResponse> call = apiService.likeNetworkPost(mParamCatId, postId, userID);
+        Call<NetworkPostsResponse> call = apiService.likeNetworkPost(mParamCatId + 1, postId, userID);
         call.enqueue(new Callback<NetworkPostsResponse>() {
             @Override
             public void onResponse(Call<NetworkPostsResponse> call, Response<NetworkPostsResponse> response) {

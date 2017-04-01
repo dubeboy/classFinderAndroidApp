@@ -26,7 +26,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.activity.LoginActivity;
-import za.co.metalojiq.classfinder.someapp.model.NetworkPostModel;
+import za.co.metalojiq.classfinder.someapp.model.network.NetworkPostModel;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
 

@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.NetworkPost;
-import za.co.metalojiq.classfinder.someapp.model.NetworkPostModel;
+import za.co.metalojiq.classfinder.someapp.model.network.NetworkPostModel;
 
 import java.util.ArrayList;
 

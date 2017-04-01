@@ -1,13 +1,36 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
+                android:padding="10dp"
              tools:context="za.co.metalojiq.classfinder.someapp.activity.fragment.Comment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/hello_blank_fragment"/>
 
-</FrameLayout>
+    <EditText
+            android:layout_width="match_parent"
+            android:layout_below="@+id/btn_frag_comment"
+            android:layout_height="wrap_content"
+            android:id="@+id/et_comment"
+            android:hint="Comment on it!"/>
+
+    <Button android:layout_width="wrap_content"
+            android:text="Comment"
+            android:background="@drawable/card_layout"
+            android:id="@+id/btn_frag_comment"
+            android:layout_height="wrap_content" android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true" android:layout_alignParentEnd="true"/>
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_below="@+id/et_comment"
+                  android:layout_height="wrap_content">
+        <android.support.v4.widget.SwipeRefreshLayout android:layout_width="match_parent"
+                                                      android:id="@+id/swipeContainer"
+                                                      android:layout_height="wrap_content">
+
+            <android.support.v7.widget.RecyclerView android:layout_width="match_parent"
+                                                    android:id="@+id/comments_list"
+                                                    android:layout_height="wrap_content">
+
+            </android.support.v7.widget.RecyclerView>
+        </android.support.v4.widget.SwipeRefreshLayout>
+    </LinearLayout>
+</RelativeLayout>

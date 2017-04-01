@@ -5,6 +5,7 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.*;
 import za.co.metalojiq.classfinder.someapp.model.*;
+import za.co.metalojiq.classfinder.someapp.model.network.NetworkPostModel;
 import za.co.metalojiq.classfinder.someapp.model.network.NetworkResponse;
 
 import java.util.List;
@@ -136,9 +137,23 @@ public interface ApiInterface {
 
     // we need on to create a new post
     @Headers({"Accept: application/json"})
-    @POST("/api/v1/networks/{network_id}/network_posts/{id}/like")
+    //"/api/v1/networks/:network_id/network_posts/:network_post_id/like"
+    @POST("/api/v1/networks/{network_id}/network_posts/{network_post_id}/like")
     Call<NetworkPostsResponse> likeNetworkPost(@Path("network_id") int networkId,
-                                          @Path("id") int postId,
+                                          @Path("network_post_id") int postId,
                                           @Query("user_id") int userId);
 
+    @Headers({"Accept: application/json"})
+    @POST("/api/v1/networks/{network_id}/network_posts/{network_post_id}/comments")
+    ///api/v1/networks/:network_id/network_posts/:network_post_id/comments
+    Call<PostResponse> postComment(@Path("network_id") int networkId,
+                                   @Path("network_post_id") int postId,
+                                   @Query("user_id") int userId,
+                                   @Query("com") String comment);
+
+    @Headers({"Accept: application/json"})
+    @POST("/api/v1/networks/{network_id}/network_posts/{network_post_id}/comments")
+    Call<NetworkPostModel> getAllComments(@Path("network_id") int networkId,
+                                          @Path("network_post_id") int postId,
+                                          @Query("user_id") int userId);
 }
