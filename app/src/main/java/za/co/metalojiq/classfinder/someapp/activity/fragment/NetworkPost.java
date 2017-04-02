@@ -43,6 +43,7 @@ public class NetworkPost extends Fragment implements NetworkPostAdapter.OnNetwor
     private static final String ARG_PARAM_CAT_NAME = "param2"; //one of them is not needed
     private static final String TAG = NetworkPost.class.getSimpleName();
     private static final String ARGS_NETWORKS_POSTS = "networks_posts";
+    private static final String ARG_PARAM_TOPIC_ID = "topic_id";
 
     // TODO: Rename and change types of parameters
     private int mParamCatId;
@@ -53,6 +54,7 @@ public class NetworkPost extends Fragment implements NetworkPostAdapter.OnNetwor
     private NetworkPostAdapter networkPostAdapter;
     private View linearLayout;
     private ArrayList<NetworkPostModel> networksPosts;
+    private int mParamTopicId;
 
     public NetworkPost() {
         // Required empty public constructor
@@ -60,11 +62,12 @@ public class NetworkPost extends Fragment implements NetworkPostAdapter.OnNetwor
 
 
     // TODO: Rename and change types and number of parameters
-    public static NetworkPost newInstance(int cat, String categoryName, ArrayList<NetworkPostModel> networkPostModels) {
+    public static NetworkPost newInstance(int cat, String categoryName, int mTopicId, ArrayList<NetworkPostModel> networkPostModels) {
         NetworkPost fragment = new NetworkPost();
         Bundle args = new Bundle();
         args.putInt(ARG_PARAM_CAT_ID, cat);
         args.putString(ARG_PARAM_CAT_NAME, categoryName);
+        args.putInt(ARG_PARAM_TOPIC_ID, mTopicId);
         args.putSerializable(ARGS_NETWORKS_POSTS, networkPostModels);
         fragment.setArguments(args);
         return fragment;
@@ -76,6 +79,7 @@ public class NetworkPost extends Fragment implements NetworkPostAdapter.OnNetwor
         if (getArguments() != null) {
             mParamCatId = getArguments().getInt(ARG_PARAM_CAT_ID);
             mParamCatName = getArguments().getString(ARG_PARAM_CAT_NAME);
+            mParamTopicId = getArguments().getInt(ARG_PARAM_TOPIC_ID);
         }
     }
 
@@ -93,7 +97,7 @@ public class NetworkPost extends Fragment implements NetworkPostAdapter.OnNetwor
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 Log.d(TAG, "Called From Networks");
                 progressBar.setVisibility(View.VISIBLE);
-                fetchNetworkPostData(getArguments().getInt(ARG_PARAM_CAT_ID), page);
+                fetchNetworkPostData(getArguments().getInt(ARG_PARAM_CAT_ID), mParamTopicId ,page);
             }
         };
         recyclerView.addOnScrollListener(scrollListener);
@@ -105,12 +109,12 @@ public class NetworkPost extends Fragment implements NetworkPostAdapter.OnNetwor
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                fetchNetworkPostData(getArguments().getInt(ARG_PARAM_CAT_ID), 1);
+                fetchNetworkPostData(getArguments().getInt(ARG_PARAM_CAT_ID), mParamTopicId ,1);
                 Toast.makeText(getActivity(), "Refresh", Toast.LENGTH_SHORT).show();
             }
         });
         recyclerView.setLayoutManager(linearLayoutManager);
-        networksPosts = new ArrayList<NetworkPostModel>();
+        networksPosts = new ArrayList<>();
         Log.d(TAG, "Number of elements =" + networksPosts.size()); // = 0
         // I need to load the recycler view only if there are items to load!!!
         networkPostAdapter = new NetworkPostAdapter(networksPosts, R.layout.list_row_networks_post,
@@ -130,21 +134,21 @@ public class NetworkPost extends Fragment implements NetworkPostAdapter.OnNetwor
                 }
             }
         });
-        fetchNetworkPostData(getArguments().getInt(ARG_PARAM_CAT_ID), 1);
+        fetchNetworkPostData(getArguments().getInt(ARG_PARAM_CAT_ID), mParamTopicId, 1);
         return linearLayout;
     }
 
     private void showNewNetworkDialog() {
         FragmentManager fm = getActivity().getSupportFragmentManager();
-        NewNetworkPost newNetworkPost = NewNetworkPost.newInstance(mParamCatId, mParamCatName);
+        NewNetworkPost newNetworkPost = NewNetworkPost.newInstance(mParamCatId,mParamTopicId, mParamCatName);
         newNetworkPost.show(fm, "fragment_new_network_post");
     }
 
 
-    private void fetchNetworkPostData(final int catId, final int page) {
+    private void fetchNetworkPostData(final int catId, int topicId , final int page) {
         Log.d(TAG, "you scrolling to page: " + page); // page will always be >= 1
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        Call<NetworkPostsResponse> call = apiService.getAllNetworksPost(catId + 1, page);
+        Call<NetworkPostsResponse> call = apiService.getAllNetworksPost(catId + 1, topicId, page);
         Log.d(TAG, "The page is here is more than 0 " + page);
         //FIXME I am not sure if there are new item this top item will show thos new items
         call.enqueue(new Callback<NetworkPostsResponse>() {
@@ -192,7 +196,6 @@ public class NetworkPost extends Fragment implements NetworkPostAdapter.OnNetwor
 
     }
 
-
     @Override
     public void onNetworkPostClick(NetworkPostModel networkPostModel, NetworkPostAdapter.ITEM_TYPE_CLICK typeClick) {
         SharedPreferences userSharedPreferences = Utils.getUserSharedPreferences(getContext());
@@ -222,8 +225,9 @@ public class NetworkPost extends Fragment implements NetworkPostAdapter.OnNetwor
             public void onResponse(Call<NetworkPostsResponse> call, Response<NetworkPostsResponse> response) {
                 if(response.body() != null) {
                     if (response.body().isLiked()) {
-                       // networkPostAdapter.like();
                         makeToast("Liked", getContext());
+                    } else {
+                        networkPostAdapter.unLike();
                     }
                 } else {
                     makeToast("Server Error", getContext());

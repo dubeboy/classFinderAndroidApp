@@ -43,6 +43,7 @@ public class NewNetworkPost extends BottomSheetDialogFragment {
     private static final String ARGS_CAT_ID = "cat_id";
     private static final String TAG = NewNetworkPost.class.getSimpleName();
     private static final String ARGS_CAT_NAME = "cat_name";
+    private static final String ARGS_TOPIC_ID = "topic_id";
     private EditText mShareNote;
     private Button btnUploadImages;
     private TextView tvCat;
@@ -52,9 +53,10 @@ public class NewNetworkPost extends BottomSheetDialogFragment {
     private String[] imageUris;
     private ProgressDialog dialog;
 
-    public static NewNetworkPost newInstance(int catId, String catName) {
+    public static NewNetworkPost newInstance(int catId, int topicId, String catName) {
         Bundle args = new Bundle();
         args.putInt(ARGS_CAT_ID, catId);
+        args.putInt(ARGS_TOPIC_ID, topicId);
         args.putString(ARGS_CAT_NAME, catName);
         NewNetworkPost newNetworkPost = new NewNetworkPost();
         newNetworkPost.setArguments(args);
@@ -120,6 +122,7 @@ public class NewNetworkPost extends BottomSheetDialogFragment {
     private void uploadData() {
         String networkDesc = mShareNote.getText().toString();
         int catId = getArguments().getInt(ARGS_CAT_ID);
+        int topicId = getArguments().getInt(ARGS_TOPIC_ID);
         MultipartBody.Builder builderNew = new MultipartBody.Builder().setType(MultipartBody.FORM);
         MultipartBody requestBody = null;
         if (imageUris != null ) {   //MMMH
@@ -138,12 +141,13 @@ public class NewNetworkPost extends BottomSheetDialogFragment {
            int uId = getUserSharedPreferences(getContext()).getInt(LoginActivity.LOGIN_PREF_USER_ID, 0);
             RequestBody netDesc = RequestBody.create(MediaType.parse("text/plain"), networkDesc);
             RequestBody userId = RequestBody.create(MediaType.parse("text/plain"), Integer.valueOf(uId).toString());
+            RequestBody tpcId = RequestBody.create(MediaType.parse("text/plain"), Integer.valueOf(topicId).toString());
           //  RequestBody categoryId = RequestBody.create(MediaType.parse("text/plain"), Integer.valueOf(catId).toString()); // networks id
 
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
            //catId + 1 becuase the server is one based fam!
-            Call<NetworkPostModel> call = apiService.postNetworkPost(catId + 1,  netDesc, userId, requestBody == null ? null : requestBody.parts());
+            Call<NetworkPostModel> call = apiService.postNetworkPost(catId + 1, tpcId,  netDesc, userId, requestBody == null ? null : requestBody.parts());
             call.enqueue(new Callback<NetworkPostModel>() {
                 @Override
                 public void onResponse(Call<NetworkPostModel> call, Response<NetworkPostModel> response) {

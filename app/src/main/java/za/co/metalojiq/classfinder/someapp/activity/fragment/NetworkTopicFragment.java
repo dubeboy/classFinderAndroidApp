@@ -43,6 +43,8 @@ public class NetworkTopicFragment extends Fragment {
     private String mNetworkName;
     public static final String NETWORK_CAT_ID = "network_cat_id";
     public static final String NETWORK_NAME = "network_name";
+    public static final String NETWORK_ID = "net_id_100";
+
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -115,6 +117,7 @@ public class NetworkTopicFragment extends Fragment {
                 Intent intent = new Intent(getContext(), NetworkPostActivity.class);
                 intent.putExtra(NETWORK_CAT_ID, mNetworkCatId);
                 intent.putExtra(NETWORK_NAME, mNetworkName);
+                intent.putExtra(NETWORK_ID, item.getId());
                 getActivity().startActivity(intent);
             }
         });

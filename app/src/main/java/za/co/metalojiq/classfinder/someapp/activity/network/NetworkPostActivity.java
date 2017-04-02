@@ -12,6 +12,7 @@ import za.co.metalojiq.classfinder.someapp.model.network.NetworkPostModel;
 import java.util.ArrayList;
 
 import static za.co.metalojiq.classfinder.someapp.activity.fragment.NetworkTopicFragment.NETWORK_CAT_ID;
+import static za.co.metalojiq.classfinder.someapp.activity.fragment.NetworkTopicFragment.NETWORK_ID;
 import static za.co.metalojiq.classfinder.someapp.activity.fragment.NetworkTopicFragment.NETWORK_NAME;
 
 public class NetworkPostActivity extends AppCompatActivity {
@@ -26,8 +27,9 @@ public class NetworkPostActivity extends AppCompatActivity {
         Intent intent = getIntent();
         int mNetworkCatId = intent.getIntExtra(NETWORK_CAT_ID, 0);
         String mNetworkName = intent.getStringExtra(NETWORK_NAME);
+        int mTopicId = intent.getIntExtra(NETWORK_ID, 0);
 
-        NetworkPost networkPost = NetworkPost.newInstance(mNetworkCatId, mNetworkName, new ArrayList<NetworkPostModel>());
+        NetworkPost networkPost = NetworkPost.newInstance(mNetworkCatId, mNetworkName, mTopicId, new ArrayList<NetworkPostModel>());
         FragmentManager fragmentManager = getSupportFragmentManager();
         final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.activity_network_post, networkPost, TAG_FRAGMENT)

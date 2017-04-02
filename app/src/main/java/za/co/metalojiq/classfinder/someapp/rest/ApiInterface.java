@@ -124,12 +124,13 @@ public interface ApiInterface {
 
     @Headers({"Accept: application/json"})
     @GET("/api/v1/networks/{network_id}/network_posts")
-    Call<NetworkPostsResponse> getAllNetworksPost(@Path("network_id") int catId, @Query("page") int page);
+    Call<NetworkPostsResponse> getAllNetworksPost(@Path("network_id") int catId, @Query("topic_id") int topicId ,@Query("page") int page);
 
     @Multipart
     @Headers({"Accept: application/json"})
     @POST("/api/v1/networks/{network_id}/network_posts")
     Call<NetworkPostModel> postNetworkPost(@Path("network_id") Integer catId,
+                                           @Part("topic_id") RequestBody topicId,
                                            @Part("desc") RequestBody networkPostDesc,
                                            @Part("user_id") RequestBody userId,
                                            @Part List<MultipartBody.Part> images); // The network Images yoh
@@ -152,7 +153,7 @@ public interface ApiInterface {
                                    @Query("com") String comment);
 
     @Headers({"Accept: application/json"})
-    @POST("/api/v1/networks/{network_id}/network_posts/{network_post_id}/comments")
+    @GET("/api/v1/networks/{network_id}/network_posts/{network_post_id}/comments")
     Call<NetworkPostModel> getAllComments(@Path("network_id") int networkId,
                                           @Path("network_post_id") int postId,
                                           @Query("user_id") int userId);

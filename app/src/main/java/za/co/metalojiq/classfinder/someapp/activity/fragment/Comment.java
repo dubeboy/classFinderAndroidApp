@@ -2,10 +2,12 @@ package za.co.metalojiq.classfinder.someapp.activity.fragment;
 
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,13 +29,12 @@ import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
 import java.util.ArrayList;
 
 import static za.co.metalojiq.classfinder.someapp.util.Utils.makeToast;
-
-
 //this is the fragment that we will always call comments or comments
 public class Comment extends BottomSheetDialogFragment {
     private static final String ARG_USER_ID = "param1";
     private static final String ARG_POST_ID = "param2";
     private static final String ARG_NETWORK_ID = "param3";
+    private static final String TAG = "Comment";
 
     // TODO: Rename and change types of parameters
     private int mUserId;
@@ -74,7 +75,7 @@ public class Comment extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_comment, container, false);
+       final View view = inflater.inflate(R.layout.fragment_comment, container, false);
         btnComment = (Button) view.findViewById(R.id.btn_frag_comment);
         etComment = (EditText) view.findViewById(R.id.et_comment);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
@@ -111,13 +112,15 @@ public class Comment extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
                 if (validateForm(etComment.getText().toString())) {
-                    postComment(mNetworkId, mUserId, mPostId, etComment.getText().toString());
+                    postComment(view, mNetworkId, mUserId, mPostId, etComment.getText().toString());
                 } else {
                     etComment.setError("You can not have a blank comment!");
                 }
             }
         });
-       // getAllComments(1);
+        getAllComments(1);
+        swipeRefreshLayout.setRefreshing(true);
+        Toast.makeText(getContext(), "Loading Comments", Toast.LENGTH_SHORT);
         return view;
     }
 
@@ -127,7 +130,7 @@ public class Comment extends BottomSheetDialogFragment {
 
     private void getAllComments(final int page) {
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        Call<NetworkPostModel> call = apiService.getAllComments(mNetworkId, mUserId, mPostId);
+        Call<NetworkPostModel> call = apiService.getAllComments(mNetworkId + 1 , mPostId, mUserId);
         call.enqueue(new Callback<NetworkPostModel>() {
             @Override
             public void onResponse(Call<NetworkPostModel> call, Response<NetworkPostModel> response) {
@@ -142,26 +145,29 @@ public class Comment extends BottomSheetDialogFragment {
                 } else {
                     makeToast("Server Error.", getContext());
                 }
+                swipeRefreshLayout.setRefreshing(false);
             }
             @Override
             public void onFailure(Call<NetworkPostModel> call, Throwable t) {
-
+                Log.d(TAG, "onFailure: " + t.toString());
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
 
     }
 
-    private void postComment(int networkId, int userId, int postId, String comment) {
+    private void postComment(final View view, int networkId, int userId, int postId, String comment) {
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        Call<PostResponse> call = apiService.postComment(networkId, postId,userId, comment);
+        Call<PostResponse> call = apiService.postComment(networkId +1 , postId,userId, comment);
         call.enqueue(new Callback<PostResponse>() {
             @Override
             public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
                 if (response.body() != null) {
                     if (response.body().isStatus()) {
-                        makeToast("Comment shared ", getContext());
+                        Snackbar.make(view, "Comment Shared!", Snackbar.LENGTH_SHORT);
+                        dismiss();
                     } else {
-                        makeToast("Sorry could not share comment.", getContext());
+                        Snackbar.make(view, "Sorry could not share comment.", Snackbar.LENGTH_SHORT);
                     }
                 } else {
                     makeToast("Server Error!!", getContext());
@@ -169,7 +175,8 @@ public class Comment extends BottomSheetDialogFragment {
             }
             @Override
             public void onFailure(Call<PostResponse> call, Throwable t) {
-                makeToast("Please connect to the internet to comment.", getContext());
+                Snackbar.make(view, "Please connect to the internet", Snackbar.LENGTH_SHORT);
+
             }
         });
     }
