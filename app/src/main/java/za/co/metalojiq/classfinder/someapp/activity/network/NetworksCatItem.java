@@ -52,9 +52,10 @@ public class NetworksCatItem extends AppCompatActivity {
         // 0 based but server is 1 based
         networkCatId = intent.getIntExtra(Networks.INTENT_EXTRA_CAT_POS, -1);
        final  String netWorksName = intent.getStringExtra(Networks.INTENT_EXTRA_CAT_NAME);
-        setTitle(netWorksName);
         // Initial NetworkType load load the posts!
         networkType = NETWORK_TYPE.POST;
+        setTitle(netWorksName + " " + networkType.toString().toLowerCase());
+
         //I have to load the fragment here giving it the id of the network + 1
         //and it will handle the fetching of the data depending on the position
         final NetworkTopicFragment networkTopicFragment = NetworkTopicFragment.newInstance(networkCatId, netWorksName, networkType);
@@ -73,14 +74,13 @@ public class NetworksCatItem extends AppCompatActivity {
                         selectedFragment = NetworkTopicFragment.newInstance(networkCatId, netWorksName, networkType);
                         break;
                 }
+                setTitle(netWorksName + " " + networkType.toString().toLowerCase());
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.frame_layout, selectedFragment);
                 transaction.commit();
                 return true;
             }
         });
-
-
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frame_layout, networkTopicFragment);
         transaction.commit();

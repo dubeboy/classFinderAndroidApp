@@ -9,6 +9,8 @@ import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.adapter.ImageAdapter;
 import za.co.metalojiq.classfinder.someapp.model.NetworksCategory;
 
+
+//These are the categories with the round circles :)
 public class Networks extends AppCompatActivity implements ImageAdapter.OnCatClick {
 
     public static final String INTENT_EXTRA_CAT_POS = "cat_pos";

@@ -41,6 +41,7 @@ public class ImageAdapter extends ArrayAdapter<NetworksCategory> implements View
         networksCategories.add(new NetworksCategory("Religion"));
         networksCategories.add(new NetworksCategory("Entertainment"));
     }
+
     // View lookup cache
     private static class ViewHolder {
         TextView txtName;

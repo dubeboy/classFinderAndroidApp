@@ -4,12 +4,11 @@
     <item
             android:id="@+id/action_cf_networks"
             android:enabled="true"
-            android:icon="@drawable/ic_comment_black_24dp"
+            android:icon="@drawable/ic_forum_black_24dp"
             android:title="CF Networks"
             />
     <item
             android:id="@+id/action_cf_question"
-            android:enabled="true"
             android:icon="@drawable/ic_live_help_black_24dp"
             android:title="CF Questions"
             />
