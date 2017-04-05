@@ -111,7 +111,7 @@ public interface ApiInterface {
     //this get all the Topics
     @Headers({"Accept: application/json"})
     @GET("/api/v1/networks")
-    Call<NetworkResponse> getAllNetworks(@Query("page") int page, @Query("network_id") int catId);
+    Call<NetworkResponse> getAllNetworkTopics(@Query("page") int page, @Query("network_id") int catId, @Query("network_type") int topicType);
 
 
     // we need on to create a new post
@@ -120,7 +120,8 @@ public interface ApiInterface {
     Call<NetworkResponse> postNewNetwork(@Query("user_id") int userId,
                                          @Query("net_cat") int catId,
                                          @Query("network_name") String networkName,
-                                         @Query("desc") String description);
+                                         @Query("desc") String description,
+                                         @Query("network_type") int networkType);
 
     @Headers({"Accept: application/json"})
     @GET("/api/v1/networks/{network_id}/network_posts")

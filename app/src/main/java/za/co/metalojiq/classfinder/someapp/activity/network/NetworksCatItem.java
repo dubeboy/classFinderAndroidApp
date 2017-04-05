@@ -23,6 +23,7 @@ import static za.co.metalojiq.classfinder.someapp.util.Utils.getUserSharedPrefer
 public class NetworksCatItem extends AppCompatActivity {
 
     private int networkCatId;
+    private NETWORK_TYPE networkType;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -52,10 +53,11 @@ public class NetworksCatItem extends AppCompatActivity {
         networkCatId = intent.getIntExtra(Networks.INTENT_EXTRA_CAT_POS, -1);
        final  String netWorksName = intent.getStringExtra(Networks.INTENT_EXTRA_CAT_NAME);
         setTitle(netWorksName);
-
+        // Initial NetworkType load load the posts!
+        networkType = NETWORK_TYPE.POST;
         //I have to load the fragment here giving it the id of the network + 1
         //and it will handle the fetching of the data depending on the position
-        final NetworkTopicFragment networkTopicFragment = NetworkTopicFragment.newInstance(networkCatId, netWorksName);
+        final NetworkTopicFragment networkTopicFragment = NetworkTopicFragment.newInstance(networkCatId, netWorksName, networkType);
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -63,10 +65,12 @@ public class NetworksCatItem extends AppCompatActivity {
                 Fragment selectedFragment = null;
                 switch (item.getItemId()) {
                     case R.id.action_cf_networks:
+                        networkType = NETWORK_TYPE.POST;
                         selectedFragment = networkTopicFragment;
                         break;
                     case R.id.action_cf_question:
-                        //selectedFragment = NetworkPost.newInstance(networkCatId, netWorksName, new ArrayList<NetworkPostModel>());
+                        networkType = NETWORK_TYPE.QUESTION;
+                        selectedFragment = NetworkTopicFragment.newInstance(networkCatId, netWorksName, networkType);
                         break;
                 }
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -99,7 +103,7 @@ public class NetworksCatItem extends AppCompatActivity {
 
     private void showAddNewNetworkDialogFragment(int userId, int networkCategoryId) {
         FragmentManager fm = getSupportFragmentManager();
-        NewNetworkTopic editNameDialogFragment = NewNetworkTopic.newInstance(userId, networkCategoryId);
-        editNameDialogFragment.show(fm, "fragment_edit_name");
+        NewNetworkTopic editNameDialogFragment = NewNetworkTopic.newInstance(userId, networkCategoryId, networkType);
+        editNameDialogFragment.show(fm, "fragment_new_network_topic");
     }
 }

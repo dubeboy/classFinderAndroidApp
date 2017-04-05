@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,28 +17,27 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import za.co.metalojiq.classfinder.someapp.R;
+import za.co.metalojiq.classfinder.someapp.activity.network.NETWORK_TYPE;
 import za.co.metalojiq.classfinder.someapp.model.network.NetworkResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
 
 import static za.co.metalojiq.classfinder.someapp.util.Utils.makeToast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link NewNetworkTopic#newInstance} factory method to
- * A network topic is a Network
- */
+
 public class NewNetworkTopic extends DialogFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_USER_ID = "param1";
     private static final String ARG_NETWORK_CATEGORY = "param2";
+    private static final String ARG_NETWORK_TYPE = "net_work_type";
     ProgressDialog dialog;
 
     // TODO: Rename and change types of parameters
     private int mUserId;
     private int mNetworkCategoryId;
     private String TAG = NewNetworkTopic.class.getSimpleName();
+    private NETWORK_TYPE mNetworkType;
 
     public NewNetworkTopic() {
         // Required empty public constructor
@@ -50,11 +48,12 @@ public class NewNetworkTopic extends DialogFragment {
      * @param networkCategory the category in which the network belongs
      * @return new network topic fragment
      */
-    public static NewNetworkTopic newInstance(int userId, int networkCategory) {
+    public static NewNetworkTopic newInstance(int userId, int networkCategory, NETWORK_TYPE networkType) {
         NewNetworkTopic newNetworkTopic = new NewNetworkTopic();
         Bundle args = new Bundle();
         args.putInt(ARG_USER_ID, userId);
         args.putInt(ARG_NETWORK_CATEGORY, networkCategory);
+        args.putSerializable(ARG_NETWORK_TYPE, networkType);
         newNetworkTopic.setArguments(args);
         return newNetworkTopic;
     }
@@ -65,6 +64,7 @@ public class NewNetworkTopic extends DialogFragment {
         if (getArguments() != null) {
             mUserId = getArguments().getInt(ARG_USER_ID);
             mNetworkCategoryId = getArguments().getInt(ARG_NETWORK_CATEGORY);
+            mNetworkType = (NETWORK_TYPE) getArguments().getSerializable(ARG_NETWORK_TYPE);
         }
     }
 
@@ -97,7 +97,7 @@ public class NewNetworkTopic extends DialogFragment {
                     //set dialog first
                     dialog = ProgressDialog.show(getContext(), "", "Creating new network topic.");
                     // make network call here
-                    addNetworkTopic(mNetworkCategoryId, networkName, description, mUserId);
+                    addNetworkTopic(mNetworkCategoryId, networkName, description, mUserId, mNetworkType);
                 }  else {
                     makeToast("Please fill in all fields", getContext());
                 }
@@ -110,9 +110,9 @@ public class NewNetworkTopic extends DialogFragment {
     }
 
 
-    private void addNetworkTopic(int network_cat_id, String topic, String descripition, int userId) {
+    private void addNetworkTopic(int network_cat_id, String topic, String description, int userId, NETWORK_TYPE networkType) {
         ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
-        Call<NetworkResponse> call = apiInterface.postNewNetwork(userId, network_cat_id, topic, descripition);
+        Call<NetworkResponse> call = apiInterface.postNewNetwork(userId, network_cat_id, topic, description, networkType.ordinal());
 
         call.enqueue(new Callback<NetworkResponse>() {
             @Override

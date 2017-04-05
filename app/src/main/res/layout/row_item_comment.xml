@@ -14,5 +14,4 @@
               android:id="@+id/tv_comment"
               android:text="Description"
               android:layout_height="wrap_content"/>
-
 </LinearLayout>

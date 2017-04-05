@@ -15,6 +15,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import za.co.metalojiq.classfinder.someapp.R;
+import za.co.metalojiq.classfinder.someapp.activity.network.NETWORK_TYPE;
 import za.co.metalojiq.classfinder.someapp.activity.network.NetworkPostActivity;
 import za.co.metalojiq.classfinder.someapp.adapter.EndlessRecyclerViewScrollListener;
 import za.co.metalojiq.classfinder.someapp.adapter.MyNetworkTopicRecyclerViewAdapter;
@@ -33,6 +34,7 @@ public class NetworkTopicFragment extends Fragment {
     private static final String ARG_NETWORK_CAT_ID = "column-count";
     private static final String TAG = "NetworkTopicFragment";
     private static final String ARG_NETWORKS_NAME = "networks_post";
+    private static final String ARG_POST_TYPE = "network_post_type";
     private static final String TAG_FRAGMENT = "net_posts";
     // TODO: Customize parameters
     private int mNetworkCatId = 1;
@@ -44,6 +46,7 @@ public class NetworkTopicFragment extends Fragment {
     public static final String NETWORK_CAT_ID = "network_cat_id";
     public static final String NETWORK_NAME = "network_name";
     public static final String NETWORK_ID = "net_id_100";
+    private NETWORK_TYPE mPostType;
 
 
     /**
@@ -53,11 +56,12 @@ public class NetworkTopicFragment extends Fragment {
     public NetworkTopicFragment() {
     }
 
-    public static NetworkTopicFragment newInstance(int networkCatId, String netWorksName) {
+    public static NetworkTopicFragment newInstance(int networkCatId, String netWorksName, NETWORK_TYPE postType) {
         NetworkTopicFragment fragment = new NetworkTopicFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_NETWORK_CAT_ID, networkCatId);
         args.putString(ARG_NETWORKS_NAME, netWorksName);
+        args.putSerializable(ARG_POST_TYPE, postType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,6 +73,7 @@ public class NetworkTopicFragment extends Fragment {
         if (getArguments() != null) {
             mNetworkCatId = getArguments().getInt(ARG_NETWORK_CAT_ID);
             mNetworkName = getArguments().getString(ARG_NETWORKS_NAME);
+            mPostType = (NETWORK_TYPE) getArguments().getSerializable(ARG_POST_TYPE);
         }
     }
 
@@ -89,7 +94,7 @@ public class NetworkTopicFragment extends Fragment {
             @Override
             public void onRefresh() {
 
-                fetchMoreNetworks(1);
+                fetchMoreNetworkTopics(1);
                 Toast.makeText(getActivity(), "Refresh", Toast.LENGTH_SHORT).show();
             }
         });
@@ -102,7 +107,7 @@ public class NetworkTopicFragment extends Fragment {
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 Log.d(TAG, "Called");
                 swipeRefreshLayout.setRefreshing(true);
-                fetchMoreNetworks(page);
+                fetchMoreNetworkTopics(page);
             }
         };
 
@@ -110,8 +115,9 @@ public class NetworkTopicFragment extends Fragment {
         recyclerView.addOnScrollListener(scrollListener); //TODO test if position matters
         recyclerView.setLayoutManager(linearLayout);
 
-        adapter = new MyNetworkTopicRecyclerViewAdapter(
-                new ArrayList<Network>(), new MyNetworkTopicRecyclerViewAdapter.OnListFragmentInteractionListener() {
+        adapter = new MyNetworkTopicRecyclerViewAdapter(new ArrayList<Network>(),
+                                                new MyNetworkTopicRecyclerViewAdapter
+                                                        .OnListFragmentInteractionListener() {
             @Override
             public void onListFragmentInteraction(Network item) {
                 Intent intent = new Intent(getContext(), NetworkPostActivity.class);
@@ -123,14 +129,14 @@ public class NetworkTopicFragment extends Fragment {
         });
 
         recyclerView.setAdapter(adapter);
-        fetchMoreNetworks(1);
+        fetchMoreNetworkTopics(1);
         return view;
     }
 
     //get all network caetogory networks ++
-    private void fetchMoreNetworks(final int page) {
+    private void fetchMoreNetworkTopics(final int page) {
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        Call<NetworkResponse> call = apiService.getAllNetworks(page, mNetworkCatId + 1); // +1 because server is 1 based
+        Call<NetworkResponse> call = apiService.getAllNetworkTopics(page, mNetworkCatId + 1, mPostType.ordinal()); // +1 because server is 1 based
 
         call.enqueue(new Callback<NetworkResponse>() {
             @Override
