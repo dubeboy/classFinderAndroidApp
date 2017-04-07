@@ -54,7 +54,7 @@ public class NetworksCatItem extends AppCompatActivity {
        final  String netWorksName = intent.getStringExtra(Networks.INTENT_EXTRA_CAT_NAME);
         // Initial NetworkType load load the posts!
         networkType = NETWORK_TYPE.POST;
-        setTitle(netWorksName + " " + networkType.toString().toLowerCase());
+        setTitle(netWorksName + " " + networkType.toString().toLowerCase() + "s");
 
         //I have to load the fragment here giving it the id of the network + 1
         //and it will handle the fetching of the data depending on the position
@@ -74,7 +74,7 @@ public class NetworksCatItem extends AppCompatActivity {
                         selectedFragment = NetworkTopicFragment.newInstance(networkCatId, netWorksName, networkType);
                         break;
                 }
-                setTitle(netWorksName + " " + networkType.toString().toLowerCase());
+                setTitle(netWorksName + " " + networkType.toString().toLowerCase() + "s");
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.frame_layout, selectedFragment);
                 transaction.commit();
