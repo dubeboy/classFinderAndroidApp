@@ -2,8 +2,10 @@ package za.co.metalojiq.classfinder.someapp.activity.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,10 +21,12 @@ import za.co.metalojiq.classfinder.someapp.activity.network.NETWORK_TYPE;
 import za.co.metalojiq.classfinder.someapp.activity.network.NetworkPostActivity;
 import za.co.metalojiq.classfinder.someapp.adapter.EndlessRecyclerViewScrollListener;
 import za.co.metalojiq.classfinder.someapp.adapter.MyNetworkTopicRecyclerViewAdapter;
+import za.co.metalojiq.classfinder.someapp.model.PostResponse;
 import za.co.metalojiq.classfinder.someapp.model.network.Network;
 import za.co.metalojiq.classfinder.someapp.model.network.NetworkResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
+import za.co.metalojiq.classfinder.someapp.util.Utils;
 
 import java.util.ArrayList;
 
@@ -80,9 +84,9 @@ public class NetworkTopicFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_network_topic_list, container, false);
+        final View view = inflater.inflate(R.layout.fragment_network_topic_list, container, false);
 
-
+        final int userId = Utils.getUserId(getContext());
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
         //TODO not working man on emulator
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
@@ -94,7 +98,7 @@ public class NetworkTopicFragment extends Fragment {
             @Override
             public void onRefresh() {
 
-                fetchMoreNetworkTopics(1);
+                fetchMoreNetworkTopics(1, userId);
                 Toast.makeText(getActivity(), "Refresh", Toast.LENGTH_SHORT).show();
             }
         });
@@ -107,36 +111,89 @@ public class NetworkTopicFragment extends Fragment {
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 Log.d(TAG, "Called");
                 swipeRefreshLayout.setRefreshing(true);
-                fetchMoreNetworkTopics(page);
+                fetchMoreNetworkTopics(page, userId);
             }
         };
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.networks_topics_list);
+        final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.networks_topics_list);
         recyclerView.addOnScrollListener(scrollListener); //TODO test if position matters
         recyclerView.setLayoutManager(linearLayout);
 
-        adapter = new MyNetworkTopicRecyclerViewAdapter(new ArrayList<Network>(),
+        adapter = new MyNetworkTopicRecyclerViewAdapter(getContext(), new ArrayList<Network>(),
                                                 new MyNetworkTopicRecyclerViewAdapter
                                                         .OnListFragmentInteractionListener() {
             @Override
-            public void onListFragmentInteraction(Network item) {
-                Intent intent = new Intent(getContext(), NetworkPostActivity.class);
-                intent.putExtra(NETWORK_CAT_ID, mNetworkCatId);
-                intent.putExtra(NETWORK_NAME, mNetworkName);
-                intent.putExtra(NETWORK_ID, item.getId());
-                getActivity().startActivity(intent);
+            public void onListFragmentInteraction(final Network item, MyNetworkTopicRecyclerViewAdapter.CLICK_TYPE clickType) {
+                switch (clickType) {
+                    case SUBS_BUTTON:
+                        adapter.toggleSubscription();
+                        int userId = Utils.getUserId(getContext());
+                        int networkId = item.getId();
+                        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+                        Call<PostResponse> call = apiService.subscribeToNetwork(networkId, userId);
+                        call.enqueue(new Callback<PostResponse>() {
+                            @Override
+                            public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
+                                if(response.body() != null ) {
+                                    if (response.body().isStatus()) { // this is when the user has already subscribed to the channel
+                                        adapter.subscribe();
+                                        Snackbar.make(view, "Subscribed to " + item.getName(), Snackbar.LENGTH_SHORT).show();
+                                        Log.d(TAG, "onResponse: " + "subscribed");
+                                    } else {
+                                        adapter.unSubscribe();
+                                        Snackbar.make(view, "un subscribed to " + item.getName(), Snackbar.LENGTH_SHORT).show();
+                                        Log.d(TAG, "onResponse: " + "unsubscribed");
+                                    }
+                                } else {
+                                    Log.d(TAG, "onResponse: " + "Server Error ");
+                                    makeToast("Server Error!", getContext());
+                                }
+                            }
+                            @Override
+                            public void onFailure(Call<PostResponse> call, Throwable t) {
+                                Log.d(TAG, "onFailure: " + t.toString());
+                                makeToast("Please connect to the internet ", getContext());
+                            }
+                        });
+
+                        break;
+                    case VIEW:
+                        Intent intent = new Intent(getContext(), NetworkPostActivity.class);
+                        intent.putExtra(NETWORK_CAT_ID, mNetworkCatId);
+                        intent.putExtra(NETWORK_NAME, mNetworkName);
+                        intent.putExtra(NETWORK_ID, item.getId());
+                        getActivity().startActivity(intent);
+                        break;
+                    case SHARE:
+                        String name = item.getName().trim().toLowerCase(); // remove white space first and then make lowercase
+                        String handle = " ";
+                        if (name.contains(" ")) { //check if there is a white space
+                           handle = name.replace(' ', '_');
+                        } else {
+                            handle = "@" + name;
+                        }
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage("The handle for this network is " + handle)
+                                .setTitle("Share your network!");
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                        break;
+                }
+
             }
         });
 
         recyclerView.setAdapter(adapter);
-        fetchMoreNetworkTopics(1);
+        fetchMoreNetworkTopics(1, userId);
         return view;
     }
 
-    //get all network caetogory networks ++
-    private void fetchMoreNetworkTopics(final int page) {
+
+
+    //get all network category networks ++
+    private void fetchMoreNetworkTopics(final int page, int userId) {
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        Call<NetworkResponse> call = apiService.getAllNetworkTopics(page, mNetworkCatId + 1, mPostType.ordinal()); // +1 because server is 1 based
+        Call<NetworkResponse> call = apiService.getAllNetworkTopics(page, mNetworkCatId + 1, mPostType.ordinal(), userId); // +1 because server is 1 based
 
         call.enqueue(new Callback<NetworkResponse>() {
             @Override

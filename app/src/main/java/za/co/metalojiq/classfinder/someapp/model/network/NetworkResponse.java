@@ -28,4 +28,12 @@ public class NetworkResponse implements Serializable {
     public void setNetworks(ArrayList<Network> networks) {
         this.networks = networks;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

@@ -111,7 +111,10 @@ public interface ApiInterface {
     //this get all the Topics
     @Headers({"Accept: application/json"})
     @GET("/api/v1/networks")
-    Call<NetworkResponse> getAllNetworkTopics(@Query("page") int page, @Query("network_id") int catId, @Query("network_type") int topicType);
+    Call<NetworkResponse> getAllNetworkTopics(@Query("page") int page,
+                                              @Query("network_id") int catId,
+                                              @Query("network_type") int topicType,
+                                              @Query("user_id") int userId);
 
 
     // we need on to create a new post
@@ -125,7 +128,10 @@ public interface ApiInterface {
 
     @Headers({"Accept: application/json"})
     @GET("/api/v1/networks/{network_id}/network_posts")
-    Call<NetworkPostsResponse> getAllNetworksPost(@Path("network_id") int catId, @Query("topic_id") int topicId ,@Query("page") int page);
+    Call<NetworkPostsResponse> getAllNetworksPost(@Path("network_id") int catId,
+                                                  @Query("topic_id") int topicId,
+                                                  @Query("page") int page,
+                                                  @Query("user_id") int userId);
 
     @Multipart
     @Headers({"Accept: application/json"})
@@ -158,4 +164,8 @@ public interface ApiInterface {
     Call<NetworkPostModel> getAllComments(@Path("network_id") int networkId,
                                           @Path("network_post_id") int postId,
                                           @Query("user_id") int userId);
+
+    @Headers({"Accept: application/json"})
+    @POST("/api/v1/networks/{network_id}/subscribe")
+    Call<PostResponse> subscribeToNetwork(@Path("network_id") int networkId,@Query("user_id") int userId);
 }

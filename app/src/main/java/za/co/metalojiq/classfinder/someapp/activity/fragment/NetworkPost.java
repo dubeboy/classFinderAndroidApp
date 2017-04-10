@@ -92,12 +92,13 @@ public class NetworkPost extends Fragment implements NetworkPostAdapter.OnNetwor
         final TextView textViewError = (TextView) linearLayout.findViewById(R.id.accomListTvError);
         progressBar = (ProgressBar) linearLayout.findViewById(R.id.accomLoad);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        final int userId = Utils.getUserId(getContext());
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 Log.d(TAG, "Called From Networks");
                 progressBar.setVisibility(View.VISIBLE);
-                fetchNetworkPostData(getArguments().getInt(ARG_PARAM_CAT_ID), mParamTopicId ,page);
+                fetchNetworkPostData(getArguments().getInt(ARG_PARAM_CAT_ID), mParamTopicId ,page, userId);
             }
         };
         recyclerView.addOnScrollListener(scrollListener);
@@ -109,7 +110,7 @@ public class NetworkPost extends Fragment implements NetworkPostAdapter.OnNetwor
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                fetchNetworkPostData(getArguments().getInt(ARG_PARAM_CAT_ID), mParamTopicId ,1);
+                fetchNetworkPostData(getArguments().getInt(ARG_PARAM_CAT_ID), mParamTopicId ,1, userId);
                 Toast.makeText(getActivity(), "Refresh", Toast.LENGTH_SHORT).show();
             }
         });
@@ -134,7 +135,7 @@ public class NetworkPost extends Fragment implements NetworkPostAdapter.OnNetwor
                 }
             }
         });
-        fetchNetworkPostData(getArguments().getInt(ARG_PARAM_CAT_ID), mParamTopicId, 1);
+        fetchNetworkPostData(getArguments().getInt(ARG_PARAM_CAT_ID), mParamTopicId, 1, userId);
         return linearLayout;
     }
 
@@ -145,10 +146,10 @@ public class NetworkPost extends Fragment implements NetworkPostAdapter.OnNetwor
     }
 
 
-    private void fetchNetworkPostData(final int catId, int topicId , final int page) {
+    private void fetchNetworkPostData(final int catId, int topicId , final int page, int userId) {
         Log.d(TAG, "you scrolling to page: " + page); // page will always be >= 1
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        Call<NetworkPostsResponse> call = apiService.getAllNetworksPost(catId + 1, topicId, page);
+        Call<NetworkPostsResponse> call = apiService.getAllNetworksPost(catId + 1, topicId, page, userId);
         Log.d(TAG, "The page is here is more than 0 " + page);
         //FIXME I am not sure if there are new item this top item will show thos new items
         call.enqueue(new Callback<NetworkPostsResponse>() {

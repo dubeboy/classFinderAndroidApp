@@ -86,6 +86,8 @@
         </activity>
         <activity android:name=".activity.network.NetworkPostActivity">
         </activity>
+        <activity android:name=".activity.NetworkTopicSearch">
+        </activity>
     </application>
 
 </manifest>

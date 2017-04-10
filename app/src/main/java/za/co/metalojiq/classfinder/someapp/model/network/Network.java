@@ -19,6 +19,10 @@ public class Network implements Serializable {
     private String name;
     @SerializedName("desc")
     private String description;
+    @SerializedName("subscribed")
+    private boolean subscribed;
+    @SerializedName("creator_id")
+    private int CreatorId;
 
     public String getDescription() {
         return description;
@@ -42,5 +46,21 @@ public class Network implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public boolean isSubscribed() {
+        return subscribed;
+    }
+
+    public void setSubscribed(boolean subscribed) {
+        this.subscribed = subscribed;
+    }
+
+    public int getCreatorId() {
+        return CreatorId;
+    }
+
+    public void setCreatorId(int creatorId) {
+        CreatorId = creatorId;
     }
 }

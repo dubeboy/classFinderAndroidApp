@@ -32,6 +32,9 @@ public class Utils {
     public static final String[] INSTITUTIONS = {"Wits", "UJ-Auckland Park", "UJ-DFC", "UJ-Soweto", "Other"};
     public static final String AUCK_AREA_PREFIX = "Auckland Park, ";
 
+    //cannot instantiate this class
+    private Utils() {}
+
     /**
      *
      * this method setup a general spinner
@@ -41,7 +44,6 @@ public class Utils {
      * @param arrResId - the xml res ID which as an array of elements to populate the array with
      * @return - the spinner which has been created, so that we can make any required modification :)
      */
-
     public static Spinner setupSpinner(AppCompatActivity context, @IdRes int resId, @ArrayRes int arrResId) {
         Spinner spinner = (Spinner) context.findViewById(resId);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter
@@ -130,8 +132,9 @@ public class Utils {
         return "image/" + s;
     }
 
-    public static void getUserInfo() {
-
+    public static int getUserId(Context context ) {
+        SharedPreferences userSharedPreferences = getUserSharedPreferences(context);
+        return userSharedPreferences.getInt(LoginActivity.LOGIN_PREF_USER_ID, 0);
     }
     public static class LocationItemListener implements AdapterView.OnItemSelectedListener {
 
