@@ -187,6 +187,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             // Signed out, show unauthenticated UI.
 //            updateUI(false);
+            Log.d(TAG, "handleSignInResult: the result is bad yoh: " + result.getStatus());
             makeToast("Sign In failed, please try again. ", this);
         }
     }

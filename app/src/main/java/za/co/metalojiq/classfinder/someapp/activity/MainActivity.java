@@ -1,5 +1,6 @@
 package za.co.metalojiq.classfinder.someapp.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -22,9 +23,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import za.co.metalojiq.classfinder.someapp.R;
+import za.co.metalojiq.classfinder.someapp.activity.fragment.AccomList;
+import za.co.metalojiq.classfinder.someapp.activity.fragment.HouseActivityFragment;
 import za.co.metalojiq.classfinder.someapp.activity.network.Networks;
 import za.co.metalojiq.classfinder.someapp.activity.expirimental.SettingsActivity;
-import za.co.metalojiq.classfinder.someapp.activity.fragment.AccomList;
 import za.co.metalojiq.classfinder.someapp.model.Accommodation;
 import za.co.metalojiq.classfinder.someapp.model.AccommodationResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
@@ -41,20 +43,26 @@ import static za.co.metalojiq.classfinder.someapp.util.Utils.makeToast;
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
+    public static final String USER_ID = "userId";
     private GoogleApiClient mGoogleApiClient;
+    private  SharedPreferences sharedPreferences;
+    private int userId = 0;
+
+    //fragment injection required code
+    FragmentManager fragmentManager;
+    private FragmentTransaction fragmentTransaction;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        SharedPreferences sharedPreferences = getSharedPreferences(LoginActivity.LOGIN_PREF_FILENAME, MODE_PRIVATE);
-        int id = sharedPreferences.getInt(LoginActivity.LOGIN_PREF_USER_ID, 0);
-        Log.d(TAG, "The ID of the user  is: " + id);
+        Log.d(TAG, "The ID of the user  is: " + userId);
         boolean isRunner = sharedPreferences.getBoolean(LoginActivity.LOGIN_IS_RUNNER, false);
         MenuItem itemLogin = menu.findItem(R.id.action_login);
         MenuItem itemRunner = menu.findItem(R.id.action_runner);
         MenuItem itemSignOut = menu.findItem(R.id.action_sign_out);
         MenuItem itemNetworks = menu.findItem(R.id.action_networks);
-        if (id == 0) { // means that the user is not logged in !!!
+        MenuItem itemHouses = menu.findItem(R.id.action_houses);
+        if (userId == 0) { // means that the user is not logged in !!!
             itemRunner.setVisible(false);
             itemLogin.setVisible(true);
             itemSignOut.setVisible(false);
@@ -63,33 +71,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             itemLogin.setVisible(false);
             itemSignOut.setVisible(true);
             itemNetworks.setVisible(true);
-        } else {
+        } else {  // this is when the user is signed in but is not a runner!
             itemRunner.setVisible(true);
             itemNetworks.setVisible(true);
             itemSignOut.setVisible(true);
+            itemHouses.setVisible(true);
 
         }
+
         return true;
-    }
-
-
-    private void googleSignOut() {
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        //Fixme remove at production
-                        makeToast("Hello there man " + status, getApplicationContext());
-                    }
-                });
-    }
-
-    private void signOut(SharedPreferences sharedPreferences) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.remove(LoginActivity.LOGIN_PREF_USER_ID);
-        supportInvalidateOptionsMenu();
-        editor.apply();
-        googleSignOut();
     }
 
     @Override
@@ -124,25 +114,56 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 SharedPreferences sharedPreferences = getSharedPreferences(LoginActivity.LOGIN_PREF_FILENAME, MODE_PRIVATE);
                 signOut(sharedPreferences);
                 return true;
-            case R.id.action_networks   :
+            case R.id.action_networks:
                 Intent networksIntent = new Intent(this, Networks.class);
                 startActivity(networksIntent);
                 return true;
+            case R.id.action_houses:
+                Intent housesIntent = new Intent(this, HouseActivity.class);
+                housesIntent.putExtra(USER_ID, userId);
+                startActivity(housesIntent);
 
         }
         // the fas
         return super.onOptionsItemSelected(item);
     }
 
+    private void googleSignOut() {
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
+                        //Fixme remove at production
+                        makeToast("Sign out" + status, getApplicationContext());
+                    }
+                });
+    }
+
+    private void signOut(SharedPreferences sharedPreferences) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(LoginActivity.LOGIN_PREF_USER_ID);
+        supportInvalidateOptionsMenu();
+        editor.apply();
+        googleSignOut();
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.accomLoad);
         supportInvalidateOptionsMenu();  //TODO Called in the wrong places
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        fragmentManager = getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
         mGoogleApiClient = getGoogleSignUp(this, this);
+
+        sharedPreferences = getSharedPreferences(LoginActivity.LOGIN_PREF_FILENAME, MODE_PRIVATE);
+        userId = sharedPreferences.getInt(LoginActivity.LOGIN_PREF_USER_ID, 0);  // getting the user Id yey !
+
+
 
 
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
@@ -157,7 +178,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 try {
                     if (response != null && response.errorBody() != null)
                         Log.d(TAG, "RAW RESPONSE OF UNSUCCESSFUL ==>" + response.errorBody().string());
-                    Snackbar.make(findViewById(R.id.activity_main), "Ops!, an Error happened!", Snackbar.LENGTH_LONG);
+                    Snackbar.make((((Activity) MainActivity.this).findViewById(android.R.id.content)),
+                            "Ops!, an Error happened!", Snackbar.LENGTH_LONG);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -168,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     ArrayList<Accommodation> accommodations = response.body().getResults();
                     Log.d(TAG, "host id " + accommodations.get(0).getHostId());
                     final AccomList accomList = AccomList.newInstance(accommodations);
+                   // final HouseActivityFragment houseActivityFragment = HouseActivityFragment.newInstance(userId);
                     setTitle(R.string.app_name);
                     startAccomListActivity(accomList, fragmentTransaction);
                 }
@@ -177,7 +200,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             public void onFailure(Call<AccommodationResponse> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
                 ArrayList<Accommodation> accommodations = new ArrayList<>();
-                final AccomList accomList = AccomList.newInstance(accommodations);
+               final AccomList accomList = AccomList.newInstance(accommodations);
+            //    final HouseActivityFragment myHousesList = HouseActivityFragment.Companion.newInstance(userId);
                 setTitle("Error");
                 startAccomListActivity(accomList, fragmentTransaction);
             }

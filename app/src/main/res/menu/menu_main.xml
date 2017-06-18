@@ -58,4 +58,12 @@
             android:icon="@drawable/ic_record_voice_over_black_24dp"
             app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/action_houses"
+        android:orderInCategory="80"
+        android:title="House"
+        android:visible="false"
+        android:icon="@drawable/ic_record_voice_over_black_24dp"
+        app:showAsAction="ifRoom" />
+
 </menu>

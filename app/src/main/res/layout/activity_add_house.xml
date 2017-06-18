@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:padding="15dp"
+    android:layout_height="match_parent"
+    tools:context="za.co.metalojiq.classfinder.someapp.activity.AddHouseActivity"
+    android:orientation="vertical">
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:paddingBottom="10dp"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/input_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter house address" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:paddingBottom="10dp"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/input_common"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Common areas about you house, eg Kitchen, etc " />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:text="Wifi"
+            android:id="@+id/checkbox_wifi"
+            android:layout_height="wrap_content" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:text="NSFAS"
+            android:id="@+id/checkbox_nsfas"
+            android:layout_height="wrap_content" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:id="@+id/checkbox_prepaid_elec"
+            android:text="Prepaid Electricity"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:id="@+id/btn_add_house"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

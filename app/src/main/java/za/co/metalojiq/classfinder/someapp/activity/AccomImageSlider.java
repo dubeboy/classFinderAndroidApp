@@ -2,7 +2,6 @@ package za.co.metalojiq.classfinder.someapp.activity;
 
 import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
@@ -71,7 +70,7 @@ public class AccomImageSlider extends AppCompatActivity implements
 
 
         TextView tvPrice = (TextView) findViewById(R.id.tv_price);
-        TextView tvRoomType = (TextView) findViewById(R.id.tv_room_type);
+        TextView tvRoomType = (TextView) findViewById(R.id.tv_num_people);
         TextView tvLocation = (TextView) findViewById(R.id.tv_room_location);
         TextView tvDesc = (TextView) findViewById(R.id.tv_desc);
         Button btnSecureAccom = (Button) findViewById(R.id.btnSecureAccom);

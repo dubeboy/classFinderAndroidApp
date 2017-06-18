@@ -13,10 +13,6 @@
                 android:layout_height="match_parent"
                 android:id="@+id/recycler_view"
         />
-
-
-
-
     <ProgressBar
             android:id="@+id/accomLoad"
             style="?android:attr/progressBarStyleSmall"

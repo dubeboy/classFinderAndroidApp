@@ -145,7 +145,7 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
                         }
                     } else {
            //             hideProgressDialog();
-                        makeToast("Fetal error sorry for the inconvenience.", SignUp.this);
+                        makeToast("Fetal error, please restart the app Aand try again", SignUp.this);
                     }
                 }
 
@@ -158,11 +158,12 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
 
               //END GOOGLE USER
         }  else {
-            final String email = mEmail.getText().toString().trim();
-            final String name = mName.getText().toString().trim();
+
             signUp.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                     String email = mEmail.getText().toString().trim();
+                     String name = mName.getText().toString().trim();
 
                     if (checkPassword()) {
                         if (mCheckIsRunner.isChecked()) {
@@ -216,7 +217,7 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
 
     private boolean checkPassword() {
         Log.d(TAG, "checkPassword: the password is " + mPassword.getText().toString());
-        if (isPasswordValid(mPassword.getText().toString())) {
+        if (!isPasswordValid(mPassword.getText().toString())) {
             mPassword.setError("Password too short");
             return false;
         } else if (!(mPassword.getText().toString().equals(mConfPassword.getText().toString()))) {

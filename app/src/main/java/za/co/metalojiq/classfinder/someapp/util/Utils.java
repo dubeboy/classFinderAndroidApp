@@ -26,7 +26,7 @@ import static za.co.metalojiq.classfinder.someapp.activity.LoginActivity.LOGIN_P
 /**
  * Created by divine on 1/28/17.
  */
-public class Utils {
+public class Utils               {
 
     public static final String[] LOCATIONS = {"Auckland Park", "Braamfontein", "Doornfontein", "Soweto"};
     public static final String[] INSTITUTIONS = {"Wits", "UJ-Auckland Park", "UJ-DFC", "UJ-Soweto", "Other"};
@@ -74,7 +74,7 @@ public class Utils {
 
     public static boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        Log.d("Utils", password);
+//        Log.d("Utils", password);
         return password.length() >= 4;
     }
 
@@ -136,6 +136,19 @@ public class Utils {
         SharedPreferences userSharedPreferences = getUserSharedPreferences(context);
         return userSharedPreferences.getInt(LoginActivity.LOGIN_PREF_USER_ID, 0);
     }
+
+    //TODO should be implemented
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.add(R.id.activity_networks_cat_item, networkPost, "NETWORK_POST_FRAGMENT_2");
+//        fragmentTransaction.commit();
+
+    //        //NetworkPost networkPost = NetworkPost.newInstance(networkCatId, netWorksName, new ArrayList<NetworkPostModel>());
+//        NetworkTopicFragment networkTopicFragment = NetworkTopicFragment.newInstance(networkCatId);
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.add(R.id.activity_networks_cat_item, networkTopicFragment, "NETWORK_POST_FRAGMENT_2");
+//        fragmentTransaction.commit();
     public static class LocationItemListener implements AdapterView.OnItemSelectedListener {
 
         TextView tvAuck;

@@ -1,5 +1,7 @@
 package za.co.metalojiq.classfinder.someapp.activity.network;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,7 +10,10 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import za.co.metalojiq.classfinder.someapp.R;
@@ -19,15 +24,22 @@ import za.co.metalojiq.classfinder.someapp.activity.fragment.NewNetworkTopic;
 import static za.co.metalojiq.classfinder.someapp.util.Utils.getUserSharedPreferences;
 
 
-// class makes  a reuest to get all the
+// class makes  a request to get all the
 public class NetworksCatItem extends AppCompatActivity {
 
     private int networkCatId;
     private NETWORK_TYPE networkType;
+    private SearchView searchView;
+    private static final String TAG = "NetworksCatItem";
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_networks_item, menu);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
+        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_network_search));
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(true);
         return true;
     }
 
@@ -40,7 +52,6 @@ public class NetworksCatItem extends AppCompatActivity {
                 showAddNewNetworkDialogFragment(id, networkCatId + 1 );
                 return true;
         }
-        // the fas
         return super.onOptionsItemSelected(item);
     }
 
@@ -85,19 +96,14 @@ public class NetworksCatItem extends AppCompatActivity {
         transaction.replace(R.id.frame_layout, networkTopicFragment);
         transaction.commit();
 
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            Log.d(TAG, "onCreate: Search result's" + query);
 
-        //TODO should be put in tye utils class
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.add(R.id.activity_networks_cat_item, networkPost, "NETWORK_POST_FRAGMENT_2");
-//        fragmentTransaction.commit();
+        } else {
+           // getInitBooks( null, null);
+        }
 
-//        //NetworkPost networkPost = NetworkPost.newInstance(networkCatId, netWorksName, new ArrayList<NetworkPostModel>());
-//        NetworkTopicFragment networkTopicFragment = NetworkTopicFragment.newInstance(networkCatId);
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.add(R.id.activity_networks_cat_item, networkTopicFragment, "NETWORK_POST_FRAGMENT_2");
-//        fragmentTransaction.commit();
     }
 
 

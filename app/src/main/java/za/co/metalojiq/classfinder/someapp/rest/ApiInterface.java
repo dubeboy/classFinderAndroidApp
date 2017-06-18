@@ -168,4 +168,13 @@ public interface ApiInterface {
     @Headers({"Accept: application/json"})
     @POST("/api/v1/networks/{network_id}/subscribe")
     Call<PostResponse> subscribeToNetwork(@Path("network_id") int networkId,@Query("user_id") int userId);
+
+
+    // House routes! //
+    @Headers({"Accept: application/json"})
+    @POST("/api/v1/users/{user_id}/house")
+    Call<HousesResponse> getHousesForUser(@Path("user_id") int userId,
+                                          @Query("page") int page);
+
+
 }
