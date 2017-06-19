@@ -57,7 +57,7 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.Hous
 
     @Override
     public int getItemCount() {
-        return 0;
+        return houseList.size();
     }
 
     static class HouseViewHolder extends RecyclerView.ViewHolder {
@@ -76,12 +76,13 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.Hous
         }
 
         void bind(final House house, final HouseListAdapter.OnItemClickListener listener) {
-            tvLocation.setText(house.getWifi() + "\n" + house.isNsfas() + "\n" + house.isPrepaidElectricity() + "\n" + house.getCommon());
+            tvLocation.setText(house.getWifi().trim() + "\n" + house.isNsfas() + "\n" + house.isPrepaidElectricity() + "\n" + house.getCommon().trim());
             String price = house.getAddress();
             tvTitle.setText(price);
             tvRoomType.setText(""); //Todo this should have the tot num people
-            Log.d(TAG, house.getResults().get(0).getPicture(0).getImageUrl() + "^END%");
-            if(house.getResults().size() > 0) {  // we want to this if the house has more than item
+
+            if(house.getResults() != null && house.getResults().size() > 0) {  // we want to this if the house has more than item
+                Log.d(TAG, house.getResults().get(0).getPicture(0).getImageUrl() + "^END%");
                 Picasso.with(itemView.getContext())
                         .load(house
                                 .getResults()

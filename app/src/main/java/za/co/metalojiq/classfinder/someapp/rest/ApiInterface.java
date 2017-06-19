@@ -185,5 +185,5 @@ public interface ApiInterface {
                                   @Query("common") String common,
                                   @Query("nsfas") boolean nsfas,
                                   @Query("wifi") boolean wifi,
-                                  @Query("wifi") boolean prepaid);
+                                  @Query("prepaid_elec") boolean prepaid);
 }

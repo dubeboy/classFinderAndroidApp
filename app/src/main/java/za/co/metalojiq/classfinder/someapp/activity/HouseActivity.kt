@@ -18,21 +18,16 @@ class HouseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_house)
-        val fab = findViewById(R.id.fab) as FloatingActionButton
+        setContentView(R.layout.activity_main)
 
         //fragment injection required code
         fragmentManager = supportFragmentManager
         fragmentTransaction = fragmentManager.beginTransaction()
         val userId = Utils.getUserId(this) //todo User id is already in the prefs so no need for it
-        fragmentTransaction.add(R.id.activity_house,
+        fragmentTransaction.add(R.id.activity_main,
                                 HouseActivityFragment.newInstance(userId),
                                 "ACTIVITY_HOUSE_FRAGMENT")
         fragmentTransaction.commit()
-        fab.setOnClickListener {
-            val intent = Intent(this@HouseActivity, AddHouseActivity::class.java)
-            startActivity(intent)
-        }
     }
 
 }

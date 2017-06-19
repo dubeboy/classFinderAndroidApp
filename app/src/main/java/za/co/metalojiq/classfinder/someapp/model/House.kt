@@ -25,7 +25,7 @@ class House {
     var isPrepaidElectricity: Boolean = false
 
     @SerializedName("results")
-    lateinit var results: ArrayList<Accommodation>
+    var results: ArrayList<Accommodation>? = null
 
     @SerializedName("status")
     var isStatus: Boolean = false
