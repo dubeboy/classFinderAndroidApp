@@ -28,6 +28,7 @@ import za.co.metalojiq.classfinder.someapp.model.House
 import za.co.metalojiq.classfinder.someapp.model.HousesResponse
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface
+import za.co.metalojiq.classfinder.someapp.util.Utils
 import za.co.metalojiq.classfinder.someapp.util.Utils.isLoggedIn
 import za.co.metalojiq.classfinder.someapp.util.Utils.makeToast
 import kotlin.collections.ArrayList
@@ -45,13 +46,15 @@ class HouseActivityFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater?,
                                   container: ViewGroup?,
                                   savedInstanceState: Bundle?): View? {
-
             linearLayout = inflater!!.inflate(R.layout.fragment_accom_list, container, false)
             recyclerView = linearLayout.findViewById(R.id.recycler_view) as RecyclerView
             val gridLayoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
             //val userId : Int = arguments.getInt(MainActivity.USER_ID, -1)
 
-            Log.d(TAG, "onCreateView: the user ID is = $userId")
+            val userId = Utils.getUserId(activity)
+            Log.d(TAG, "fetching initial house data for user : $userId")
+
+            fetchHousesData(0, userId)
 
             progressBar = linearLayout.findViewById(R.id.accomLoad) as ProgressBar
             // val textViewError = linearLayout.findViewById(R.id.accomListTvError) as TextView
@@ -207,13 +210,10 @@ class HouseActivityFragment : Fragment() {
             val POST_ADVERT_ID = TAG + "POST_INT_ADVERT_ID"
 
             private lateinit var linearLayout: View
-            private var userId: Int = -1
 
             fun newInstance(usrId: Int): HouseActivityFragment {
                 Log.d(TAG, "House fragment hello")
                 val args = Bundle()  //might use this some day
-                args.putInt(MainActivity.USER_ID, usrId)
-                userId = usrId
                 val fragment = HouseActivityFragment()
                 fragment.arguments = args
                 return fragment

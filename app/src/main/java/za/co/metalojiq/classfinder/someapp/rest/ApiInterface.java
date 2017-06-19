@@ -167,14 +167,23 @@ public interface ApiInterface {
 
     @Headers({"Accept: application/json"})
     @POST("/api/v1/networks/{network_id}/subscribe")
-    Call<PostResponse> subscribeToNetwork(@Path("network_id") int networkId,@Query("user_id") int userId);
+    Call<PostResponse> subscribeToNetwork(@Path("network_id") int networkId,
+                                          @Query("user_id") int userId);
 
 
-    // House routes! //
+    // House routes! // ================HOUSE ROUTES =====================
     @Headers({"Accept: application/json"})
-    @POST("/api/v1/users/{user_id}/house")
+    @GET("/api/v1/users/{user_id}/house")
     Call<HousesResponse> getHousesForUser(@Path("user_id") int userId,
                                           @Query("page") int page);
 
 
+    @Headers({"Accept: application/json"})
+    @POST("/api/v1/users/{user_id}/house")
+    Call<House> postHouse(@Path("user_id") int userId,
+                                  @Query("address") String address,
+                                  @Query("common") String common,
+                                  @Query("nsfas") boolean nsfas,
+                                  @Query("wifi") boolean wifi,
+                                  @Query("wifi") boolean prepaid);
 }

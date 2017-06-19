@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity
 
 import za.co.metalojiq.classfinder.someapp.R
 import za.co.metalojiq.classfinder.someapp.activity.fragment.HouseActivityFragment
+import za.co.metalojiq.classfinder.someapp.util.Utils
 
 class HouseActivity : AppCompatActivity() {
 
@@ -23,7 +24,7 @@ class HouseActivity : AppCompatActivity() {
         //fragment injection required code
         fragmentManager = supportFragmentManager
         fragmentTransaction = fragmentManager.beginTransaction()
-        val userId = intent.getIntExtra(MainActivity.USER_ID, -1)
+        val userId = Utils.getUserId(this) //todo User id is already in the prefs so no need for it
         fragmentTransaction.add(R.id.activity_house,
                                 HouseActivityFragment.newInstance(userId),
                                 "ACTIVITY_HOUSE_FRAGMENT")

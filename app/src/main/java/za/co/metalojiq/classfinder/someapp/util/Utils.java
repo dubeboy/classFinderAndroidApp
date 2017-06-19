@@ -115,9 +115,6 @@ public class Utils               {
         Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
     }
 
-    public static void l(String msg) {
-        Log.d("Debug", msg);
-    }
 
     public static void logIt(String id, String msg) {
         Log.d(id, msg);

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.metalojiq.classfinder.someapp.R;
-import za.co.metalojiq.classfinder.someapp.model.Accommodation;
 import za.co.metalojiq.classfinder.someapp.model.House;
 
 /**
@@ -77,18 +76,24 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.Hous
         }
 
         void bind(final House house, final HouseListAdapter.OnItemClickListener listener) {
-            tvLocation.setText(house.getWifi() + "\n" + house.isNsfas() + "\n" + house.isPrepaidElectrity() + "\n" + house.getCommon());
+            tvLocation.setText(house.getWifi() + "\n" + house.isNsfas() + "\n" + house.isPrepaidElectricity() + "\n" + house.getCommon());
             String price = house.getAddress();
             tvTitle.setText(price);
             tvRoomType.setText(""); //Todo this should have the tot num people
             Log.d(TAG, house.getResults().get(0).getPicture(0).getImageUrl() + "^END%");
-            Picasso.with(itemView.getContext())
-                    .load(house
-                            .getResults()
-                            .get(0)
-                            .getPicture(0)
-                            .getImageUrl()
-                    ).into(accomImageThumb);
+            if(house.getResults().size() > 0) {  // we want to this if the house has more than item
+                Picasso.with(itemView.getContext())
+                        .load(house
+                                .getResults()
+                                .get(0)
+                                .getPicture(0)
+                                .getImageUrl()
+                        ).into(accomImageThumb);
+            } else {
+
+                //TODO: Should add place holder image
+                accomImageThumb.setVisibility(View.GONE);
+            }
 //            built in onClick listener for a view.. nice!!
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

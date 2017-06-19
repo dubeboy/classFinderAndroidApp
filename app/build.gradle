@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 25
@@ -43,13 +44,14 @@ dependencies {
     compile 'gun0912.ted:tedbottompicker:1.0.12'
     compile 'gun0912.ted:tedpermission:1.0.3'
     compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
-    compile 'com.google.android.gms:play-services-auth:11.0.0' // google play services
+    // google play services
     compile 'com.github.douglasjunior:android-simple-tooltip:0.1.2'
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     testCompile 'junit:junit:4.12'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    implementation 'com.google.android.gms:play-services-auth:11.0.0'
 }
 apply plugin: 'com.google.gms.google-services'
 buildscript {

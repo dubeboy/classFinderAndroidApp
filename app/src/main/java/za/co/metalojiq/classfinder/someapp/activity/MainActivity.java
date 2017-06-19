@@ -137,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         makeToast("Sign out" + status, getApplicationContext());
                     }
                 });
+
     }
 
     private void signOut(SharedPreferences sharedPreferences) {
@@ -186,13 +187,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 //
 //              TODO  should refactor this so that we can just pass another argument id from which class so if an error happens
 //                so that we just show the msg
-                if ((response != null ? response.body() : null) != null) {
-                    ArrayList<Accommodation> accommodations = response.body().getResults();
-                    Log.d(TAG, "host id " + accommodations.get(0).getHostId());
-                    final AccomList accomList = AccomList.newInstance(accommodations);
-                   // final HouseActivityFragment houseActivityFragment = HouseActivityFragment.newInstance(userId);
-                    setTitle(R.string.app_name);
-                    startAccomListActivity(accomList, fragmentTransaction);
+                if (response.body() != null) {
+                    ArrayList<Accommodation> accommodations;
+                    accommodations = response.body().getResults();
+                    if(accommodations.size() > 0) {
+                        Log.d(TAG, "host id " + accommodations.get(0).getHostId());
+                        final AccomList accomList = AccomList.newInstance(accommodations);
+                        setTitle(R.string.app_name);
+                        startAccomListActivity(accomList, fragmentTransaction);
+                    }
                 }
             }
 
@@ -215,6 +218,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        makeToast("Please connect to the internet first", this);
+        makeToast("Please connect to the internet first to use google sign in or update google sign in", this);
     }
 }
