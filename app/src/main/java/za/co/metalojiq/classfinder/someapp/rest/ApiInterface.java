@@ -186,4 +186,8 @@ public interface ApiInterface {
                                   @Query("nsfas") boolean nsfas,
                                   @Query("wifi") boolean wifi,
                                   @Query("prepaid_elec") boolean prepaid);
+
+    @Headers({"Accept: application/json"})
+    @GET("/api/v1/house/{id}/get_accoms")
+    Call<AccommodationResponse> getAccommodationsForHouse(@Path("id") int id);
 }

@@ -22,6 +22,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import za.co.metalojiq.classfinder.someapp.R;
+import za.co.metalojiq.classfinder.someapp.activity.fragment.HouseActivityFragment;
 import za.co.metalojiq.classfinder.someapp.model.AccommodationResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
@@ -45,7 +46,6 @@ public class NewAccommodation extends AppCompatActivity {
     private LinearLayout imagesContainer;
     private ProgressDialog dialog;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +55,8 @@ public class NewAccommodation extends AppCompatActivity {
         roomTypeSpinner = setupSpinner(this, R.id.newSpinnerRoomType, R.array.room_type);
         auckAreaSpinner = setupSpinner(this, R.id.newSpinnerAuckAreas, R.array.auck_areas);
         imagesContainer = (LinearLayout) findViewById(R.id.newImagesHorizontalScroll);
+
+        int houseId = getIntent().getIntExtra(HouseActivityFragment.Companion.getHOUSE_ID(), -1);
 
         locationSpinner.setOnItemSelectedListener(new Utils.LocationItemListener(tvAuck, auckAreaSpinner));
         etPrice = (EditText) findViewById(R.id.newEtPrice);
@@ -77,7 +79,7 @@ public class NewAccommodation extends AppCompatActivity {
                     //TODO should be a notification
                      dialog = ProgressDialog.show(NewAccommodation.this, "",
                             "Uploading images, please wait...", true);
-                    uploadData();
+                    uploadData(houseId);
                 } else {
                     Toast.makeText(NewAccommodation.this,
                             "you have to also include images.", Toast.LENGTH_LONG).show();
@@ -87,7 +89,7 @@ public class NewAccommodation extends AppCompatActivity {
 
     }
 
-    private void uploadData() {
+    private void uploadData(int houseId) {
         String loc = (String) locationSpinner.getSelectedItem();
         String roomT= (String) roomTypeSpinner.getSelectedItem();
         String rawArea = (String) auckAreaSpinner.getSelectedItem();
@@ -119,7 +121,7 @@ public class NewAccommodation extends AppCompatActivity {
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
 
-            Call<AccommodationResponse> call = apiService.postAccommodation(userId, location, roomType, auckArea,
+            Call<AccommodationResponse> call = apiService.postAccommodation(userId, houseId,  location, roomType, auckArea,
                     price, description, requestBody.parts());
             call.enqueue(new Callback<AccommodationResponse>() {
                 @Override

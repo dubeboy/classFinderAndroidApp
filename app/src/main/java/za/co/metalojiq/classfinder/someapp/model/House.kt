@@ -23,10 +23,8 @@ class House {
     var common: String? = null
     @SerializedName("prepaid_elec")
     var isPrepaidElectricity: Boolean = false
-
     @SerializedName("results")
     var results: ArrayList<Accommodation>? = null
-
     @SerializedName("status")
     var isStatus: Boolean = false
 }

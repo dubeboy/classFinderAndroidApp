@@ -24,7 +24,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.AccomList;
-import za.co.metalojiq.classfinder.someapp.activity.fragment.HouseActivityFragment;
 import za.co.metalojiq.classfinder.someapp.activity.network.Networks;
 import za.co.metalojiq.classfinder.someapp.activity.expirimental.SettingsActivity;
 import za.co.metalojiq.classfinder.someapp.model.Accommodation;

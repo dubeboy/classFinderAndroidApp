@@ -81,7 +81,7 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.Hous
             tvTitle.setText(price);
             tvRoomType.setText(""); //Todo this should have the tot num people
 
-            if(house.getResults() != null && house.getResults().size() > 0) {  // we want to this if the house has more than item
+            if (house.getResults() != null && house.getResults().size() > 0) {  // we want to this if the house has more than item
                 Log.d(TAG, house.getResults().get(0).getPicture(0).getImageUrl() + "^END%");
                 Picasso.with(itemView.getContext())
                         .load(house
@@ -106,8 +106,10 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.Hous
     }
 
     public void clear() {
-        houseList.clear();
-        notifyDataSetChanged();
+        if (houseList.size() > 0) {
+            houseList.clear();
+            notifyDataSetChanged();
+        }
     }
 
     public void addAll(ArrayList<House> houses) {

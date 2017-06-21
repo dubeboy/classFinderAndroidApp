@@ -64,6 +64,8 @@ public class AccomList extends Fragment {
         // Required empty public constructor
     }
 
+
+    // this is really good because I would like show diffrent accom based on who is calling!!
     public static AccomList newInstance(ArrayList<Accommodation> accommodations) {
         Log.d(TAG, "Inherererereererere");
         Bundle args = new Bundle();
@@ -146,7 +148,6 @@ public class AccomList extends Fragment {
 
         final FloatingActionButton fab = (FloatingActionButton) linearLayout.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
             @Override
             public void onClick(View view) {
                 if (isLoggedIn(getActivity())) {
@@ -158,12 +159,8 @@ public class AccomList extends Fragment {
                 }
             }
         });
-
-
         return linearLayout;
-
     }
-
 
     //get data from the server given the page
     private void fetchAccomData(final int page) {
@@ -213,7 +210,6 @@ public class AccomList extends Fragment {
                 }
                 progressBar.setVisibility(View.GONE);
             }
-
             @Override
             public void onFailure(Call<AccommodationResponse> call, Throwable t) {
                 Log.d(TAG, t.toString());

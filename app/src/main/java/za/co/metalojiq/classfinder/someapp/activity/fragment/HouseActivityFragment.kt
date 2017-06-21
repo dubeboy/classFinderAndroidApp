@@ -20,11 +20,10 @@ import retrofit2.Response
 
 import za.co.metalojiq.classfinder.someapp.R
 import za.co.metalojiq.classfinder.someapp.activity.AddHouseActivity
+import za.co.metalojiq.classfinder.someapp.activity.HouseAccomsActivity
 import za.co.metalojiq.classfinder.someapp.activity.MainActivity
-import za.co.metalojiq.classfinder.someapp.activity.NewAccommodation
 import za.co.metalojiq.classfinder.someapp.adapter.EndlessRecyclerViewScrollListener
 import za.co.metalojiq.classfinder.someapp.adapter.HouseListAdapter
-import za.co.metalojiq.classfinder.someapp.model.House
 import za.co.metalojiq.classfinder.someapp.model.HousesResponse
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface
@@ -44,7 +43,6 @@ class HouseActivityFragment : Fragment() {
     private var recyclerView: RecyclerView? = null
     private lateinit var linearLayout: View
 
-
     override fun onCreateView(inflater: LayoutInflater?,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -52,73 +50,28 @@ class HouseActivityFragment : Fragment() {
         recyclerView = linearLayout.findViewById(R.id.recycler_view) as RecyclerView
         swipeRefreshLayout = linearLayout.findViewById(R.id.swipeContainer) as SwipeRefreshLayout
         val fab = linearLayout.findViewById(R.id.fab) as FloatingActionButton
-
-
         val gridLayoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        activity.title = "house activity"
-        //val userId : Int = arguments.getInt(MainActivity.USER_ID, -1)
-
+        activity.title = "Your houses"
         val userId = Utils.getUserId(activity)
-        Log.d(TAG, "fetching initial house data for user : $userId")
-
-        fetchHousesData(0, userId)
-
         progressBar = linearLayout.findViewById(R.id.accomLoad) as ProgressBar
-        // val textViewError = linearLayout.findViewById(R.id.accomListTvError) as TextView
-        progressBar!!.visibility = View.VISIBLE // todo: deprecated
-
-
+        progressBar!!.setVisibility(View.GONE) // set the progressbar to be gone
         scrollListener = object : EndlessRecyclerViewScrollListener(gridLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
-                Log.d(TAG, "Called")
-                progressBar!!.visibility = View.VISIBLE // todo: deprecated
+                Log.d(TAG, "Called with page: $page")
                 swipeRefreshLayout!!.isRefreshing = true
-                fetchHousesData(page, userId)
+                fetchMoreHousesData(page, userId)
             }
         }
         recyclerView!!.addOnScrollListener(scrollListener) //TODO test if position matters
-
-        //TODO not working man on emulator
         swipeRefreshLayout!!.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light)
         swipeRefreshLayout!!.setOnRefreshListener({
-            fetchHousesData(0, userId)
+            fetchMoreHousesData(0, userId)
             Toast.makeText(activity, "Refresh", Toast.LENGTH_SHORT).show()
         })
-
         recyclerView!!.layoutManager = gridLayoutManager
-       // recyclerView!!.adapter = houseAdapter
-
-//            if (houses != null) {
-//                Log.d(TAG, "Number of elemets =" + houses.size)
-//                // I need to load the recycler view only if there are items to load!!!
-//                if (houses!!.size > 0) {
-//                    houseAdapter = AccomAdapter(houses, R.layout.list_item_accom, activity.applicationContext,
-//                            AccomAdapter.OnItemClickListener { accommodation ->
-//                                val intent = Intent(activity.applicationContext, AccomImageSlider::class.java)
-//                                intent.putStringArrayListExtra(PICTURES_ARRAY_EXTRA, accommodation.imagesUrls) // TODO: 1/11/17 google how to add an arraylist to a put extra
-//                                intent.putExtra(DOUBLE_PRICE_EXTRA, accommodation.price)
-//                                intent.putExtra(STRING_ROOM_TYPE_EXTRA, accommodation.roomType)
-//                                intent.putExtra(STRING_ROOM_LOCATION_EXTRA, accommodation.location)
-//                                intent.putExtra(STRING_ROOM_DESC, accommodation.description)
-//                                intent.putExtra(POST_INT_HOST_ID, accommodation.hostId)
-//                                Log.d(TAG, "Id of host is ################################### " + accommodation.hostId!!)
-//                                intent.putExtra(POST_ADVERT_ID, accommodation.id)
-//                                startActivity(intent)
-//                            })
-//                    recyclerView.adapter = houseAdapter
-//
-//                } else {
-//                    //Todo(FRAGMENT COMMIT ERROR) Should be an If statement here to Id which fragment
-//                    //so that we can change the text to match wheather a person is just loading all accommodation
-//                    textViewError.visibility = View.VISIBLE
-//                }
-//            } else {
-//                Snackbar.make(linearLayout, "No houses found ")
-//            }
-
         fab.setOnClickListener {
             if (isLoggedIn(activity)) {
                 val intent = Intent(this@HouseActivityFragment.activity, AddHouseActivity::class.java)
@@ -128,12 +81,45 @@ class HouseActivityFragment : Fragment() {
                 makeToast("Please sign in to access this action", context)
             }
         }
+        fetchAndInitialiseFirstData(userId) // at last to this!
         return linearLayout
     }
 
 
+    fun fetchAndInitialiseFirstData(userId: Int) {
+        Log.d(TAG, "fetching initial house data for user : $userId")
+        val apiService = ApiClient.getClient().create<ApiInterface>(ApiInterface::class.java)
+        val call: Call<HousesResponse> = apiService.getHousesForUser(userId, 1)
+        call.enqueue(object : Callback<HousesResponse?> {
+            override fun onResponse(call: Call<HousesResponse?>?, response: Response<HousesResponse?>) {
+                if (response.body() != null) {
+                    val houses = response.body()!!.houses
+                    if (houses!!.size == 0) {
+                        Snackbar.make(linearLayout, "Sorry you have not add your houses to classFinder, press + button to add ",
+                                Snackbar.LENGTH_LONG).show()
+                    }
+                    houseAdapter = HouseListAdapter(houses,
+                            R.layout.list_item_accom, activity.applicationContext,
+                            HouseListAdapter.OnItemClickListener {
+                                house ->
+                                val intent = Intent(activity.applicationContext, HouseAccomsActivity::class.java)
+                                intent.putExtra(HOUSE_ID, house.id)
+                                startActivity(intent)
+                            })
+                    recyclerView!!.adapter = houseAdapter
+                    scrollListener!!.resetState()
+                }
+            }
+
+            override fun onFailure(call: Call<HousesResponse?>?, t: Throwable?) {
+                Snackbar.make(linearLayout, "Sorry classFinder error, we will be back shortly.",
+                        Snackbar.LENGTH_LONG).show()
+            }
+        })
+    }
+
     //get data from the server given the page
-    private fun fetchHousesData(page: Int, userId: Int) {
+    private fun fetchMoreHousesData(page: Int, userId: Int) {
         Log.d(TAG, "you scrolling to page: " + page)
         //        if (page == 1) {
         //            return;
@@ -155,46 +141,27 @@ class HouseActivityFragment : Fragment() {
                 if (response.body() == null)
                     Snackbar.make(linearLayout, "An error happened please try again", Snackbar.LENGTH_SHORT)
                 if (response.body()!!.houses!!.size != 0) {
-                    val houses: ArrayList<House> = ArrayList(response.body()!!.houses)
-                    val housesResults = response.body()!!.houses
+                    val houses = response.body()!!.houses
 
                     if (page == 0) {
                         Log.d(TAG, "Page is here reload")
                         Log.d(TAG, "the houses is: $houses")
-                        houseAdapter = HouseListAdapter(houses, R.layout.list_item_accom, activity.applicationContext,
-                                HouseListAdapter.OnItemClickListener { accommodation ->
-                                    //                                val intent = Intent(activity.applicationContext, AccomImageSlider::class.java)
-//                                intent.putStringArrayListExtra(PICTURES_ARRAY_EXTRA, accommodation.imagesUrls) // TODO: 1/11/17 google how to add an arraylist to a put extra
-//                                intent.putExtra(DOUBLE_PRICE_EXTRA, accommodation.price)
-//                                intent.putExtra(STRING_ROOM_TYPE_EXTRA, accommodation.roomType)
-//                                intent.putExtra(STRING_ROOM_LOCATION_EXTRA, accommodation.location)
-//                                intent.putExtra(STRING_ROOM_DESC, accommodation.description)
-//                                intent.putExtra(POST_INT_HOST_ID, accommodation.hostId)
-//                                Log.d(TAG, "Id of host is ################################### " + accommodation.hostId!!)
-//                                intent.putExtra(POST_ADVERT_ID, accommodation.id)
-//                                startActivity(intent)
-                                    Snackbar.make(linearLayout, "You have clicked ", Snackbar.LENGTH_SHORT)
-                                })
-                        activity.runOnUiThread({
-                            recyclerView!!.adapter = houseAdapter
-
-                        })
-                        // houseAdapter.clear()
-//                            scrollListener.resetState()
-                        swipeRefreshLayout!!.isRefreshing = false
+                        houseAdapter!!.clear()
+                        houseAdapter!!.addAll(ArrayList(houses))
+                        scrollListener!!.resetState()
                     } else {
                         Log.d(TAG, "Page is here loadMore")
                         Log.d(TAG, "onResponse: Houses" + houses.size)
                         //TODO sould use addALL
-                        houses += housesResults  // this is awesome man
+                        houseAdapter!!.addAll(ArrayList(houses))
                         houseAdapter!!.notifyItemRangeInserted(houseAdapter!!.itemCount + 1, response.body()!!.houses.size)
                     }
-                    progressBar!!.visibility = View.GONE
+                    swipeRefreshLayout!!.isRefreshing = false
                 } else {
                     Snackbar.make(linearLayout, "No more accommodationds to load. ", Snackbar.LENGTH_SHORT).show()
                     call.cancel()
                 }
-                progressBar!!.visibility = View.GONE
+                swipeRefreshLayout!!.isRefreshing = false
             }
 
             override fun onFailure(call: Call<HousesResponse>, t: Throwable) {
@@ -214,11 +181,10 @@ class HouseActivityFragment : Fragment() {
         val STRING_ROOM_TYPE_EXTRA = MainActivity.TAG + ".STRING_ROOM_TYPE"
         val STRING_ROOM_DESC = MainActivity.TAG + ".STRING_ROOM_DESC"
         val STRING_ROOM_LOCATION_EXTRA = MainActivity.TAG + ".STRING_ROOM_LOCATION"
-        //Post strings for securing room----------------------------------------------------------------------
         val POST_INT_HOST_ID = MainActivity.TAG + ".POST_STRING_SECURING_ROOM"
         val ACCOM_BUNDLE_KEY = TAG + ".ACCOM_KEY"
         val POST_ADVERT_ID = TAG + "POST_INT_ADVERT_ID"
-
+        val HOUSE_ID = TAG + "HOUSE_ID"
 
         fun newInstance(usrId: Int): HouseActivityFragment {
             Log.d(TAG, "House fragment hello")
