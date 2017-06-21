@@ -36,7 +36,7 @@ class HouseAccomsActivity : AppCompatActivity() {
                 progressBar.visibility = View.GONE //Hide the progress bar man
                 val fragmentTransaction = fragmentManager.beginTransaction()
                 if(response.body() != null && response.body()!!.results != null) {
-                    val accoms = AccomList.newInstance(ArrayList(response.body()!!.results))
+                    val accoms = AccomList.newInstance(ArrayList(response.body()!!.results), houseId)
                     runOnUiThread({  // I think its always good practise man
                         fragmentTransaction.add(R.id.activity_main, accoms, "HOUSE_ACCOMS")
                         fragmentTransaction.commit()

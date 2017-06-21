@@ -39,7 +39,7 @@ public class SearchResults extends AppCompatActivity {
         Search.INTENT_RESPONSE intentResponse = (Search.INTENT_RESPONSE) intent.getSerializableExtra(INTENT_RESPONSE_EXTRA);
         if (intentResponse == Search.INTENT_RESPONSE.SUCCESS) {
             //todo unchecked cast
-            AccomList accomList = AccomList.newInstance(accommodations);
+            AccomList accomList = AccomList.newInstance(accommodations, -1);
             transaction.add(R.id.activity_search_results, accomList, "ACCOM_LIST_FRAGMENT");
         } else {
             GetAccomFailed getAccomFailed = new GetAccomFailed();

@@ -67,9 +67,13 @@ public interface ApiInterface {
     @Multipart
     @Headers({"Accept: application/json"})
     @POST("/api/v1/accommodations")
-    Call<AccommodationResponse> postAccommodation(@Part("user_id") RequestBody userId, @Part("location") RequestBody location,
-                                                  @Part("room_type") RequestBody roomType, @Part("institution") RequestBody auckArea,
-                                                  @Part("price") RequestBody price, @Part("description") RequestBody description,
+    Call<AccommodationResponse> postAccommodation(@Part("user_id") RequestBody userId,
+                                                  @Part("house_id") RequestBody houseId,
+                                                  @Part("location") RequestBody location,
+                                                  @Part("room_type") RequestBody roomType,
+                                                  @Part("institution") RequestBody auckArea,
+                                                  @Part("price") RequestBody price,
+                                                  @Part("description") RequestBody description,
                                                   @Part List<MultipartBody.Part> images);
 
     @Multipart

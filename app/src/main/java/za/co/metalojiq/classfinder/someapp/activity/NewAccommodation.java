@@ -56,7 +56,7 @@ public class NewAccommodation extends AppCompatActivity {
         auckAreaSpinner = setupSpinner(this, R.id.newSpinnerAuckAreas, R.array.auck_areas);
         imagesContainer = (LinearLayout) findViewById(R.id.newImagesHorizontalScroll);
 
-        int houseId = getIntent().getIntExtra(HouseActivityFragment.Companion.getHOUSE_ID(), -1);
+        final int houseId = getIntent().getIntExtra(HouseActivityFragment.Companion.getHOUSE_ID(), -1);
 
         locationSpinner.setOnItemSelectedListener(new Utils.LocationItemListener(tvAuck, auckAreaSpinner));
         etPrice = (EditText) findViewById(R.id.newEtPrice);
@@ -117,12 +117,13 @@ public class NewAccommodation extends AppCompatActivity {
             RequestBody auckArea = RequestBody.create(MediaType.parse("text/plain"), aA);
             RequestBody price = RequestBody.create(MediaType.parse("text/plain"), ((Integer) prc).toString() );
             RequestBody description = RequestBody.create(MediaType.parse("text/plain"), desc);
+            RequestBody hId = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(houseId));
             MultipartBody requestBody = builderNew.build();
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
 
-            Call<AccommodationResponse> call = apiService.postAccommodation(userId, houseId,  location, roomType, auckArea,
-                    price, description, requestBody.parts());
+            Call<AccommodationResponse> call = apiService.postAccommodation(userId, hId,  location, roomType, auckArea,
+                                                                             price, description, requestBody.parts());
             call.enqueue(new Callback<AccommodationResponse>() {
                 @Override
                 public void onResponse(Call<AccommodationResponse> call, Response<AccommodationResponse> response) {

@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -66,10 +67,11 @@ public class AccomList extends Fragment {
 
 
     // this is really good because I would like show diffrent accom based on who is calling!!
-    public static AccomList newInstance(ArrayList<Accommodation> accommodations) {
+    public static AccomList newInstance(ArrayList<Accommodation> accommodations, int houseId) {
         Log.d(TAG, "Inherererereererere");
         Bundle args = new Bundle();
         args.putSerializable(ACCOM_BUNDLE_KEY, accommodations);
+        args.putInt(HouseActivityFragment.Companion.getHOUSE_ID(), houseId);
         AccomList fragment = new AccomList();
         fragment.setArguments(args);
         return fragment;
@@ -116,6 +118,7 @@ public class AccomList extends Fragment {
         //// TODO: 1/13/17  make it better please move this the onCreate Hook
         ArrayList<Accommodation> accommodations =
                 (ArrayList<Accommodation>) getArguments().getSerializable(ACCOM_BUNDLE_KEY);
+        final int houseId = getArguments().getInt(HouseActivityFragment.Companion.getHOUSE_ID(), -1);
 
         if (accommodations != null) {  //I think its redundant.
             Log.d(TAG, "Number of elemets =" + accommodations.size());
@@ -147,16 +150,13 @@ public class AccomList extends Fragment {
         }
 
         final FloatingActionButton fab = (FloatingActionButton) linearLayout.findViewById(R.id.fab);
+        if (houseId < 1) fab.setVisibility(View.GONE);  //hide fab if house id =< 0
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isLoggedIn(getActivity())) {
-                    Intent intent = new Intent(AccomList.this.getActivity(), NewAccommodation.class);
-                    startActivity(intent);
-                } else {
-                    fab.setVisibility(View.GONE);
-                    makeToast("Please sign in to access this action", getContext());
-                }
+                Intent intent = new Intent(AccomList.this.getActivity(), NewAccommodation.class);
+                intent.putExtra(HouseActivityFragment.Companion.getHOUSE_ID(), houseId);
+                startActivity(intent);
             }
         });
         return linearLayout;
@@ -210,6 +210,7 @@ public class AccomList extends Fragment {
                 }
                 progressBar.setVisibility(View.GONE);
             }
+
             @Override
             public void onFailure(Call<AccommodationResponse> call, Throwable t) {
                 Log.d(TAG, t.toString());

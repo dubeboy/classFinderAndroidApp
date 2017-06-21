@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     accommodations = response.body().getResults();
                     if(accommodations.size() > 0) {
                         Log.d(TAG, "host id " + accommodations.get(0).getHostId());
-                        final AccomList accomList = AccomList.newInstance(accommodations);
+                        final AccomList accomList = AccomList.newInstance(accommodations, -1);
                         setTitle(R.string.app_name);
                         startAccomListActivity(accomList, fragmentTransaction);
                     }
@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             public void onFailure(Call<AccommodationResponse> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
                 ArrayList<Accommodation> accommodations = new ArrayList<>();
-               final AccomList accomList = AccomList.newInstance(accommodations);
+               final AccomList accomList = AccomList.newInstance(accommodations, -1);
             //    final HouseActivityFragment myHousesList = HouseActivityFragment.Companion.newInstance(userId);
                 setTitle("Error");
                 startAccomListActivity(accomList, fragmentTransaction);
