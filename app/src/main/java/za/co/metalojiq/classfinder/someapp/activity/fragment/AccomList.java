@@ -3,6 +3,7 @@ package za.co.metalojiq.classfinder.someapp.activity.fragment;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +25,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.activity.AccomImageSlider;
+import za.co.metalojiq.classfinder.someapp.activity.LoginActivity;
 import za.co.metalojiq.classfinder.someapp.activity.MainActivity;
 import za.co.metalojiq.classfinder.someapp.activity.NewAccommodation;
 import za.co.metalojiq.classfinder.someapp.adapter.AccomAdapter;
@@ -31,6 +34,7 @@ import za.co.metalojiq.classfinder.someapp.model.Accommodation;
 import za.co.metalojiq.classfinder.someapp.model.AccommodationResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
+import za.co.metalojiq.classfinder.someapp.util.Utils;
 
 import java.util.ArrayList;
 
@@ -40,7 +44,7 @@ import static za.co.metalojiq.classfinder.someapp.util.Utils.makeToast;
 /**
  * This displays all the available accommodations
  */
-public class AccomList extends Fragment {
+public class AccomList extends Fragment implements AccomAdapter.OnItemClickListener {
     private static final String TAG = AccomList.class.getSimpleName();
 
     public static final String PICTURES_ARRAY_EXTRA = MainActivity.TAG + ".PICTURES_ARRAY_LIST";
@@ -52,6 +56,7 @@ public class AccomList extends Fragment {
     public static final String POST_INT_HOST_ID = MainActivity.TAG + ".POST_STRING_SECURING_ROOM";
     public static final String ACCOM_BUNDLE_KEY = TAG + ".ACCOM_KEY";
     public static final String POST_ADVERT_ID = TAG + "POST_INT_ADVERT_ID";
+    private Button btnShare;
 
 
     private EndlessRecyclerViewScrollListener scrollListener;
@@ -87,6 +92,8 @@ public class AccomList extends Fragment {
         final TextView textViewError = (TextView) linearLayout.findViewById(R.id.accomListTvError);
         progressBar = (ProgressBar) linearLayout.findViewById(R.id.accomLoad);
 
+
+
         StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2,
                 StaggeredGridLayoutManager.VERTICAL);
         scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
@@ -97,6 +104,8 @@ public class AccomList extends Fragment {
                 fetchAccomData(page);
             }
         };
+
+
         recyclerView.addOnScrollListener(scrollListener); //TODO test if position matters
 
         swipeRefreshLayout = (SwipeRefreshLayout) linearLayout.findViewById(R.id.swipeContainer);
@@ -124,22 +133,8 @@ public class AccomList extends Fragment {
             Log.d(TAG, "Number of elemets =" + accommodations.size());
             // I need to load the recycler view only if there are items to load!!!
             if (accommodations.size() > 0) {
-                accomAdapter = new AccomAdapter(accommodations, R.layout.list_item_accom, getActivity().getApplicationContext(),
-                        new AccomAdapter.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(Accommodation accommodation) {
-                                Intent intent = new Intent(getActivity().getApplicationContext(), AccomImageSlider.class);
-                                intent.putStringArrayListExtra(PICTURES_ARRAY_EXTRA, accommodation.getImagesUrls()); // TODO: 1/11/17 google how to add an arraylist to a put extra
-                                intent.putExtra(DOUBLE_PRICE_EXTRA, accommodation.getPrice());
-                                intent.putExtra(STRING_ROOM_TYPE_EXTRA, accommodation.getRoomType());
-                                intent.putExtra(STRING_ROOM_LOCATION_EXTRA, accommodation.getLocation());
-                                intent.putExtra(STRING_ROOM_DESC, accommodation.getDescription());
-                                intent.putExtra(POST_INT_HOST_ID, accommodation.getHostId());
-                                Log.d(TAG, "Id of host is ################################### " + accommodation.getHostId());
-                                intent.putExtra(POST_ADVERT_ID, accommodation.getId());
-                                startActivity(intent);
-                            }
-                        });
+                accomAdapter = new AccomAdapter(accommodations,
+                        R.layout.list_item_accom, getActivity().getApplicationContext(), this);
                 recyclerView.setAdapter(accomAdapter);
 
             } else {
@@ -161,6 +156,7 @@ public class AccomList extends Fragment {
         });
         return linearLayout;
     }
+
 
     //get data from the server given the page
     private void fetchAccomData(final int page) {
@@ -218,5 +214,29 @@ public class AccomList extends Fragment {
                         Snackbar.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @NonNull
+    private void startAcomDetailsActivity(Accommodation accommodation) {
+        Log.d(TAG, "startAcomDetailsActivity: its has been clicked dude ");
+        Intent intent = new Intent(getActivity().getApplicationContext(), AccomImageSlider.class);
+        intent.putStringArrayListExtra(PICTURES_ARRAY_EXTRA, accommodation.getImagesUrls()); // TODO: 1/11/17 google how to add an arraylist to a put extra
+        intent.putExtra(DOUBLE_PRICE_EXTRA, accommodation.getPrice());
+        intent.putExtra(STRING_ROOM_TYPE_EXTRA, accommodation.getRoomType());
+        intent.putExtra(STRING_ROOM_LOCATION_EXTRA, accommodation.getLocation());
+        intent.putExtra(STRING_ROOM_DESC, accommodation.getDescription());
+        intent.putExtra(POST_INT_HOST_ID, accommodation.getHostId());
+        Log.d(TAG, "Id of host is ################################### " + accommodation.getHostId());
+        intent.putExtra(POST_ADVERT_ID, accommodation.getId());
+        startActivity(intent);
+    }
+
+
+    @Override
+    public void onItemClick(Accommodation accommodation) {
+        Log.d(TAG, "onItemClick: its clicked man ");
+        startAcomDetailsActivity(accommodation);
+
+
     }
 }

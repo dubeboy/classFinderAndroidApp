@@ -17,6 +17,7 @@ import com.gun0912.tedpermission.TedPermission;
 import gun0912.tedbottompicker.TedBottomPicker;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -45,6 +46,7 @@ public class NewAccommodation extends AppCompatActivity {
     private EditText etDescription;
     private LinearLayout imagesContainer;
     private ProgressDialog dialog;
+    private OkHttpClient kk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,8 @@ public class NewAccommodation extends AppCompatActivity {
         roomTypeSpinner = setupSpinner(this, R.id.newSpinnerRoomType, R.array.room_type);
         auckAreaSpinner = setupSpinner(this, R.id.newSpinnerAuckAreas, R.array.auck_areas);
         imagesContainer = (LinearLayout) findViewById(R.id.newImagesHorizontalScroll);
+
+        setTitle("Add a room");
 
         final int houseId = getIntent().getIntExtra(HouseActivityFragment.Companion.getHOUSE_ID(), -1);
 
@@ -94,7 +98,7 @@ public class NewAccommodation extends AppCompatActivity {
         String roomT= (String) roomTypeSpinner.getSelectedItem();
         String rawArea = (String) auckAreaSpinner.getSelectedItem();
         int prc =  Integer.valueOf((etPrice.getText().toString()).equals("") ? "0" : etPrice.getText().toString());
-        String desc = etDescription.getText().toString();
+        String desc = etDescription.getText().toString(); // todo: must do validatons here please
 
 
         // we want to upload only if there are images
@@ -127,12 +131,13 @@ public class NewAccommodation extends AppCompatActivity {
             call.enqueue(new Callback<AccommodationResponse>() {
                 @Override
                 public void onResponse(Call<AccommodationResponse> call, Response<AccommodationResponse> response) {
-                    if (response.body().isStatus()) {
+                    if (response.body() != null && response.body().isStatus()) {
                         makeToast("uploaded", NewAccommodation.this);
-                        dialog.dismiss();
+                        dialog.dismiss(); //todo: this is redundant
                         finish();
                     } else {
                         makeToast("Sorry please try again something went wrong double check your submission", NewAccommodation.this);
+                        dialog.dismiss();  //todo: this is redundant
                     }
                 }
                 @Override
@@ -144,20 +149,15 @@ public class NewAccommodation extends AppCompatActivity {
         } else {
             if (TextUtils.isEmpty(desc))  {
                 Toast.makeText(this, "Description has to have something", Toast.LENGTH_SHORT).show();
-
             }
             if (prc == 0)  {
                 Toast.makeText(this, "Price has to be more than 0", Toast.LENGTH_SHORT).show();
-
             }
             if (bitmaps.length == 0)  {
                 Toast.makeText(this, "you have to also include images.", Toast.LENGTH_SHORT).show();
-
             }
         }
     }
-
-
     private  void launchImagesPicker() {
         requestCameraPermissions();
     }
@@ -196,7 +196,6 @@ public class NewAccommodation extends AppCompatActivity {
                 .setCompleteButtonText("Upload")
                 .setEmptySelectionText("No image selected for upload")
                 .create();
-
         bottomSheetDialogFragment.show(getSupportFragmentManager());
     }
     private void requestCameraPermissions() {
@@ -210,7 +209,6 @@ public class NewAccommodation extends AppCompatActivity {
                 Toast.makeText(NewAccommodation.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
             }
         };
-
         new TedPermission(NewAccommodation.this)
                 .setPermissionListener(permissionlistener)
                 .setGotoSettingButton(true)

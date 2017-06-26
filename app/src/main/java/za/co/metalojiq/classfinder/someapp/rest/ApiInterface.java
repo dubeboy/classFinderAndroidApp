@@ -1,5 +1,7 @@
 package za.co.metalojiq.classfinder.someapp.rest;
 
+import android.support.annotation.NonNull;
+
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -152,12 +154,12 @@ public interface ApiInterface {
     //"/api/v1/networks/:network_id/network_posts/:network_post_id/like"
     @POST("/api/v1/networks/{network_id}/network_posts/{network_post_id}/like")
     Call<NetworkPostsResponse> likeNetworkPost(@Path("network_id") int networkId,
-                                          @Path("network_post_id") int postId,
-                                          @Query("user_id") int userId);
+                                               @Path("network_post_id") int postId,
+                                               @Query("user_id") int userId);
 
     @Headers({"Accept: application/json"})
     @POST("/api/v1/networks/{network_id}/network_posts/{network_post_id}/comments")
-    ///api/v1/networks/:network_id/network_posts/:network_post_id/comments
+        ///api/v1/networks/:network_id/network_posts/:network_post_id/comments
     Call<PostResponse> postComment(@Path("network_id") int networkId,
                                    @Path("network_post_id") int postId,
                                    @Query("user_id") int userId,
@@ -185,11 +187,13 @@ public interface ApiInterface {
     @Headers({"Accept: application/json"})
     @POST("/api/v1/users/{user_id}/house")
     Call<House> postHouse(@Path("user_id") int userId,
-                                  @Query("address") String address,
-                                  @Query("common") String common,
-                                  @Query("nsfas") boolean nsfas,
-                                  @Query("wifi") boolean wifi,
-                                  @Query("prepaid_elec") boolean prepaid);
+                          @NonNull @Query("address") String address,
+                          @NonNull @Query("location") String location,
+                          @NonNull @Query("city") String city,
+                          @NonNull @Query("common") String common,
+                          @Query("nsfas") boolean nsfas,
+                          @Query("wifi") boolean wifi,
+                          @Query("prepaid_elec") boolean prepaid);
 
     @Headers({"Accept: application/json"})
     @GET("/api/v1/house/{id}/get_accoms")

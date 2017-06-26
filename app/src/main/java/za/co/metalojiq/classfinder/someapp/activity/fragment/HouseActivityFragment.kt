@@ -32,9 +32,6 @@ import za.co.metalojiq.classfinder.someapp.util.Utils.isLoggedIn
 import za.co.metalojiq.classfinder.someapp.util.Utils.makeToast
 import kotlin.collections.ArrayList
 
-/**
- * A placeholder fragment containing a simple view.
- */
 class HouseActivityFragment : Fragment() {
     private var scrollListener: EndlessRecyclerViewScrollListener? = null
     private var progressBar: ProgressBar? = null
@@ -54,7 +51,7 @@ class HouseActivityFragment : Fragment() {
         activity.title = "Your houses"
         val userId = Utils.getUserId(activity)
         progressBar = linearLayout.findViewById(R.id.accomLoad) as ProgressBar
-        progressBar!!.setVisibility(View.GONE) // set the progressbar to be gone
+        progressBar!!.visibility = View.GONE // set the progressbar to be gone
         scrollListener = object : EndlessRecyclerViewScrollListener(gridLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
                 Log.d(TAG, "Called with page: $page")
@@ -84,8 +81,6 @@ class HouseActivityFragment : Fragment() {
         fetchAndInitialiseFirstData(userId) // at last to this!
         return linearLayout
     }
-
-
     fun fetchAndInitialiseFirstData(userId: Int) {
         Log.d(TAG, "fetching initial house data for user : $userId")
         val apiService = ApiClient.getClient().create<ApiInterface>(ApiInterface::class.java)
@@ -110,7 +105,6 @@ class HouseActivityFragment : Fragment() {
                     scrollListener!!.resetState()
                 }
             }
-
             override fun onFailure(call: Call<HousesResponse?>?, t: Throwable?) {
                 Snackbar.make(linearLayout, "Sorry classFinder error, we will be back shortly.",
                         Snackbar.LENGTH_LONG).show()
@@ -121,9 +115,6 @@ class HouseActivityFragment : Fragment() {
     //get data from the server given the page
     private fun fetchMoreHousesData(page: Int, userId: Int) {
         Log.d(TAG, "you scrolling to page: " + page)
-        //        if (page == 1) {
-        //            return;
-        //        }  // dont do anything if page is equal to one
 
         val apiService = ApiClient.getClient().create<ApiInterface>(ApiInterface::class.java)
         val call: Call<HousesResponse>
@@ -175,16 +166,8 @@ class HouseActivityFragment : Fragment() {
 
     companion object {
         private val TAG = HouseActivityFragment::class.simpleName
-
-        val PICTURES_ARRAY_EXTRA = MainActivity.TAG + ".PICTURES_ARRAY_LIST"
-        val DOUBLE_PRICE_EXTRA = MainActivity.TAG + ".DOUBLE_PRICE"
-        val STRING_ROOM_TYPE_EXTRA = MainActivity.TAG + ".STRING_ROOM_TYPE"
-        val STRING_ROOM_DESC = MainActivity.TAG + ".STRING_ROOM_DESC"
-        val STRING_ROOM_LOCATION_EXTRA = MainActivity.TAG + ".STRING_ROOM_LOCATION"
-        val POST_INT_HOST_ID = MainActivity.TAG + ".POST_STRING_SECURING_ROOM"
-        val ACCOM_BUNDLE_KEY = TAG + ".ACCOM_KEY"
-        val POST_ADVERT_ID = TAG + "POST_INT_ADVERT_ID"
-        val HOUSE_ID = TAG + "HOUSE_ID"
+        val HOUSE_ID = TAG + "_HOUSE_ID"
+        val HOUSE_NAME = TAG + "_HOUSE_NAME"
 
         fun newInstance(usrId: Int): HouseActivityFragment {
             Log.d(TAG, "House fragment hello")

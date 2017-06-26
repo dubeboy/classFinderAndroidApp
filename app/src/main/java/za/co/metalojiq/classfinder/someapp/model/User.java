@@ -1,6 +1,10 @@
 package za.co.metalojiq.classfinder.someapp.model;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -20,6 +24,9 @@ public class User {
     private ArrayList<TimeSlot> timeSlots;
     @SerializedName("runner")
     private boolean runner;
+    @SerializedName("token")
+    @NonNull
+    private String token;
 
 
     public ArrayList<TimeSlot> getTimeSlots() {
@@ -67,6 +74,14 @@ public class User {
     public boolean isRunner() {
 
         return runner;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(@NonNull String token) {
+        this.token = token;
     }
 
     //This class belongs to the user and nowhere else so u can only get to it via a user object.

@@ -67,6 +67,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public static final String GOOGLE_USER_TOKEN = "GOOGLE_USER_TOKEN";
     public static final String GOOGLE_USER_EMAIL = "GOOGLE_USER_EMAIL";
     public static final String GOOGLE_USER_NAME = "GOOGLE_USER_NAME";
+    public static final String USER_LOGIN_TOKEN = "USER_LOGIN_TOKEN";
     /**
      * Keep track of the login task to ensure we can onCancelCallback it if requested.
      */
@@ -90,7 +91,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
-        EditorInfo editorInfo = new EditorInfo();
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -134,12 +134,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             }
         });
-//        (findViewById(R.id.google_sign_out_button)).setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                signOut();
-//            }
-//        });
     }
 
 
@@ -417,6 +411,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         editor.putString(LOGIN_PREF_EMAIL, response.body().getUser().getEmail());
                         editor.putInt(LOGIN_PREF_USER_ID, response.body().getUser().getId());
                         editor.putBoolean(LOGIN_IS_RUNNER, response.body().getUser().isRunner());
+                        editor.putString(USER_LOGIN_TOKEN, response.body().getUser().getToken());
                         editor.apply(); //fixme does this backgroud thing effect any thing
                         Log.d(TAG,sharedPreferences.getString(LOGIN_PREF_EMAIL, "YOHHHHHHH this is a problem NO EMAIL MAN DAMN!!!"));
                         // only here you should finish

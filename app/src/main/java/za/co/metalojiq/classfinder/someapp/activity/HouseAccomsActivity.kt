@@ -16,6 +16,7 @@ import za.co.metalojiq.classfinder.someapp.model.AccommodationResponse
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface
 
+
 class HouseAccomsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,10 +35,11 @@ class HouseAccomsActivity : AppCompatActivity() {
         call.enqueue(object: Callback<AccommodationResponse?> {
             override fun onResponse(call: Call<AccommodationResponse?>, response: Response<AccommodationResponse?>) {
                 progressBar.visibility = View.GONE //Hide the progress bar man
-                val fragmentTransaction = fragmentManager.beginTransaction()
+
                 if(response.body() != null && response.body()!!.results != null) {
                     val accoms = AccomList.newInstance(ArrayList(response.body()!!.results), houseId)
                     runOnUiThread({  // I think its always good practise man
+                        val fragmentTransaction = fragmentManager.beginTransaction()
                         fragmentTransaction.add(R.id.activity_main, accoms, "HOUSE_ACCOMS")
                         fragmentTransaction.commit()
                     })

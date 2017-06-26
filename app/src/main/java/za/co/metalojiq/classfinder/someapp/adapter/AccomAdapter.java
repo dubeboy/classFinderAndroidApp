@@ -1,16 +1,23 @@
 package za.co.metalojiq.classfinder.someapp.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import za.co.metalojiq.classfinder.someapp.R;
+import za.co.metalojiq.classfinder.someapp.activity.LoginActivity;
 import za.co.metalojiq.classfinder.someapp.model.Accommodation;
+import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
+import za.co.metalojiq.classfinder.someapp.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +55,7 @@ public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHol
     //the holder object represents the current item that we working at
     @Override
     public void onBindViewHolder(AccomViewHolder holder, final int position) {
+        holder.setActivity(context);
         holder.bind(accommodations.get(position), listener);
     }
 
@@ -62,17 +70,24 @@ public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHol
 
     static class AccomViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView accomImageThumb;
-        TextView tvTitle;
-        TextView tvLocation;
-        TextView tvRoomType;
+        private final ImageButton btnShare;
+        private final ImageView accomImageThumb;
+        private final TextView tvTitle;
+        private final TextView tvLocation;
+        private final TextView tvRoomType;
+        private Context activity = null;
+
         AccomViewHolder(View itemView) {
             super(itemView);
             accomImageThumb = (ImageView) itemView.findViewById(R.id.img_thumbnail);
             tvTitle = (TextView) itemView.findViewById(R.id.tv_title);
             tvLocation = (TextView) itemView.findViewById(R.id.tv_location);
             tvRoomType = (TextView) itemView.findViewById(R.id.tv_room_type);
+            btnShare = (ImageButton) itemView.findViewById(R.id.btn_share);
+
         }
+
+
 
 //        this function will do all the binding to the each item list todo: a bit inefficient
         void bind(final Accommodation accommodation, final OnItemClickListener listener) {
@@ -91,6 +106,25 @@ public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHol
                     listener.onItemClick(accommodation);
                 }
             });
+
+            btnShare.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_SEND);
+                    String userToken = Utils.getUserSharedPreferences(activity)
+                            .getString(LoginActivity
+                                    .USER_LOGIN_TOKEN, "");
+                    String url = ApiClient.DEV_HOST + "/api/v1/refs?token=" + userToken + "&accom_id=" + accommodation.getId();
+                    intent.putExtra(Intent.EXTRA_TEXT, url);
+                    intent.setType("text/plain");
+                    activity.startActivity(intent);
+                }
+            });
+        }
+
+        public void setActivity(Context activity) {
+            this.activity = activity;
         }
     }
 
@@ -103,4 +137,6 @@ public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHol
         accommodations.addAll(accoms);
         notifyDataSetChanged();
     }
+
+
 }
