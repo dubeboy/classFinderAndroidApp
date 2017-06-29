@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -13,7 +14,7 @@ import java.util.ArrayList;
  */
 
 //if the user authenticates using the gmail them then user we get that user id and check if its there on our servers
-public class User {
+public class User implements Serializable {
     @SerializedName("id")
     private int id; //todo: should be a long bra
     @SerializedName("email")

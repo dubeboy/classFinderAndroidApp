@@ -2,13 +2,15 @@ package za.co.metalojiq.classfinder.someapp.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by divine on 1/18/17.
  */
 
 
 //Transaction is a very good mixed up object which gets data from an Accommodation and User
-public class Transaction {
+public class Transaction implements Serializable {
     //Todo these mapping should change because they are now generic
     @SerializedName("accom_id")
     private String id;

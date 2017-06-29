@@ -1,6 +1,7 @@
 package za.co.metalojiq.classfinder.someapp.model
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 import java.util.ArrayList
 
@@ -9,7 +10,7 @@ import java.util.ArrayList
  */
 
 //maybe should have been a data class!:todo
-class House {
+class House: Serializable {
     @SerializedName("id")
     var id: Int = 0
     @SerializedName("address")

@@ -2,12 +2,13 @@ package za.co.metalojiq.classfinder.someapp.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by divine on 2/28/17.
  */
-public class Venue {
+public class Venue  implements Serializable{
     @SerializedName("name")
     private String name;
 
