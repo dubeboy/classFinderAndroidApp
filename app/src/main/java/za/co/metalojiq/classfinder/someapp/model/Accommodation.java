@@ -12,8 +12,6 @@ public class Accommodation implements Serializable {
     private Integer id;
     @SerializedName("host_id")
     private Integer hostId;
-    @SerializedName("location")
-    private String location;
     @SerializedName("room_type")
     private String roomType;
     @SerializedName("price")
@@ -22,11 +20,11 @@ public class Accommodation implements Serializable {
     private String description;
     @SerializedName("pictures")
     private List<Picture> pictures = null;
+    private House house = null; //will be null for some few seconds
 
     public Accommodation(Integer id, Integer hostId, String location, String roomType, String price, String description, List<Picture> pictures) {
         this.id = id;
         this.hostId = hostId;
-        this.location = location;
         this.roomType = roomType;
         this.price = price;
         this.description = description;
@@ -39,14 +37,6 @@ public class Accommodation implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
     }
 
     public String getRoomType() {
@@ -99,6 +89,14 @@ public class Accommodation implements Serializable {
 
     public void setHostId(Integer hostId) {
         this.hostId = hostId;
+    }
+
+    public House getHouse() {
+        return house;
+    }
+
+    public void setHouse(House house) {
+        this.house = house;
     }
 }
 

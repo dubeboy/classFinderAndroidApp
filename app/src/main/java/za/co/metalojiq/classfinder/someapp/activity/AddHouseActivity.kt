@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
@@ -21,8 +20,11 @@ import za.co.metalojiq.classfinder.someapp.rest.ApiClient
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface
 import za.co.metalojiq.classfinder.someapp.util.Utils
 import kotlinx.android.synthetic.main.activity_add_house.*
+import za.co.metalojiq.classfinder.someapp.activity.fragment.HouseActivityFragment.Companion.HOUSE_ID
 
 class AddHouseActivity : AppCompatActivity() {
+
+    lateinit var progressDialog: ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +40,9 @@ class AddHouseActivity : AppCompatActivity() {
         val ckWifi = findViewById(R.id.checkbox_wifi) as CheckBox
         val ckPrepaid = findViewById(R.id.checkbox_prepaid_elec) as CheckBox
         val btnAddHouse = findViewById(R.id.btn_add_house) as Button
+        val progressDialog: ProgressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Adding your house to classfinder, please wait.")
+
 
         btnAddHouse.setOnClickListener({
             if (validate(userId, etAddress.text.toString(), etCommon.text.toString())) {
@@ -64,10 +69,8 @@ class AddHouseActivity : AppCompatActivity() {
                           wifi: Boolean,
                           prepaid: Boolean) {
 
-        val progressDialog = ProgressDialog(this)
-        progressDialog.setMessage("Adding your house to classfinder, please wait.")
-        progressDialog.show() // show the dialog
 
+        progressDialog.show() // show the dialog
         val apiService = ApiClient.getClient().create(ApiInterface::class.java)
         val call = apiService.postHouse(userId, address, location, city, common, nsfas, wifi, prepaid)
 
@@ -80,7 +83,8 @@ class AddHouseActivity : AppCompatActivity() {
                                 "House saved",
                                 LENGTH_LONG).show()
                         val intent = Intent(this@AddHouseActivity, NewAccommodation::class.java)
-                        intent.putExtra(HOUSE_ID, response.body()?.id)
+                        Log.d(TAG, "the house id is: ${response.body()!!.id}")
+                        intent.putExtra(HOUSE_ID, response.body()!!.id)
                         startActivity(intent)
                     } else {
                         makeText(this@AddHouseActivity, "failed to add your house to classfinder", Toast.LENGTH_LONG).show()
@@ -102,12 +106,10 @@ class AddHouseActivity : AppCompatActivity() {
     //my static members
     companion object {
         private val TAG = "AddHouseActivity"
-        private val HOUSE_ID = "HouseId"
 
         private fun validate(userId: Int,
                              address: String,
                              common: String): Boolean {
-
             if (userId < 1) return false
             if (TextUtils.isEmpty(address)) return false
             if (TextUtils.isEmpty(common)) return false

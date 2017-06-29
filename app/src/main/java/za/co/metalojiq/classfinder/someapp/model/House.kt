@@ -8,6 +8,7 @@ import java.util.ArrayList
  * Created by divine on 2017/06/15.
  */
 
+//maybe should have been a data class!:todo
 class House {
     @SerializedName("id")
     var id: Int = 0
@@ -27,4 +28,9 @@ class House {
     var results: ArrayList<Accommodation>? = null
     @SerializedName("status")
     var isStatus: Boolean = false
+    @SerializedName("city")
+    var city: String? = null
+    private var _location: String? = null
+    var location: String? = null
+
 }

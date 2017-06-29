@@ -1,6 +1,5 @@
 package za.co.metalojiq.classfinder.someapp.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -8,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -91,7 +89,7 @@ public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHol
 
 //        this function will do all the binding to the each item list todo: a bit inefficient
         void bind(final Accommodation accommodation, final OnItemClickListener listener) {
-            tvLocation.setText(accommodation.getLocation());
+            tvLocation.setText(accommodation.getHouse().getLocation());
             String price = "R " + accommodation.getPrice();
             tvTitle.setText(price);
             tvRoomType.setText(accommodation.getRoomType());
@@ -122,7 +120,6 @@ public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHol
                 }
             });
         }
-
         public void setActivity(Context activity) {
             this.activity = activity;
         }

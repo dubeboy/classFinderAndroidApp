@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         editor.remove(LoginActivity.LOGIN_PREF_USER_ID);
         supportInvalidateOptionsMenu();
         editor.apply();
-        googleSignOut();
+//        googleSignOut();  // todo: eactivate soon
     }
 
 

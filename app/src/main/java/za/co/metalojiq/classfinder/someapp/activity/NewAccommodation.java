@@ -37,32 +37,34 @@ import static za.co.metalojiq.classfinder.someapp.util.Utils.*;
 public class NewAccommodation extends AppCompatActivity {
 
     private static final String TAG = NewAccommodation.class.getSimpleName();
-    private Spinner locationSpinner;
-    private Spinner roomTypeSpinner;
-    private Spinner auckAreaSpinner;
+    //    private Spinner auckAreaSpinner;
+    //    private Spinner locationSpinner;
     private Bitmap[] bitmaps;
+    private Spinner roomTypeSpinner;
     private String[] imageUris;
     private EditText etPrice;
     private EditText etDescription;
     private LinearLayout imagesContainer;
     private ProgressDialog dialog;
-    private OkHttpClient kk;
+//    private OkHttpClient kk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_accommodation);
-        TextView tvAuck = (TextView) findViewById(R.id.newAuckAreas);
-        locationSpinner = setupSpinner(this, R.id.newSpinnerLocation, R.array.locations_array);
+       // TextView tvAuck = (TextView) findViewById(R.id.newAuckAreas);
+        //locationSpinner = setupSpinner(this, R.id.newSpinnerLocation, R.array.locations_array);
         roomTypeSpinner = setupSpinner(this, R.id.newSpinnerRoomType, R.array.room_type);
-        auckAreaSpinner = setupSpinner(this, R.id.newSpinnerAuckAreas, R.array.auck_areas);
+       // auckAreaSpinner = setupSpinner(this, R.id.newSpinnerAuckAreas, R.array.auck_areas);
         imagesContainer = (LinearLayout) findViewById(R.id.newImagesHorizontalScroll);
 
         setTitle("Add a room");
 
-        final int houseId = getIntent().getIntExtra(HouseActivityFragment.Companion.getHOUSE_ID(), -1);
+        final int houseId = getIntent()
+                            .getIntExtra(HouseActivityFragment.Companion.getHOUSE_ID(), -1);
+        Log.d(TAG, "onCreate: the passed in house id is:  " + houseId);
 
-        locationSpinner.setOnItemSelectedListener(new Utils.LocationItemListener(tvAuck, auckAreaSpinner));
+       // locationSpinner.setOnItemSelectedListener(new Utils.LocationItemListener(tvAuck, auckAreaSpinner));
         etPrice = (EditText) findViewById(R.id.newEtPrice);
         etDescription = (EditText) findViewById(R.id.newBooksDesc);
 
@@ -93,10 +95,11 @@ public class NewAccommodation extends AppCompatActivity {
 
     }
 
-    private void uploadData(int houseId) {
-        String loc = (String) locationSpinner.getSelectedItem();
+    private void uploadData(final int houseId) {
+//        String loc = (String) locationSpinner.getSelectedItem();
+        Log.d(TAG, "uploadData: the house id is: " + houseId);
         String roomT= (String) roomTypeSpinner.getSelectedItem();
-        String rawArea = (String) auckAreaSpinner.getSelectedItem();
+//        String rawArea = (String) auckAreaSpinner.getSelectedItem();
         int prc =  Integer.valueOf((etPrice.getText().toString()).equals("") ? "0" : etPrice.getText().toString());
         String desc = etDescription.getText().toString(); // todo: must do validatons here please
 
@@ -114,11 +117,11 @@ public class NewAccommodation extends AppCompatActivity {
                 builderNew.addFormDataPart("images[]", file.getName(), reqFile);
             }
             int uId = getUserSharedPreferences(this).getInt(LoginActivity.LOGIN_PREF_USER_ID, 0);
-            String aA = AUCK_AREA_PREFIX + rawArea;
+//            String aA = AUCK_AREA_PREFIX + rawArea;
             RequestBody userId = RequestBody.create(MediaType.parse("text/plain"),((Integer) uId).toString() );
-            RequestBody location = RequestBody.create(MediaType.parse("text/plain"), loc);
+//            RequestBody location = RequestBody.create(MediaType.parse("text/plain"), loc);
             RequestBody roomType = RequestBody.create(MediaType.parse("text/plain"), roomT);
-            RequestBody auckArea = RequestBody.create(MediaType.parse("text/plain"), aA);
+//            RequestBody auckArea = RequestBody.create(MediaType.parse("text/plain"), aA);
             RequestBody price = RequestBody.create(MediaType.parse("text/plain"), ((Integer) prc).toString() );
             RequestBody description = RequestBody.create(MediaType.parse("text/plain"), desc);
             RequestBody hId = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(houseId));
@@ -126,7 +129,7 @@ public class NewAccommodation extends AppCompatActivity {
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
 
-            Call<AccommodationResponse> call = apiService.postAccommodation(userId, hId,  location, roomType, auckArea,
+            Call<AccommodationResponse> call = apiService.postAccommodation(userId, hId, roomType,
                                                                              price, description, requestBody.parts());
             call.enqueue(new Callback<AccommodationResponse>() {
                 @Override

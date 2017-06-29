@@ -144,6 +144,7 @@ class HouseActivityFragment : Fragment() {
                         Log.d(TAG, "Page is here loadMore")
                         Log.d(TAG, "onResponse: Houses" + houses.size)
                         //TODO sould use addALL
+
                         houseAdapter!!.addAll(ArrayList(houses))
                         houseAdapter!!.notifyItemRangeInserted(houseAdapter!!.itemCount + 1, response.body()!!.houses.size)
                     }

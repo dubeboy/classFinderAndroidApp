@@ -16,28 +16,28 @@
 
     >
 
-        <TextView
-                android:text="Location"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:id="@+id/newTvLocation"/>
-        <Spinner
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:id="@+id/newSpinnerLocation"/>
-        <TextView
-                android:text="Auckland Park Areas"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:id="@+id/newAuckAreas"/>
-        <Spinner
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:id="@+id/newSpinnerAuckAreas"/>
+        <!--<TextView-->
+                <!--android:text="Location"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="18dp"-->
+                <!--android:id="@+id/newTvLocation"/>-->
+        <!--<Spinner-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="14dp"-->
+                <!--android:id="@+id/newSpinnerLocation"/>-->
+        <!--<TextView-->
+                <!--android:text="Auckland Park Areas"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="16dp"-->
+                <!--android:id="@+id/newAuckAreas"/>-->
+        <!--<Spinner-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="15dp"-->
+                <!--android:id="@+id/newSpinnerAuckAreas"/>-->
         <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

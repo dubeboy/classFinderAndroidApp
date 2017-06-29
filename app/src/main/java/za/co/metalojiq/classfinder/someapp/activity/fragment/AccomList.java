@@ -52,6 +52,8 @@ public class AccomList extends Fragment implements AccomAdapter.OnItemClickListe
     public static final String STRING_ROOM_TYPE_EXTRA = MainActivity.TAG + ".STRING_ROOM_TYPE";
     public static final String STRING_ROOM_DESC = MainActivity.TAG + ".STRING_ROOM_DESC";
     public static final String STRING_ROOM_LOCATION_EXTRA = MainActivity.TAG + ".STRING_ROOM_LOCATION";
+    public static final String STRING_ROOM_ADDRESS_EXTRA = MainActivity.TAG + ".STRING_ROOM_ADDRESS";
+    public static final String STRING_ROOM_CITY_EXTRA = MainActivity.TAG + ".STRING_ROOM_CITY";
     //Post strings for securing room----------------------------------------------------------------------
     public static final String POST_INT_HOST_ID = MainActivity.TAG + ".POST_STRING_SECURING_ROOM";
     public static final String ACCOM_BUNDLE_KEY = TAG + ".ACCOM_KEY";
@@ -216,14 +218,15 @@ public class AccomList extends Fragment implements AccomAdapter.OnItemClickListe
         });
     }
 
-    @NonNull
-    private void startAcomDetailsActivity(Accommodation accommodation) {
+    private void startAcomDetailsActivity(@NonNull Accommodation accommodation) {
         Log.d(TAG, "startAcomDetailsActivity: its has been clicked dude ");
         Intent intent = new Intent(getActivity().getApplicationContext(), AccomImageSlider.class);
         intent.putStringArrayListExtra(PICTURES_ARRAY_EXTRA, accommodation.getImagesUrls()); // TODO: 1/11/17 google how to add an arraylist to a put extra
         intent.putExtra(DOUBLE_PRICE_EXTRA, accommodation.getPrice());
         intent.putExtra(STRING_ROOM_TYPE_EXTRA, accommodation.getRoomType());
-        intent.putExtra(STRING_ROOM_LOCATION_EXTRA, accommodation.getLocation());
+        intent.putExtra(STRING_ROOM_LOCATION_EXTRA, accommodation.getHouse().getLocation());
+        intent.putExtra(STRING_ROOM_ADDRESS_EXTRA, accommodation.getHouse().getAddress());
+        intent.putExtra(STRING_ROOM_CITY_EXTRA, accommodation.getHouse().getCity());
         intent.putExtra(STRING_ROOM_DESC, accommodation.getDescription());
         intent.putExtra(POST_INT_HOST_ID, accommodation.getHostId());
         Log.d(TAG, "Id of host is ################################### " + accommodation.getHostId());
