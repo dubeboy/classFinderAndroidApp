@@ -75,8 +75,18 @@ public interface ApiInterface {
                                                   @Part("room_type") RequestBody roomType,
 //                                                  @Part("institution") RequestBody auckArea,
                                                   @Part("price") RequestBody price,
+                                                  @Part("deposit") RequestBody deposit,
                                                   @Part("description") RequestBody description,
                                                   @Part List<MultipartBody.Part> images);
+
+
+    @Headers({"Accept: application/json"})
+    @POST("/api/v1/accommodations/{id}/deposit")
+    Call<StatusRespose> postToken(@Path("id") Integer accommdationId,
+                                  @Query("stripeToken") String token,
+                                  @Query("email") String email);
+
+    //----------------------------------BOOKS-------------------------------------------------
 
     @Multipart
     @Headers({"Accept: application/json"})

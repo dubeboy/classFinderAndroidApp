@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/list"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:orientation="vertical"
+    android:padding="8dp"
+    tools:context="za.co.metalojiq.classfinder.someapp.activity.fragment.CardInputFragment"
+     >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:text="Deposit for room"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/primary_dark"
+        android:layout_height="wrap_content" />
+
+    <com.stripe.android.view.CardInputWidget
+        android:id="@+id/card_input_widget"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:id="@+id/btn_pay"
+        android:text="Pay (Amount here dwag)"
+        android:layout_height="wrap_content" />
+
+
+</LinearLayout>

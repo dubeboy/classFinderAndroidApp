@@ -1,5 +1,6 @@
 package za.co.metalojiq.classfinder.someapp.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,8 @@ import za.co.metalojiq.classfinder.someapp.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static za.co.metalojiq.classfinder.someapp.util.Utils.shareButtonIntent;
 
 
 /**
@@ -108,18 +111,13 @@ public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHol
             btnShare.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent();
-                    intent.setAction(Intent.ACTION_SEND);
-                    String userToken = Utils.getUserSharedPreferences(activity)
-                            .getString(LoginActivity
-                                    .USER_LOGIN_TOKEN, "");
-                    String url = ApiClient.DEV_HOST + "/api/v1/refs?token=" + userToken + "&accom_id=" + accommodation.getId();
-                    intent.putExtra(Intent.EXTRA_TEXT, url);
-                    intent.setType("text/plain");
-                    activity.startActivity(intent);
+                    activity.startActivity(shareButtonIntent(accommodation.getId(), activity));
                 }
             });
         }
+
+
+
         public void setActivity(Context activity) {
             this.activity = activity;
         }

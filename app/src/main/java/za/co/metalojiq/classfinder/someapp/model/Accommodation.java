@@ -20,7 +20,10 @@ public class Accommodation implements Serializable {
     private String description;
     @SerializedName("pictures")
     private List<Picture> pictures = null;
+    @SerializedName("house")
     private House house = null; //will be null for some few seconds
+    @SerializedName("deposit")
+    private double deposit;
 
     public Accommodation(Integer id, Integer hostId, String location, String roomType, String price, String description, List<Picture> pictures) {
         this.id = id;
@@ -97,6 +100,14 @@ public class Accommodation implements Serializable {
 
     public void setHouse(House house) {
         this.house = house;
+    }
+
+    public double getDeposit() {
+        return deposit;
+    }
+
+    public void setDeposit(double deposit) {
+        this.deposit = deposit;
     }
 }
 

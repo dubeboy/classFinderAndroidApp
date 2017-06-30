@@ -58,6 +58,7 @@ public class AccomList extends Fragment implements AccomAdapter.OnItemClickListe
     public static final String POST_INT_HOST_ID = MainActivity.TAG + ".POST_STRING_SECURING_ROOM";
     public static final String ACCOM_BUNDLE_KEY = TAG + ".ACCOM_KEY";
     public static final String POST_ADVERT_ID = TAG + "POST_INT_ADVERT_ID";
+    public static final String DOUBLE_ROOM_DEPOSIT_EXTRA = "DOUBLE_DEPOSIT";
     private Button btnShare;
 
 
@@ -229,6 +230,8 @@ public class AccomList extends Fragment implements AccomAdapter.OnItemClickListe
         intent.putExtra(STRING_ROOM_CITY_EXTRA, accommodation.getHouse().getCity());
         intent.putExtra(STRING_ROOM_DESC, accommodation.getDescription());
         intent.putExtra(POST_INT_HOST_ID, accommodation.getHostId());
+        intent.putExtra(DOUBLE_ROOM_DEPOSIT_EXTRA,String.valueOf(accommodation.getDeposit()));
+
         Log.d(TAG, "Id of host is ################################### " + accommodation.getHostId());
         intent.putExtra(POST_ADVERT_ID, accommodation.getId());
         startActivity(intent);

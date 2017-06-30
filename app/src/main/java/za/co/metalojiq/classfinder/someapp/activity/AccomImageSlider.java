@@ -26,6 +26,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.AccomList;
+import za.co.metalojiq.classfinder.someapp.activity.fragment.CardInputFragment;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.DatePickerFragment;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.ListBottomSheet;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.TimePickerFragment;
@@ -33,6 +34,10 @@ import za.co.metalojiq.classfinder.someapp.adapter.AccomImageAdapter;
 import za.co.metalojiq.classfinder.someapp.model.AccommodationResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
+import za.co.metalojiq.classfinder.someapp.util.Utils;
+
+import static za.co.metalojiq.classfinder.someapp.activity.LoginActivity.GOOGLE_USER_EMAIL;
+import static za.co.metalojiq.classfinder.someapp.activity.LoginActivity.LOGIN_PREF_EMAIL;
 
 /**
  * Created by divine on 1/11/17.
@@ -47,6 +52,7 @@ public class AccomImageSlider extends AppCompatActivity implements
     private int hostId;
     private int studentId;
     private int advertId;
+    private Button btnRent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,7 +61,8 @@ public class AccomImageSlider extends AppCompatActivity implements
         //setStatusBarTranslucent(true);
         //get passed in intent
         Intent intent = getIntent();
-        ArrayList<String> stringArrayList = intent.getStringArrayListExtra(AccomList.PICTURES_ARRAY_EXTRA);
+        ArrayList<String> stringArrayList =
+                intent.getStringArrayListExtra(AccomList.PICTURES_ARRAY_EXTRA);
 
         String price = intent.getStringExtra(AccomList.DOUBLE_PRICE_EXTRA);
         String roomType = intent.getStringExtra(AccomList.STRING_ROOM_TYPE_EXTRA);
@@ -63,13 +70,21 @@ public class AccomImageSlider extends AppCompatActivity implements
         String description = intent.getStringExtra(AccomList.STRING_ROOM_DESC);
         String address = intent.getStringExtra(AccomList.STRING_ROOM_ADDRESS_EXTRA);
         String city = intent.getStringExtra(AccomList.STRING_ROOM_CITY_EXTRA);
+        final String deposit = intent.getStringExtra(AccomList.DOUBLE_ROOM_DEPOSIT_EXTRA);
         hostId = intent.getIntExtra(AccomList.POST_INT_HOST_ID, 0);
 
-        SharedPreferences sharedPreferences = getSharedPreferences(LoginActivity.LOGIN_PREF_FILENAME, MODE_PRIVATE);
+
+        SharedPreferences sharedPreferences =
+                getSharedPreferences(LoginActivity.LOGIN_PREF_FILENAME, MODE_PRIVATE);
 
         Log.d(TAG, "the host ID is this one " + hostId);
         studentId = sharedPreferences.getInt(LoginActivity.LOGIN_PREF_USER_ID, 0);
         advertId = intent.getIntExtra(AccomList.POST_ADVERT_ID, 0);
+        String email = sharedPreferences.getString(LOGIN_PREF_EMAIL, "");
+        Log.d(TAG, "onCreate: the email is: " + email);
+        if (email.equals("")) {
+            email = sharedPreferences.getString(GOOGLE_USER_EMAIL, "");
+        }
 
         TextView tvPrice = (TextView) findViewById(R.id.tv_price);
         TextView tvRoomType = (TextView) findViewById(R.id.tv_num_people);
@@ -78,6 +93,7 @@ public class AccomImageSlider extends AppCompatActivity implements
         Button btnSecureAccom = (Button) findViewById(R.id.btnSecureAccom);
         //group holder a group of items where one at a time can be active
         RadioGroup radioGroup = (RadioGroup) findViewById(R.id.imageCountIndicator);
+        ImageButton btnShare = (ImageButton) findViewById(R.id.btn_share);
 
         String p = "R " + price;
         tvPrice.setText(p);
@@ -99,6 +115,14 @@ public class AccomImageSlider extends AppCompatActivity implements
             radioButtons[i].setClickable(false); //todo make it able to change the image when clicked and also change style
             radioGroup.addView(radioButtons[i]);
         }
+
+
+        btnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(Utils.shareButtonIntent(advertId, getApplicationContext()));
+            }
+        });
 
         ViewPager mPager = (ViewPager) findViewById(R.id.viewPageAccom);
         mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -125,43 +149,27 @@ public class AccomImageSlider extends AppCompatActivity implements
             public void onClick(View v) {
                 DatePickerFragment newFragment = new DatePickerFragment();
                 newFragment.show(getSupportFragmentManager(), "datePicker");
+                // calls back @onDateSet
+            }
+        });
+
+        final String finalEmail = email; // copy of the email var, coz email var cannot be final :(
+        btnRent = (Button) findViewById(R.id.btnRentRoom);
+
+
+        btnRent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: the email is " + finalEmail);
+                CardInputFragment cardInputFragment
+                        = CardInputFragment.
+                        Companion.newInstance(advertId, finalEmail, deposit );
+               cardInputFragment.show(getSupportFragmentManager(),
+                       "dialog");
             }
         });
 
 
-    }
-
-
-    //TODO implement later please not good enough
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    protected void setStatusBarTranslucent(boolean makeTranslucent) {
-        View v = findViewById(R.id.accomImageSliderLayout);
-        if (v != null) {
-            int paddingTop = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT ? getStatusBarHeight(this) : 0;
-            TypedValue tv = new TypedValue();
-            getTheme().resolveAttribute(android.support.v7.appcompat.R.attr.actionBarSize, tv, true);
-            paddingTop += TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
-            v.setPadding(0, makeTranslucent ? paddingTop : 0, 0, 0);
-        }
-
-        if (makeTranslucent) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        } else {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
-    }
-
-    private int getStatusBarHeight(AccomImageSlider accomImageSlider) {
-        Rect rectangle = new Rect();
-        Window window = getWindow();
-        window.getDecorView().getWindowVisibleDisplayFrame(rectangle);
-        int statusBarHeight = rectangle.top;
-        int contentViewTop =
-                window.findViewById(Window.ID_ANDROID_CONTENT).getTop();
-        int titleBarHeight = contentViewTop - statusBarHeight;
-
-        Log.i("*** AccomImageS :: ", "StatusBar Height= " + statusBarHeight + " , TitleBar Height = " + titleBarHeight);
-        return titleBarHeight;
     }
 
     @Override
@@ -185,7 +193,7 @@ public class AccomImageSlider extends AppCompatActivity implements
         call.enqueue(new Callback<AccommodationResponse>() {
             @Override
             public void onResponse(Call<AccommodationResponse> call, Response<AccommodationResponse> response) {
-                if (response.body().isStatus()) {
+                if (response.body() != null && response.body().isStatus()) {
                     Snackbar.make(findViewById(android.R.id.content),
                             "Congratulations you have successfully booked to view this room." + //todo NB remove this
                                     "Please send Confirmation message(Text/WhatsApp) to 0823114484 " +
@@ -200,7 +208,9 @@ public class AccomImageSlider extends AppCompatActivity implements
 
             @Override
             public void onFailure(Call<AccommodationResponse> call, Throwable t) {
-
+                Snackbar.make(findViewById(android.R.id.content),
+                        "Sorry classfinder error, we will be back soon",
+                        Snackbar.LENGTH_INDEFINITE);
             }
         });
     }

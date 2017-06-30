@@ -1,6 +1,7 @@
 package za.co.metalojiq.classfinder.someapp.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.ArrayRes;
 import android.support.annotation.IdRes;
@@ -17,7 +18,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import za.co.metalojiq.classfinder.someapp.activity.LoginActivity;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.BookSearchFaculty;
+import za.co.metalojiq.classfinder.someapp.model.Accommodation;
 import za.co.metalojiq.classfinder.someapp.model.NetworksCategory;
+import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 
 import static android.content.Context.MODE_PRIVATE;
 import static za.co.metalojiq.classfinder.someapp.activity.LoginActivity.LOGIN_IS_RUNNER;
@@ -193,6 +196,25 @@ public class Utils               {
     public static int genColor(String key) {
         ColorGenerator generator = ColorGenerator.MATERIAL;
         return generator.getColor(key);
+
+    }
+
+    public static Intent shareButtonIntent(final int accommodationId, Context activity) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        String userToken = Utils.getUserSharedPreferences(activity)
+                .getString(LoginActivity
+                        .USER_LOGIN_TOKEN, "");
+        if (!userToken.equals("")) {
+            String url = ApiClient.DEV_HOST + "/api/v1/refs?token=" + userToken + "&accom_id=" + accommodationId;
+            intent.putExtra(Intent.EXTRA_TEXT, url);
+            intent.setType("text/plain");
+            return intent;
+        } else {
+            Toast.makeText(activity, "Please Sign in before you can share accommodation and start getting some money", Toast.LENGTH_LONG).show();
+            return new Intent();
+        }
+
 
     }
 

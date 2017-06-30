@@ -46,6 +46,7 @@ public class NewAccommodation extends AppCompatActivity {
     private EditText etDescription;
     private LinearLayout imagesContainer;
     private ProgressDialog dialog;
+    private EditText etDeposit;
 //    private OkHttpClient kk;
 
     @Override
@@ -67,6 +68,7 @@ public class NewAccommodation extends AppCompatActivity {
        // locationSpinner.setOnItemSelectedListener(new Utils.LocationItemListener(tvAuck, auckAreaSpinner));
         etPrice = (EditText) findViewById(R.id.newEtPrice);
         etDescription = (EditText) findViewById(R.id.newBooksDesc);
+        etDeposit = (EditText) findViewById(R.id.newEtDeposit);
 
         Button btnPickImages = (Button) findViewById(R.id.newBtnAddImages);
         btnPickImages.setOnClickListener(new View.OnClickListener() {
@@ -97,12 +99,12 @@ public class NewAccommodation extends AppCompatActivity {
 
     private void uploadData(final int houseId) {
 //        String loc = (String) locationSpinner.getSelectedItem();
+//        String rawArea = (String) auckAreaSpinner.getSelectedItem();
         Log.d(TAG, "uploadData: the house id is: " + houseId);
         String roomT= (String) roomTypeSpinner.getSelectedItem();
-//        String rawArea = (String) auckAreaSpinner.getSelectedItem();
+        double deposit = Double.valueOf(etDeposit.getText().toString());
         int prc =  Integer.valueOf((etPrice.getText().toString()).equals("") ? "0" : etPrice.getText().toString());
         String desc = etDescription.getText().toString(); // todo: must do validatons here please
-
 
         // we want to upload only if there are images
         if (!(bitmaps.length == 0 && prc <= 0 && TextUtils.isEmpty(desc))) {
@@ -125,12 +127,13 @@ public class NewAccommodation extends AppCompatActivity {
             RequestBody price = RequestBody.create(MediaType.parse("text/plain"), ((Integer) prc).toString() );
             RequestBody description = RequestBody.create(MediaType.parse("text/plain"), desc);
             RequestBody hId = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(houseId));
+            RequestBody reqDeposit = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(deposit));
             MultipartBody requestBody = builderNew.build();
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
 
             Call<AccommodationResponse> call = apiService.postAccommodation(userId, hId, roomType,
-                                                                             price, description, requestBody.parts());
+                                                                             price, reqDeposit,  description, requestBody.parts());
             call.enqueue(new Callback<AccommodationResponse>() {
                 @Override
                 public void onResponse(Call<AccommodationResponse> call, Response<AccommodationResponse> response) {

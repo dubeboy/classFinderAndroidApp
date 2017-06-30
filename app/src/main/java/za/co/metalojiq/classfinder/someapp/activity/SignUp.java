@@ -145,14 +145,14 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
                         }
                     } else {
            //             hideProgressDialog();
-                        makeToast("Fetal error, please restart the app Aand try again", SignUp.this);
+                        makeToast("Fetal error, please restart the app and try again", SignUp.this);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<UserResponse> call, Throwable t) {
              //       hideProgressDialog();
-                    makeToast("Sorry  internet problem, please connect to the internet tu!", SignUp.this);
+                    makeToast("Sorry  internet problem, please connect to the internet", SignUp.this);
                 }
             });
 
@@ -232,7 +232,7 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
     private boolean isSelectedAtleastOneTimePeriod() {
         for (byte i : times) {
             if (i == 1) {
-                Log.d(TAG, "isSelectedAtleastOneTimePeriod: someting selected");
+                Log.d(TAG, "isSelectedAtleastOneTimePeriod: something selected");
                 return true;
             }
         }

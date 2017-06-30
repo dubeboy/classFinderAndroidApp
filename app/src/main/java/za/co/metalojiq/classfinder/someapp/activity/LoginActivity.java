@@ -412,7 +412,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         editor.putInt(LOGIN_PREF_USER_ID, response.body().getUser().getId());
                         editor.putBoolean(LOGIN_IS_RUNNER, response.body().getUser().isRunner());
                         editor.putString(USER_LOGIN_TOKEN, response.body().getUser().getToken());
-                        editor.apply(); //fixme does this backgroud thing effect any thing
+                        editor.commit(); //i want it to save now because we abould to finish the activity
                         Log.d(TAG,sharedPreferences.getString(LOGIN_PREF_EMAIL, "YOHHHHHHH this is a problem NO EMAIL MAN DAMN!!!"));
                         // only here you should finish
                         showProgress(false);
