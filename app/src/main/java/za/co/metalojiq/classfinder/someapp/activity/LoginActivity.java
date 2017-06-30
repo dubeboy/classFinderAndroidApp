@@ -395,7 +395,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
          void login () {
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
             Call<UserResponse> call = apiService.signIn(mEmail, mPassword);
-            final boolean yes[] = {false};
+            final boolean yes[] = {false}; //todo: bad!
             call.enqueue(new Callback<UserResponse>() {
                 @Override
                 public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
@@ -423,6 +423,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         showProgress(false);
                         mEmailView.requestFocus();
                         Toast.makeText(loginActivity, "Sorry your password or username is correct", Toast.LENGTH_SHORT).show();
+                        mPasswordView.setError("Sorry your password or username is correct");
+                        mPasswordView.requestFocus();
                     }
                     mAuthTask = null;  //this will enable the user to login again there was an error
                 }
@@ -430,7 +432,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 public void onFailure(Call<UserResponse> call, Throwable t) {
                     Log.d(TAG, t.toString());
                     showProgress(false);
-                    mPasswordView.setError(getString(R.string.error_incorrect_password));
+                    mPasswordView.setError("Sorry please connect to the internet");
                     mPasswordView.requestFocus();
                 }
             });

@@ -142,9 +142,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private void signOut(SharedPreferences sharedPreferences) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove(LoginActivity.LOGIN_PREF_USER_ID);
+        editor.commit(); // commit the changes and then invalidate option menu
         supportInvalidateOptionsMenu();
-        editor.apply();
-//        googleSignOut();  // todo: eactivate soon
+//        googleSignOut();  // todo: reactivate soon
     }
 
 
