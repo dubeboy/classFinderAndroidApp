@@ -120,7 +120,9 @@ public class AccomImageSlider extends AppCompatActivity implements
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(Utils.shareButtonIntent(advertId, getApplicationContext()));
+                Intent shareIntent = Utils.shareButtonIntent(advertId, getApplicationContext());
+                if(shareIntent != null)
+                    startActivity(shareIntent);
             }
         });
 

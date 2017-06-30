@@ -111,7 +111,9 @@ public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHol
             btnShare.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    activity.startActivity(shareButtonIntent(accommodation.getId(), activity));
+                    Intent shareIntent = shareButtonIntent(accommodation.getId(), activity);
+                    if(shareIntent != null)
+                        activity.startActivity(shareIntent);
                 }
             });
         }

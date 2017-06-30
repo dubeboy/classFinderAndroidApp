@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.ArrayRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -198,7 +199,7 @@ public class Utils               {
         return generator.getColor(key);
 
     }
-
+    @Nullable
     public static Intent shareButtonIntent(final int accommodationId, Context activity) {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
@@ -212,7 +213,7 @@ public class Utils               {
             return intent;
         } else {
             Toast.makeText(activity, "Please Sign in before you can share accommodation and start getting some money", Toast.LENGTH_LONG).show();
-            return new Intent();
+            return null;
         }
 
 

@@ -156,6 +156,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
+
+    // this calls the sign up activity which is the on that will persist the settings
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {

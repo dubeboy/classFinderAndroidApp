@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.Toast
 import com.stripe.android.Stripe
 import com.stripe.android.TokenCallback
@@ -17,7 +16,6 @@ import com.stripe.android.view.CardInputWidget;
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
 
 import za.co.metalojiq.classfinder.someapp.R
 import za.co.metalojiq.classfinder.someapp.model.StatusRespose

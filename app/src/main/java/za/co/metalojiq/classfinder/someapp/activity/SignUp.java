@@ -30,7 +30,6 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
     private EditText mPassword;
     private EditText mPhone;
     private EditText mConfPassword;
-    private String email;
     private String name;
     private String googleUserToken;
     private ProgressDialog dialog;
@@ -100,6 +99,8 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
         isGoogleUser = intent.getBooleanExtra(IS_GOOGLE_LOGIN, false);
 
         if (isGoogleUser) {
+            final String email;
+
             email = intent.getStringExtra(LoginActivity.GOOGLE_USER_EMAIL);
             name = intent.getStringExtra(LoginActivity.GOOGLE_USER_NAME);
             googleUserToken = intent.getStringExtra(LoginActivity.GOOGLE_USER_TOKEN);
@@ -117,8 +118,8 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
                     if(response.body() != null) {
                         boolean exits = response.body().isExits();
                         if (exits) {
-                            saveUserInfo(email, response.body().getUser().getId(), response.body().getUser().isRunner(), isGoogleUser);
-                            finish();
+                            saveUserInfo(email, response.body().getUser().getId(), response.body().getUser().isRunner(), isGoogleUser, response.body().getUser().getToken());
+                            startActivity(new Intent(SignUp.this, MainActivity.class));
                         } else {  // if the google user does not exit
                             hideAllFieldsExceptPhone();
                             signUp.setOnClickListener(new OnClickListener() {
@@ -135,7 +136,8 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
                                                     mPhone.getText().toString().trim(),
                                                     mCheckIsRunner.isSelected(), times, ((String) locationsSpinner.getSelectedItem()));
                                         } else { // this part is for when a user does not want to be a runner
-                                            googleSignUp(googleUserToken, email, name,
+                                            googleSignUp(googleUserToken,
+                                                    email, name,
                                                     mPhone.getText().toString().trim(),
                                                     mCheckIsRunner.isSelected(), null, null);
                                         }
@@ -171,8 +173,12 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
                             if (!isSelectedAtleastOneTimePeriod()) {
                                 return;
                             }
-                            signUp(email, name,  mPhone.getText().toString().trim(),
-                                    mPassword.getText().toString(), mCheckIsRunner.isSelected(), times,
+                            signUp(email,
+                                    name,
+                                    mPhone.getText().toString().trim(),
+                                    mPassword.getText().toString(),
+                                    mCheckIsRunner.isSelected(),
+                                    times,
                                     ((String) locationsSpinner.getSelectedItem()));
                         } else { // this part is for when a user does not want to be a runner
                             signUp(email, name,  mPhone.getText().toString().trim(),
@@ -279,7 +285,13 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
 
     }
 
-    private void googleSignUp(String token, String email, String name, String phone, boolean selected, byte[] times, String selectedItem) {
+    private void googleSignUp(String token,
+                              String email,
+                              String name,
+                              String phone,
+                              boolean selected,
+                              byte[] times,
+                              String selectedItem) {
         //call retrofit
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
         Call<UserResponse> call = apiService.googleUserSignUp(email, name, phone, token, selected, times, selectedItem);
@@ -299,9 +311,13 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
     @Override
     public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
         if (response.body().isStatus()) {
-            saveUserInfo(email, response.body().getUser().getId(), response.body().getUser().isRunner(), isGoogleUser);
+            saveUserInfo(response.body().getUser().getEmail(),
+                         response.body().getUser().getId(),
+                         response.body().getUser().isRunner(),
+                         isGoogleUser,
+                         response.body().getUser().getToken());
             makeToast("Thank you you have signed up successfully", this);
-            finish(); // we want to go back to the last activity
+            startActivity(new Intent(this, MainActivity.class));
         } else {
             makeToast("Please try again this account already exists, or rather sign in", this);
         }
@@ -309,14 +325,16 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
     }
 
 
-    public void saveUserInfo(String email, int id, boolean isRunner, boolean isGoogle) {
+    public void saveUserInfo(String email, int id, boolean isRunner, boolean isGoogle, String token) {
         SharedPreferences sharedPreferences  = getUserSharedPreferences(this) ;
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(LOGIN_PREF_EMAIL, email);
         editor.putInt(LOGIN_PREF_USER_ID, id);
         editor.putBoolean(LOGIN_IS_RUNNER, isRunner);
         editor.putBoolean(IS_GOOGLE_LOGIN, isGoogle);
-        editor.apply(); //fixme does this backgroud thing effect any thing
+        editor.putString(USER_LOGIN_TOKEN, token);
+
+        editor.commit(); //fixme does this backgroud thing effect any thing
     }
 
     @Override
