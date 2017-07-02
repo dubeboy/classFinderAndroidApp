@@ -82,9 +82,9 @@ public interface ApiInterface {
 
     @Headers({"Accept: application/json"})
     @POST("/api/v1/accommodations/{id}/deposit")
-    Call<StatusRespose> postToken(@Path("id") Integer accommdationId,
-                                  @Query("stripeToken") String token,
-                                  @Query("email") String email);
+    Call<StatusRespose> postStripeToken(@Path("id") Integer accommdationId,
+                                        @Query("stripeToken") String token,
+                                        @Query("email") String email);
 
     //----------------------------------BOOKS-------------------------------------------------
 
@@ -208,4 +208,16 @@ public interface ApiInterface {
     @Headers({"Accept: application/json"})
     @GET("/api/v1/house/{id}/get_accoms")
     Call<AccommodationResponse> getAccommodationsForHouse(@Path("id") int id);
+
+    //----------notifications---------------refrencies------- payments
+    @Headers({"Accept: application/json"})
+    @GET("/api/v1/accommodations/{id}/refs")
+    Call<StatusRespose> share_ref(@Query("t") String token);
+
+    @Headers({"Accept: application/json"})
+    @GET("/api/v1/users/save_fcm_token")
+    Call<StatusRespose> saveFcmToken(@Query("t") String token, @Query("email") String email);
+
+
+
 }

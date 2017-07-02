@@ -57,7 +57,7 @@ class CardInputFragment : BottomSheetDialogFragment() {
                         // we must send the token to the server here
                         val apiService = ApiClient.getClient().create(ApiInterface::class.java)
                         apiService
-                                .postToken(arguments.getInt(ARG_ACCOM_ID), token.id, arguments.getString(ARG_EMAIL) as String)
+                                .postStripeToken(arguments.getInt(ARG_ACCOM_ID), token.id, arguments.getString(ARG_EMAIL) as String)
                                 .enqueue(object : Callback<StatusRespose?> {
                                     override fun onResponse(call: Call<StatusRespose?>?, response: Response<StatusRespose?>) {
                                         if (response.body() != null) {

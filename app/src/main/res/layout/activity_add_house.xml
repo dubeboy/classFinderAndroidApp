@@ -30,7 +30,7 @@
             android:id="@+id/input_common"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Common areas about you house, eg Kitchen, etc " />
+            android:hint="Common areas about your house, eg Kitchen, etc " />
 
     </android.support.design.widget.TextInputLayout>
 

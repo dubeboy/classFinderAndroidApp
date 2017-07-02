@@ -22,6 +22,8 @@ import za.co.metalojiq.classfinder.someapp.util.Utils
 import kotlinx.android.synthetic.main.activity_add_house.*
 import za.co.metalojiq.classfinder.someapp.activity.fragment.HouseActivityFragment.Companion.HOUSE_ID
 
+
+//todo: should use chips for common areas
 class AddHouseActivity : AppCompatActivity() {
 
     lateinit var progressDialog: ProgressDialog
@@ -40,7 +42,7 @@ class AddHouseActivity : AppCompatActivity() {
         val ckWifi = findViewById(R.id.checkbox_wifi) as CheckBox
         val ckPrepaid = findViewById(R.id.checkbox_prepaid_elec) as CheckBox
         val btnAddHouse = findViewById(R.id.btn_add_house) as Button
-        val progressDialog: ProgressDialog = ProgressDialog(this)
+        progressDialog = ProgressDialog(this)
         progressDialog.setMessage("Adding your house to classfinder, please wait.")
 
 
