@@ -12,6 +12,7 @@ import za.co.metalojiq.classfinder.someapp.R
 import android.content.Context.NOTIFICATION_SERVICE
 import android.app.NotificationManager
 import android.content.Context
+import android.util.Log
 
 
 /**
@@ -19,13 +20,12 @@ import android.content.Context
  */
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
-
-
     override fun onMessageReceived(remoteMessage: RemoteMessage?) {
+        Log.d("MyFirebaseMessaging", "msg is : ${remoteMessage}")
         val mBuilder: NotificationCompat.Builder = NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_home_black_24dp)
                 .setContentTitle("You got a view from: ${remoteMessage?.from}")
-                .setContentText("messages body is ${remoteMessage?.notification?.body}");
+                .setContentText("messages body is ${remoteMessage?.notification?.body}")
 
         val mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         mNotificationManager.notify(1, mBuilder.build());

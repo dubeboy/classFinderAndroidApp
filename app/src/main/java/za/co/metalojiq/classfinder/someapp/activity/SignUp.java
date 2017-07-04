@@ -10,6 +10,9 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.*;
+
+import com.google.firebase.iid.FirebaseInstanceId;
+
 import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -198,16 +201,12 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
         });
     }
 
-    private void makeGoogleUserExperienceBetter(String phone) {
-
-    }
 
     private void toggleShowRunnerInfo(boolean show) {
          horScroll = (HorizontalScrollView) findViewById(R.id.SignUpHorizontalTimes);
         TextView tvSelectTime = (TextView)  findViewById(R.id.signUpTvSelectTime);
         TextView signUpSelectTime = (TextView)  findViewById(R.id.signUpSelectTime);
         Spinner spinner = (Spinner) findViewById(R.id.signUpSpinnerTime);
-
         if (show) {
             tvSelectTime.setVisibility(View.VISIBLE);
             horScroll.setVisibility(View.VISIBLE);
@@ -279,7 +278,14 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
 
     private void signUp(String email, String name, String phone, String password, boolean selected, byte[] times, String selectedItem) {
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        Call<UserResponse> call = apiService.signUp(email, name, phone, password, selected, times, selectedItem);
+        Call<UserResponse> call = apiService.signUp(email,
+                                                    name,
+                                                    phone,
+                                                    password,
+                                                    selected, //todo: deprecated
+                                                    times, //todo: deprecated
+                                                    selectedItem,
+                                                    FirebaseInstanceId.getInstance().getToken());
         call.enqueue(this);
         showProgressDialog();
 
@@ -294,7 +300,7 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
                               String selectedItem) {
         //call retrofit
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        Call<UserResponse> call = apiService.googleUserSignUp(email, name, phone, token, selected, times, selectedItem);
+        Call<UserResponse> call = apiService.googleUserSignUp(email, name, phone, token, selected, times, selectedItem, FirebaseInstanceId.getInstance().getToken());
         call.enqueue(this);
         showProgressDialog();
 

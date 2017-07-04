@@ -21,6 +21,7 @@ import android.widget.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -50,7 +51,6 @@ public class AccomImageSlider extends AppCompatActivity implements
     //Final because we want to marry this calendar instance for ever till onDestroy() of activity , lol lol!!!!
     private final Calendar c = Calendar.getInstance();
     private int hostId;
-    private int studentId;
     private int advertId;
     private Button btnRent;
 
@@ -74,11 +74,9 @@ public class AccomImageSlider extends AppCompatActivity implements
         hostId = intent.getIntExtra(AccomList.POST_INT_HOST_ID, 0);
 
 
-        SharedPreferences sharedPreferences =
-                getSharedPreferences(LoginActivity.LOGIN_PREF_FILENAME, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Utils.getUserSharedPreferences(this);
 
         Log.d(TAG, "the host ID is this one " + hostId);
-        studentId = sharedPreferences.getInt(LoginActivity.LOGIN_PREF_USER_ID, 0);
         advertId = intent.getIntExtra(AccomList.POST_ADVERT_ID, 0);
         String email = sharedPreferences.getString(LOGIN_PREF_EMAIL, "");
         Log.d(TAG, "onCreate: the email is: " + email);
@@ -149,9 +147,14 @@ public class AccomImageSlider extends AppCompatActivity implements
         btnSecureAccom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerFragment newFragment = new DatePickerFragment();
-                newFragment.show(getSupportFragmentManager(), "datePicker");
-                // calls back @onDateSet
+                if(Utils.getUserId(AccomImageSlider.this) != 0) {
+                    DatePickerFragment newFragment = new DatePickerFragment();
+                    newFragment.show(getSupportFragmentManager(), "datePicker");
+                    // calls back @onDateSet
+                } else {
+                    Toast.makeText(AccomImageSlider.this, "Please login first", Toast.LENGTH_LONG).show();
+                    startActivity(new Intent(AccomImageSlider.this, LoginActivity.class));
+                }
             }
         });
 
@@ -165,7 +168,7 @@ public class AccomImageSlider extends AppCompatActivity implements
                 Log.d(TAG, "onClick: the email is " + finalEmail);
                 CardInputFragment cardInputFragment
                         = CardInputFragment.
-                        Companion.newInstance(advertId, finalEmail, deposit );
+                        Companion.newInstance(advertId, finalEmail, deposit);
                cardInputFragment.show(getSupportFragmentManager(),
                        "dialog");
             }
@@ -236,6 +239,8 @@ public class AccomImageSlider extends AppCompatActivity implements
                         mYear + " ";
         Log.d(TAG, "The String month is " + month);
         Log.d(TAG, "The time is " + time);
+        final int studentId = Utils.getUserId(this);
+        Log.d(TAG, "onItemSelected: the student id is: " + studentId);
         secureRoom(advertId, hostId, studentId, month, time);
     }
 }

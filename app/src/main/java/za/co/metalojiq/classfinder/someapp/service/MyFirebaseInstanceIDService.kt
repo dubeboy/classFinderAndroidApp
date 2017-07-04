@@ -20,6 +20,7 @@ import za.co.metalojiq.classfinder.someapp.util.Utils
  */
 
 class MyFirebaseInstanceIDService : FirebaseInstanceIdService() {
+    private val TAG = "InstanceIDService"
 
     override fun onTokenRefresh() {
         // Get updated InstanceID token.
@@ -30,24 +31,34 @@ class MyFirebaseInstanceIDService : FirebaseInstanceIdService() {
     }
 
     private fun sendRegistrationToServer(refreshedToken: String) {
+        saveTokenToPrefs(refreshedToken)
         val apiClient = ApiClient.getClient().create(ApiInterface::class.java)
         val email = Utils.getUserSharedPreferences(this).getString(LoginActivity.LOGIN_PREF_EMAIL, "")
-        assert(email != "")
-        val httpCall = apiClient.saveFcmToken(refreshedToken, email)
-            .enqueue(object: Callback<StatusRespose?> {
-            override fun onResponse(call: Call<StatusRespose?>?, response: Response<StatusRespose?>?) {
-                Log.d(TAG, "saved token to server")
-                Toast.makeText(this@MyFirebaseInstanceIDService,  "Classfinder can now notify you on latest accommodation news", Toast.LENGTH_LONG).show()
-            }
+        //assert(email != "")
+        if (email != "") {
+             apiClient
+                    .saveFcmToken(refreshedToken, email)
+                    .enqueue(object : Callback<StatusRespose?> {
+                        override fun onResponse(call: Call<StatusRespose?>?, response: Response<StatusRespose?>) {
+                            Log.d(TAG, "saved token to server")
+                            Toast.makeText(this@MyFirebaseInstanceIDService, "Classfinder can now notify you on latest accommodation news", Toast.LENGTH_LONG).show()
+                        }
 
-            override fun onFailure(call: Call<StatusRespose?>?, t: Throwable?) {
-               Toast.makeText(this@MyFirebaseInstanceIDService,  "Please connect to the internt to send notifications", Toast.LENGTH_LONG).show()
-            }
-        })
+                        override fun onFailure(call: Call<StatusRespose?>?, t: Throwable?) {
+                            Toast.makeText(this@MyFirebaseInstanceIDService, "Please connect to the internt to send notifications", Toast.LENGTH_LONG).show()
+                        }
+                    })
+        }
+    }
+
+    fun saveTokenToPrefs(refreshedToken: String) {
+        val userSharedPreferences = Utils.getUserSharedPreferences(this)
+        val editor = userSharedPreferences.edit()
+        editor.putString(FCM_TOKEN, refreshedToken)
+        editor.commit()
     }
 
     companion object {
-
-        private val TAG = "InstanceIDService"
+        val FCM_TOKEN = "fcmToken"
     }
 }

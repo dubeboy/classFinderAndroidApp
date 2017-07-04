@@ -31,7 +31,6 @@ class House: Serializable {
     var isStatus: Boolean = false
     @SerializedName("city")
     var city: String? = null
-    private var _location: String? = null
     var location: String? = null
 
 }

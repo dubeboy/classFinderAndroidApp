@@ -24,12 +24,16 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
+
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.FirebaseInstanceIdService;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -142,7 +146,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     *
     * */
 
-    private  void signIn() {
+    private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -165,10 +169,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             GoogleSignInAccount acct = result.getSignInAccount();
             //Todo remove this is bad!!
             Log.d(TAG, "Hello You have signed in using google " + acct.getDisplayName());
-            Log.d(TAG,"Hello Your token is this " + acct.getId());
-          //  makeToast("Hello " + acct.getEmail(), this);
+            Log.d(TAG, "Hello Your token is this " + acct.getId());
+            //  makeToast("Hello " + acct.getEmail(), this);
             Log.d("TOKEN ", acct.getIdToken());
-            Log.d("TOKEN ", acct.getId());
+            Log.d("TOKEN ID", acct.getId());
 
             //in this method I should send the user Id to the login activity man
             Intent intent = new Intent(this, SignUp.class);
@@ -184,7 +188,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Signed out, show unauthenticated UI.
 //            updateUI(false);
             Log.d(TAG, "handleSignInResult: the result is bad yoh: " + result.getStatus());
-            makeToast("Sign In failed, please try again. ", this);
+            makeToast("Google Sign In failed, please try again.", this);
         }
     }
 
@@ -286,9 +290,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
 
-
-
-
     /**
      * Shows the progress UI and hides the login form.
      */
@@ -387,14 +388,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public class UserLoginTask {
         private final String mEmail;
         private final String mPassword;
+
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
         }
 
-         void login () {
+        void login() {
+            String fcmToken = FirebaseInstanceId.getInstance().getToken();
+            Log.d(TAG, "login: fcm token is:  " + fcmToken);
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-            Call<UserResponse> call = apiService.signIn(mEmail, mPassword);
+            Call<UserResponse> call = apiService.signIn(mEmail, mPassword, fcmToken);
             final boolean yes[] = {false}; //todo: bad!
             call.enqueue(new Callback<UserResponse>() {
                 @Override
@@ -404,18 +408,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     //todo: bad code!!!!!!! i think...
 
                     Log.d(TAG, "is its a yes: 10000 " + yes[0]);
-                    yes[0]= response.body().isStatus();
+                    yes[0] = response.body().isStatus();
                     Log.d(TAG, "is its a yes: 20000 " + yes[0]);
                     Toast.makeText(LoginActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     if (response.body().isStatus()) {
-                        SharedPreferences sharedPreferences  = getSharedPreferences(LOGIN_PREF_FILENAME, MODE_PRIVATE) ;
+                        SharedPreferences sharedPreferences = getSharedPreferences(LOGIN_PREF_FILENAME, MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString(LOGIN_PREF_EMAIL, response.body().getUser().getEmail());
                         editor.putInt(LOGIN_PREF_USER_ID, response.body().getUser().getId());
                         editor.putBoolean(LOGIN_IS_RUNNER, response.body().getUser().isRunner());
                         editor.putString(USER_LOGIN_TOKEN, response.body().getUser().getToken());
                         editor.commit(); //i want it to save now because we abould to finish the activity
-                        Log.d(TAG,sharedPreferences.getString(LOGIN_PREF_EMAIL, "YOHHHHHHH this is a problem NO EMAIL MAN DAMN!!!"));
+                        Log.d(TAG, sharedPreferences.getString(LOGIN_PREF_EMAIL, "YOHHHHHHH this is a problem NO EMAIL MAN DAMN!!!"));
                         // only here you should finish
                         showProgress(false);
                         finish();
@@ -428,6 +432,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     }
                     mAuthTask = null;  //this will enable the user to login again there was an error
                 }
+
                 @Override
                 public void onFailure(Call<UserResponse> call, Throwable t) {
                     Log.d(TAG, t.toString());

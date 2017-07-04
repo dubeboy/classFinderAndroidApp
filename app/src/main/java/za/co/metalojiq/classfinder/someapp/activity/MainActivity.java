@@ -75,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             itemNetworks.setVisible(true);
             itemSignOut.setVisible(true);
             itemHouses.setVisible(true);
-
         }
 
         return true;

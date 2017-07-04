@@ -57,7 +57,7 @@ class CardInputFragment : BottomSheetDialogFragment() {
                         // we must send the token to the server here
                         val apiService = ApiClient.getClient().create(ApiInterface::class.java)
                         apiService
-                                .postStripeToken(arguments.getInt(ARG_ACCOM_ID), token.id, arguments.getString(ARG_EMAIL) as String)
+                                .postStripeToken(arguments.getInt(ARG_ACCOM_ID), token.id, arguments.getString(ARG_EMAIL),  arguments.getString(ARG_DEPOSIT) )
                                 .enqueue(object : Callback<StatusRespose?> {
                                     override fun onResponse(call: Call<StatusRespose?>?, response: Response<StatusRespose?>) {
                                         if (response.body() != null) {
@@ -89,6 +89,7 @@ class CardInputFragment : BottomSheetDialogFragment() {
 
                     override fun onError(error: Exception?) {
                         Toast.makeText(vie.context, "an arror happend, please try again", Toast.LENGTH_LONG).show()
+                        progresDialog.dismiss()
                     }
                 })
             }
@@ -108,7 +109,7 @@ class CardInputFragment : BottomSheetDialogFragment() {
         private val TAG = "CardInputFragment"
 
         // TODO: Customize parameters
-        fun newInstance(accomId: Int, email: String , deposit: String ): CardInputFragment {
+        fun newInstance(accomId: Int, email: String , deposit: String): CardInputFragment {
 
             val fragment = CardInputFragment()
             val args = Bundle()

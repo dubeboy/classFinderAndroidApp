@@ -27,12 +27,10 @@ public interface ApiInterface {
     @GET("/api/v1/accommodations/search")
     Call<AccommodationResponse> searchAccommodations(@Query(value = "name", encoded = true) String location,
                                                      @Query("room_type") String roomType,
-                                                     @Query("auck_location") String auckLocation,
-                                                     @Query("price_from") Integer priceFrom, @Query("price_to") Integer priceTo);
-
-    @GET("/api/v1/accommodations/{id}.json")
-    Call<AccommodationResponse> getAccommodationDetails(@Path("id") int id);
-
+//                                                     @Query("auck_location") String auckLocation,
+                                                     @Query("price_from") Integer priceFrom,
+                                                     @Query("price_to") Integer priceTo,
+                                                     @Query("nsfas") boolean nsfas);
     @GET("/api/v1/books")
     @Headers({"Accept: application/json"})
     Call<BooksResponse> getBooks(@Query("page") Integer page);
@@ -52,7 +50,8 @@ public interface ApiInterface {
     @Headers({"Accept: application/json"})
     @FormUrlEncoded
     @POST("/api/v1/sessions")
-    Call<UserResponse> signIn(@Field("email") String email, @Field("password") String password);
+    Call<UserResponse> signIn(@Field("email") String email,
+                              @Field("password") String password, @Field("fcm_token") String fcmToken);
 
     @Headers({"Accept: application/json"}) //Todo: should remove this -> redundant
     @GET("/api/v1/users/{id}")
@@ -84,7 +83,8 @@ public interface ApiInterface {
     @POST("/api/v1/accommodations/{id}/deposit")
     Call<StatusRespose> postStripeToken(@Path("id") Integer accommdationId,
                                         @Query("stripeToken") String token,
-                                        @Query("email") String email);
+                                        @Query("email") String email,
+                                        @Query("deposit") String deposit);
 
     //----------------------------------BOOKS-------------------------------------------------
 
@@ -106,7 +106,9 @@ public interface ApiInterface {
     Call<UserResponse> signUp(@Field("email") String email, @Field("name") String name,
                               @Field("phone") String phone, @Field("password") String password,
                               @Field("is_runner") boolean selected,
-                              @Field("time_slots_ids") byte[] times, @Field("run_location") String runLocation);
+                              @Field("time_slots_ids") byte[] times,
+                              @Field("run_location") String runLocation,
+                              @Field("fcm_token") String fcmToken);
 
     @Headers({"Accept: application/json"})
     @FormUrlEncoded
@@ -114,7 +116,9 @@ public interface ApiInterface {
     Call<UserResponse> googleUserSignUp(@Field("email") String email, @Field("name") String name,
                                         @Field("phone") String phone, @Field("token") String token,
                                         @Field("is_runner") boolean selected,
-                                        @Field("time_slots_ids") byte[] times, @Field("run_location") String runLocation);
+                                        @Field("time_slots_ids") byte[] times,
+                                        @Field("run_location") String runLocation,
+                                        @Field("fcm_token") String fcmToken);
 
     @Headers({"Accept: application/json"})
     @GET("/api/v1/users/user_exits")
@@ -211,12 +215,12 @@ public interface ApiInterface {
 
     //----------notifications---------------refrencies------- payments
     @Headers({"Accept: application/json"})
-    @GET("/api/v1/accommodations/{id}/refs")
-    Call<StatusRespose> share_ref(@Query("t") String token);
+    @GET("/api/v1/accommodations/refs")
+    Call<StatusRespose> shareRef(@Query("tk") String token, @Query("accom_id") int accommodationId);
 
     @Headers({"Accept: application/json"})
     @GET("/api/v1/users/save_fcm_token")
-    Call<StatusRespose> saveFcmToken(@Query("t") String token, @Query("email") String email);
+    Call<StatusRespose> saveFcmToken(@Query("fcm_token") String token, @Query("email") String email);
 
 
 

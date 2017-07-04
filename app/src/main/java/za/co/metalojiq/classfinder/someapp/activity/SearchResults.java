@@ -36,7 +36,7 @@ public class SearchResults extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         final FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        Search.INTENT_RESPONSE intentResponse = (Search.INTENT_RESPONSE) intent.getSerializableExtra(INTENT_RESPONSE_EXTRA);
+        Search.INTENT_RESPONSE intentResponse = (Search.INTENT_RESPONSE) intent.getSerializableExtra(Companion.getINTENT_RESPONSE_EXTRA());
         if (intentResponse == Search.INTENT_RESPONSE.SUCCESS) {
             //todo unchecked cast
             AccomList accomList = AccomList.newInstance(accommodations, -1);

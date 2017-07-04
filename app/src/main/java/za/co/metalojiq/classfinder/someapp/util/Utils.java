@@ -17,11 +17,16 @@ import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import za.co.metalojiq.classfinder.someapp.activity.LoginActivity;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.BookSearchFaculty;
-import za.co.metalojiq.classfinder.someapp.model.Accommodation;
 import za.co.metalojiq.classfinder.someapp.model.NetworksCategory;
+import za.co.metalojiq.classfinder.someapp.model.StatusRespose;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
+import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
 
 import static android.content.Context.MODE_PRIVATE;
 import static za.co.metalojiq.classfinder.someapp.activity.LoginActivity.LOGIN_IS_RUNNER;
@@ -30,6 +35,8 @@ import static za.co.metalojiq.classfinder.someapp.activity.LoginActivity.LOGIN_P
 /**
  * Created by divine on 1/28/17.
  */
+
+//todo: should change this to a kotlin object class
 public class Utils               {
 
     public static final String[] LOCATIONS = {"Auckland Park", "Braamfontein", "Doornfontein", "Soweto"};
@@ -152,11 +159,11 @@ public class Utils               {
 //        fragmentTransaction.commit();
     public static class LocationItemListener implements AdapterView.OnItemSelectedListener {
 
-        TextView tvAuck;
+        //TextView tvAuck;
         Spinner auckAreaSpinner;
 
-        public LocationItemListener(TextView tvAuck, Spinner auckAreaSpinner) {
-            this.tvAuck = tvAuck;
+        public LocationItemListener(Spinner auckAreaSpinner) {
+           // this.tvAuck = tvAuck;
             this.auckAreaSpinner = auckAreaSpinner;
         }
 
@@ -164,11 +171,11 @@ public class Utils               {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             String selected = (String) parent.getItemAtPosition(position);
             if (selected.equals(LOCATIONS[0])) {
-                tvAuck.setVisibility(View.VISIBLE);
+              //  tvAuck.setVisibility(View.VISIBLE);
                 auckAreaSpinner.setVisibility(View.VISIBLE);
                 auckAreaSpinner.setSelection(-1);
             } else {
-                tvAuck.setVisibility(View.GONE);
+                //tvAuck.setVisibility(View.GONE);
                 auckAreaSpinner.setVisibility(View.GONE);
             }
         }
@@ -179,10 +186,7 @@ public class Utils               {
         }
     }
 
-
-
     //For generating alphabets of the users profile
-
     public static TextDrawable getTextDrawable(NetworksCategory dataModel) {
         return TextDrawable.builder()
                 .buildRound(dataModel.getName().charAt(0) + "", genColor(dataModel.getName()));
@@ -210,13 +214,25 @@ public class Utils               {
             String url = ApiClient.DEV_HOST + "/api/v1/refs?token=" + userToken + "&accom_id=" + accommodationId;
             intent.putExtra(Intent.EXTRA_TEXT, url);
             intent.setType("text/plain");
+            // this is where we send data to the internet
+            ApiClient.getClient().create(ApiInterface.class)
+                    .shareRef(userToken, accommodationId)
+                    .enqueue(new Callback<StatusRespose>() {
+                        @Override
+                        public void onResponse(Call<StatusRespose> call, Response<StatusRespose> response) {
+                            //todo: add some logic
+                        }
+
+                        @Override
+                        public void onFailure(Call<StatusRespose> call, Throwable t) {
+
+                        }
+                    });
             return intent;
         } else {
             Toast.makeText(activity, "Please Sign in before you can share accommodation and start getting some money", Toast.LENGTH_LONG).show();
             return null;
         }
-
-
     }
 
 

@@ -22,29 +22,32 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <intent-filter>
                 <data android:scheme="cf" />
+
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <service
             android:name=".service.MyFirebaseMessagingService"
             android:permission="">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service
-            android:name=".service.MyFirebaseInstanceIDService">
+        <service android:name=".service.MyFirebaseInstanceIDService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
         <activity
             android:name=".activity.AccomImageSlider"
             android:label="Accommodation Images" />
@@ -103,7 +106,8 @@
             android:label="@string/title_activity_house" />
         <activity android:name=".activity.AddHouseActivity" />
         <activity android:name=".activity.FragmentSurrogateActivity" />
-        <activity android:name=".activity.HouseAccomsActivity"></activity>
+        <activity android:name=".activity.HouseAccomsActivity" />
+        <activity android:name=".activity.HostDashboard"></activity>
     </application>
 
 </manifest>
