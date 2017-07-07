@@ -105,9 +105,9 @@ class AddHouseActivity : AppCompatActivity(), Utils.OnImagesSelected {
 
         progressDialog.show() // show the dialog
         val apiService = ApiClient.getClient().create(ApiInterface::class.java)
-        val call = apiService.postHouse(userId, address, location, city, common, nsfas, wifi, prepaid,  body.parts())
+        val apiCaller = apiService.postHouse(userId, address, location, city, common, nsfas, wifi, prepaid,  body.parts())
 
-        call.enqueue(object : Callback<House?> {
+        apiCaller.enqueue(object : Callback<House?> {
             override fun onResponse(call: Call<House?>?, response: Response<House?>) {
                 progressDialog.hide()
                 if (response.body() != null) {

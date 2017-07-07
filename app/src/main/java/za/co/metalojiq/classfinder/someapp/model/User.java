@@ -26,8 +26,9 @@ public class User implements Serializable {
     @SerializedName("runner")
     private boolean runner;
     @SerializedName("token")
-    @NonNull
     private String token;
+    @SerializedName("fcm_token")
+    private String fcm_token;
 
 
     public ArrayList<TimeSlot> getTimeSlots() {
@@ -48,6 +49,10 @@ public class User implements Serializable {
         this.id = id;
     }
 
+
+    public User() {
+
+    }
 
 
     public User(String email, String password, boolean runner) {
@@ -83,6 +88,14 @@ public class User implements Serializable {
 
     public void setToken(@NonNull String token) {
         this.token = token;
+    }
+
+    public String getFcm_token() {
+        return fcm_token;
+    }
+
+    public void setFcm_token(String fcm_token) {
+        this.fcm_token = fcm_token;
     }
 
     //This class belongs to the user and nowhere else so u can only get to it via a user object.

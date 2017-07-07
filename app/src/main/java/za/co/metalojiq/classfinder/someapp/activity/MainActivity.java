@@ -141,8 +141,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 startActivity(housesIntent);
 
         }
-        // the fas
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     private void googleSignOut() {

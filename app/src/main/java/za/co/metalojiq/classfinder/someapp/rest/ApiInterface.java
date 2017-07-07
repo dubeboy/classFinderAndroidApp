@@ -17,7 +17,7 @@ import java.util.List;
  */
 
 /**
- * this is a class containing all my api class, sweet! is It...??
+ * this is a class containing all my api class, sweet! is It...?? the /api/v1 can be eliminated
  */
 public interface ApiInterface {
     @GET("/api/v1/accommodations.json")
@@ -54,8 +54,14 @@ public interface ApiInterface {
                               @Field("password") String password, @Field("fcm_token") String fcmToken);
 
     @Headers({"Accept: application/json"}) //Todo: should remove this -> redundant
+    @GET("/api/v1/users/get_user")
+    Call<UserResponse> getUser(@Query("user_id") String userId);
+
+    @Headers({"Accept: application/json"}) //Todo: should remove this -> redundant
     @GET("/api/v1/users/{id}")
     Call<TransactionResponse> getRunner(@Path("id") int id, @Query("run") int run);
+
+
 
     @Headers({"Accept: application/json"})
     @GET("/api/v1/users/{id}/panel")
