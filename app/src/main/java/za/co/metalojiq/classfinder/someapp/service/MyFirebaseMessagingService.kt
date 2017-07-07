@@ -24,11 +24,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         Log.d("MyFirebaseMessaging", "msg is : ${remoteMessage}")
         val mBuilder: NotificationCompat.Builder = NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_home_black_24dp)
-                .setContentTitle("You got a view from: ${remoteMessage?.from}")
-                .setContentText("messages body is ${remoteMessage?.notification?.body}")
+                .setContentTitle(remoteMessage?.notification?.title.toString())
+                .setContentText(remoteMessage?.notification?.body.toString())
 
         val mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        mNotificationManager.notify(1, mBuilder.build());
+        mNotificationManager.notify(1, mBuilder.build())
     }
 
     override fun onDeletedMessages() {

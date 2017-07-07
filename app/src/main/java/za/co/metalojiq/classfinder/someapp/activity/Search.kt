@@ -53,7 +53,7 @@ class Search : AppCompatActivity() {
         auckAreaSpinner = setupSpinner(this, R.id.search_spinner_auck_areas, R.array.auck_areas)
 
 
-        locationSpinner!!.onItemSelectedListener = Utils.LocationItemListener(auckAreaSpinner)
+//        locationSpinner!!.onItemSelectedListener = Utils.LocationItemListener(auckAreaSpinner)
         priceFrom = findViewById(R.id.search_price_from) as EditText
         priceTo = findViewById(R.id.search_price_to) as EditText
     }
@@ -66,10 +66,10 @@ class Search : AppCompatActivity() {
 
         val location = locationSpinner!!.selectedItem as String
 
-        if (location == LOCATIONS[0]) {
-            val rawArea = auckAreaSpinner!!.selectedItem as String
-           // auckArea = AUCK_AREA_PREFIX + rawArea //YAK MAN bad code need better thought man.
-        }
+//        if (location == LOCATIONS[0]) {
+//            val rawArea = auckAreaSpinner!!.selectedItem as String
+//           // auckArea = AUCK_AREA_PREFIX + rawArea //YAK MAN bad code need better thought man.
+//        }
 
         val roomType = roomTypeSpinner!!.selectedItem as String
 

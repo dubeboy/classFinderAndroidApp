@@ -14,9 +14,6 @@ import za.co.metalojiq.classfinder.someapp.activity.fragment.AccomList;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.GetAccomFailed;
 import za.co.metalojiq.classfinder.someapp.model.Accommodation;
 
-import static za.co.metalojiq.classfinder.someapp.activity.Search.INTENT_RESPONSE_EXTRA;
-
-
 /**
  * this class handles all search that is done on the app and launches the required fragment
  */
@@ -36,7 +33,7 @@ public class SearchResults extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         final FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        Search.INTENT_RESPONSE intentResponse = (Search.INTENT_RESPONSE) intent.getSerializableExtra(Companion.getINTENT_RESPONSE_EXTRA());
+        Search.INTENT_RESPONSE intentResponse = (Search.INTENT_RESPONSE) intent.getSerializableExtra(Search.Companion.getINTENT_RESPONSE_EXTRA());
         if (intentResponse == Search.INTENT_RESPONSE.SUCCESS) {
             //todo unchecked cast
             AccomList accomList = AccomList.newInstance(accommodations, -1);

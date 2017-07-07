@@ -207,7 +207,8 @@ public interface ApiInterface {
                           @NonNull @Query("common") String common,
                           @Query("nsfas") boolean nsfas,
                           @Query("wifi") boolean wifi,
-                          @Query("prepaid_elec") boolean prepaid);
+                          @Query("prepaid_elec") boolean prepaid,
+                          @Part List<MultipartBody.Part> images);
 
     @Headers({"Accept: application/json"})
     @GET("/api/v1/house/{id}/get_accoms")
@@ -221,6 +222,12 @@ public interface ApiInterface {
     @Headers({"Accept: application/json"})
     @GET("/api/v1/users/save_fcm_token")
     Call<StatusRespose> saveFcmToken(@Query("fcm_token") String token, @Query("email") String email);
+
+    @Headers({"Accept: application/json"})
+    @GET("/api/v1/users/send_sms")
+    Call<StatusRespose> sendSms(@Query("phone_number") String number,
+                                @Query("user_id") int userId);
+
 
 
 

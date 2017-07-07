@@ -54,12 +54,14 @@
         <TextView
             android:id="@+id/search_tv_auck_areas"
             android:layout_width="match_parent"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             android:text="Auck Areas:"
             android:textSize="20sp" />
         <Spinner
             android:id="@+id/search_spinner_auck_areas"
             android:layout_width="match_parent"
+            android:visibility="gone"
             android:layout_height="wrap_content" />
 
 

@@ -1,7 +1,9 @@
 package za.co.metalojiq.classfinder.someapp.activity.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,6 +12,8 @@ import android.view.ViewGroup;
 
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -50,25 +54,29 @@ public class StudentPanel extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mId = getArguments().getInt(ARG_ID);
-        }
+//        if (getArguments() != null) {
+//            mId = getArguments().getInt(ARG_ID);
+//        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_runner, container, false);
+        return inflater.inflate(R.layout.fragment_runner, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.runnerLoadMore);
         recyclerView = (RecyclerView) view.findViewById(R.id.runner_list);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.runnerTransLoad); // Todo should rename
-        tvError = (TextView) view.findViewById(R.id.runnerErrorMsg);
-//            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         getActivity().setTitle("Your bookings");
-        load(mId);
-        return view;
 
+        if (getArguments() != null) {
+            mId = getArguments().getInt(ARG_ID);
+        }
+        load(mId);
     }
 
     private void load(final int studentId) {
@@ -81,18 +89,17 @@ public class StudentPanel extends Fragment {
                 ArrayList<Transaction> transactions = response.body().getTransactions();
                 if (transactions.size() == 0) {
                     tvError.setText("Nothing to show.");
-                    recyclerView.setVisibility(View.GONE);
+                   // recyclerView.setVisibility(View.GONE);
                     mProgressBar.setVisibility(View.GONE);
                     return;
                 }
                 recyclerView.setAdapter(new TransactionAdapter(transactions, R.layout.list_item_runner, getActivity()));
                 mProgressBar.setVisibility(View.GONE);
             }
-
             @Override
             public void onFailure(Call<TransactionResponse> call, Throwable t) {
-                tvError.setText("Sorry please connect to the internet ");
-                recyclerView.setVisibility(View.GONE);
+//                recyclerView.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Please connect to the internet", Toast.LENGTH_LONG).show();
                 mProgressBar.setVisibility(View.GONE);
             }
         });

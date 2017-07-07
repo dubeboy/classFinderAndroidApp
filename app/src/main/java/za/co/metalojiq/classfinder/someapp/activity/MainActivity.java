@@ -1,24 +1,36 @@
 package za.co.metalojiq.classfinder.someapp.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
+
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+
+import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -28,8 +40,10 @@ import za.co.metalojiq.classfinder.someapp.activity.network.Networks;
 import za.co.metalojiq.classfinder.someapp.activity.expirimental.SettingsActivity;
 import za.co.metalojiq.classfinder.someapp.model.Accommodation;
 import za.co.metalojiq.classfinder.someapp.model.AccommodationResponse;
+import za.co.metalojiq.classfinder.someapp.model.StatusRespose;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
+import za.co.metalojiq.classfinder.someapp.util.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,13 +53,18 @@ import static za.co.metalojiq.classfinder.someapp.util.Utils.makeToast;
 
 
 //// TODO: 1/11/17   this class should use fragments to display the activity based on the which callback
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
     public static final String USER_ID = "userId";
     private GoogleApiClient mGoogleApiClient;
-    private  SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences;
     private int userId = 0;
+    private Boolean isFabOpen = false;
+    private FloatingActionButton fab, fab1, fab2;
+    private Animation fab_open, fab_close, rotate_forward, rotate_backward;
+    EditText etOwnerPhone;
+
 
     //fragment injection required code
     FragmentManager fragmentManager;
@@ -162,7 +181,23 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         sharedPreferences = getSharedPreferences(LoginActivity.LOGIN_PREF_FILENAME, MODE_PRIVATE);
         userId = sharedPreferences.getInt(LoginActivity.LOGIN_PREF_USER_ID, 0);  // getting the user Id yey !
 
-
+        //@author - https://www.learn2crack.com/2015/10/android-floating-action-button-animations.html
+        // it was exactly what i needed
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab1 = (FloatingActionButton) findViewById(R.id.fab1);
+        fab2 = (FloatingActionButton) findViewById(R.id.fab2);
+        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
+        rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_fab_forward);
+        rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_fab_back);
+        if (Utils.getUserId(this) != 0) {
+            fab.setOnClickListener(this);
+            fab1.setOnClickListener(this);
+            fab2.setOnClickListener(this);
+        } else {
+            makeToast("Please sign in first", this);
+            startActivity(new Intent(this, LoginActivity.class));
+        }
 
 
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
@@ -188,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 if (response.body() != null) {
                     ArrayList<Accommodation> accommodations;
                     accommodations = response.body().getResults();
-                    if(accommodations.size() > 0) {
+                    if (accommodations.size() > 0) {
                         Log.d(TAG, "host id " + accommodations.get(0).getHostId());
                         final AccomList accomList = AccomList.newInstance(accommodations, -1);
                         setTitle(R.string.app_name);
@@ -201,8 +236,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             public void onFailure(Call<AccommodationResponse> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
                 ArrayList<Accommodation> accommodations = new ArrayList<>();
-               final AccomList accomList = AccomList.newInstance(accommodations, -1);
-            //    final HouseActivityFragment myHousesList = HouseActivityFragment.Companion.newInstance(userId);
+                final AccomList accomList = AccomList.newInstance(accommodations, -1);
+                //    final HouseActivityFragment myHousesList = HouseActivityFragment.Companion.newInstance(userId);
                 setTitle("Error");
                 startAccomListActivity(accomList, fragmentTransaction);
             }
@@ -217,5 +252,103 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         makeToast("Please connect to the internet first to use google sign in or update google sign in", this);
+    }
+
+    public void animateFAB() {
+
+        if (isFabOpen) {
+
+            fab.startAnimation(rotate_backward);
+            fab1.startAnimation(fab_close);
+            fab2.startAnimation(fab_close);
+            fab1.setClickable(false);
+            fab2.setClickable(false);
+            isFabOpen = false;
+            Log.d("Raj", "close");
+
+        } else {
+
+            fab.startAnimation(rotate_forward);
+            fab1.startAnimation(fab_open);
+            fab2.startAnimation(fab_open);
+            fab1.setClickable(true);
+            fab2.setClickable(true);
+            isFabOpen = true;
+            Log.d("Raj", "open");
+
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        switch (id) {
+            case R.id.fab:
+
+                animateFAB();
+                break;
+            case R.id.fab1:
+
+                Log.d(TAG, "Fab 1");
+                break;
+            case R.id.fab2:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                LayoutInflater inflater = getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.fragment_invite_accommodation_owner, null);
+                builder.setView(dialogView);
+                builder.setTitle("Invite LandLord");
+                etOwnerPhone = (EditText) dialogView.findViewById(R.id.accom_owner_phone);
+                builder.setPositiveButton("Invite", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String phoneNumber = etOwnerPhone.getText().toString();
+                        if(validateNumber(phoneNumber.trim())) {
+                            makeToast("Inviting Landload", MainActivity.this);
+                            ApiClient.getClient().create(ApiInterface.class)
+                                    .sendSms(phoneNumber, Utils.getUserId(MainActivity.this))
+                                    .enqueue(new Callback<StatusRespose>() {
+                                        @Override
+                                        public void onResponse(Call<StatusRespose> call, Response<StatusRespose> response) {
+                                            if (response.body() != null) {
+                                                if (response.body().isStatus()) {
+                                                    Toast.makeText(MainActivity.this,
+                                                            "Invited Landload via SMS", Toast.LENGTH_LONG).show();
+                                                } else {
+                                                    Toast.makeText(MainActivity.this,
+                                                            "Sorry could not send SMS please make sure you are signed in", Toast.LENGTH_LONG).show();
+
+                                                }
+                                            } else {
+                                                Toast.makeText(MainActivity.this,
+                                                        "Ops this should not happen", Toast.LENGTH_LONG).show(); //useless
+
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<StatusRespose> call, Throwable t) {
+                                            Toast.makeText(MainActivity.this,
+                                                    "To send an sms you need to be connected to the internet", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                            dialog.dismiss();
+                        } else makeToast("Please validate your input", MainActivity.this);
+                    }
+
+                    private boolean validateNumber(String phoneNumber) {
+                        return (!TextUtils.isEmpty(phoneNumber)) && phoneNumber.length() == 10;
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+                animateFAB(); // close the animation
+                break;
+        }
     }
 }

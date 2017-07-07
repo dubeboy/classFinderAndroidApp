@@ -1,11 +1,14 @@
 package za.co.metalojiq.classfinder.someapp.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,6 +22,7 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
+import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,10 +35,11 @@ import za.co.metalojiq.classfinder.someapp.util.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static za.co.metalojiq.classfinder.someapp.util.Utils.*;
 
-public class NewAccommodation extends AppCompatActivity {
+public class NewAccommodation extends AppCompatActivity implements Utils.OnImagesSelected {
 
     private static final String TAG = NewAccommodation.class.getSimpleName();
     //    private Spinner auckAreaSpinner;
@@ -48,6 +53,8 @@ public class NewAccommodation extends AppCompatActivity {
     private ProgressDialog dialog;
     private EditText etDeposit;
 //    private OkHttpClient kk;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +82,10 @@ public class NewAccommodation extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 makeToast("Starting image Picker", NewAccommodation.this);
-                launchImagesPicker();
+                Utils.launchImagesPicker(NewAccommodation.this,
+                                                getSupportFragmentManager(),
+                                                imagesContainer,
+                                                NewAccommodation.this); //todo:  arguments can be better
             }
         });
 
@@ -164,62 +174,11 @@ public class NewAccommodation extends AppCompatActivity {
             }
         }
     }
-    private  void launchImagesPicker() {
-        requestCameraPermissions();
-    }
 
-    private void createImagesBottomPicker() {
-        TedBottomPicker bottomSheetDialogFragment = new TedBottomPicker.Builder(this)
-                .setOnMultiImageSelectedListener(new TedBottomPicker.OnMultiImageSelectedListener() {
 
-                    @Override
-                    public void onImagesSelected(ArrayList<Uri> uriList) {
-                        int numImages = uriList.size();
-                        bitmaps  = new Bitmap[numImages];
-                        if (numImages > 0) {
-                            imagesContainer.removeAllViews();
-                            imageUris = new String[numImages];
-                            ImageView previewImages[] = new ImageView[numImages];
-                            HorizontalScrollView imagesHoriScrollView = (HorizontalScrollView) findViewById(R.id.newImagesScrollView);
-                            imagesHoriScrollView.setVisibility(View.VISIBLE);
-
-                            for (int i = 0; i < numImages; i++) {
-                                bitmaps[i] = BitmapFactory.decodeFile(uriList.get(i).getPath());
-                                imageUris[i] = uriList.get(i).getPath();
-                                previewImages[i] = new ImageView(NewAccommodation.this);
-                                previewImages[i].setAdjustViewBounds(true);
-                                previewImages[i].setLayoutParams(new ViewGroup.LayoutParams(240, 240));
-                                previewImages[i].setPadding(5, 0, 5, 0);
-                                previewImages[i].setScaleType(ImageView.ScaleType.FIT_CENTER);
-                                previewImages[i].setImageBitmap(bitmaps[i]);
-                                imagesContainer.addView(previewImages[i]);
-                            }
-                        }
-                    }
-                })
-                .setPeekHeight(1600)
-                .showTitle(false)
-                .setCompleteButtonText("Upload")
-                .setEmptySelectionText("No image selected for upload")
-                .create();
-        bottomSheetDialogFragment.show(getSupportFragmentManager());
-    }
-    private void requestCameraPermissions() {
-        PermissionListener permissionlistener = new PermissionListener() {
-            @Override
-            public void onPermissionGranted() {
-                Toast.makeText(NewAccommodation.this, "Please select images ypu want to upload.", Toast.LENGTH_SHORT).show();
-                createImagesBottomPicker();
-            }
-            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
-                Toast.makeText(NewAccommodation.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
-            }
-        };
-        new TedPermission(NewAccommodation.this)
-                .setPermissionListener(permissionlistener)
-                .setGotoSettingButton(true)
-                .setDeniedMessage("If you reject permission,you can not upload Images\n\nPlease turn on permissions at [Setting] > [Permission]")
-                .setPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .check();
+    @Override
+    public void onImagesSelected(Bitmap[] bitmaps, String[] imagesUrls) {
+        this.bitmaps = bitmaps;
+        this.imageUris = imagesUrls;
     }
 }

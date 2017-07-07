@@ -4,4 +4,6 @@
     <color name="primary_dark">#e65100</color>
     <color name="accent">#4caf50</color>
     <color name="price_color">#00c853</color>
+    <color name="colorFAB1">#2196F3</color>
+    <color name="colorFAB2">#E040FB</color>
 </resources>
