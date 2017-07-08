@@ -77,17 +77,23 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
         toggleShowRunnerInfo(false);
         final Spinner locationsSpinner =  setupSpinner(this, R.id.signUpSpinnerTime, R.array.locations_array);
 
-        mRunnerQuestion.setOnClickListener(v -> {
-            String s = "As an Accommodation Assistant you are expected to take clients to view rooms around" +
-                         "an area you are familiar with.Select an area around which you are available to take clients to view rooms.";
-            showTooltip(s, mRunnerQuestion);
+        mRunnerQuestion.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String s = "As an Accommodation Assistant you are expected to take clients to view rooms around" +
+                        "an area you are familiar with.Select an area around which you are available to take clients to view rooms.";
+                showTooltip(s, mRunnerQuestion);
+            }
         });
 
-        mCheckIsRunner.setOnClickListener(v -> {
-            if (mCheckIsRunner.isChecked()) {
-                toggleShowRunnerInfo(true);
-            } else {
-                toggleShowRunnerInfo(false);
+        mCheckIsRunner.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCheckIsRunner.isChecked()) {
+                    toggleShowRunnerInfo(true);
+                } else {
+                    toggleShowRunnerInfo(false);
+                }
             }
         });
 
