@@ -9,13 +9,14 @@ import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import com.firebase.ui.database.FirebaseListAdapter
-import com.google.firebase.database.FirebaseDatabase
 import za.co.metalojiq.classfinder.someapp.R
 import kotlinx.android.synthetic.main.activity_chat.*
 import za.co.metalojiq.classfinder.someapp.model.ChatMessage
 import za.co.metalojiq.classfinder.someapp.util.Utils
 import android.widget.TextView
 import android.widget.Toast
+import com.google.firebase.database.*
+import okhttp3.internal.Util
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -38,12 +39,12 @@ class ChatActivity : AppCompatActivity() {
         fab_send.setOnClickListener {
             Log.d(TAG, "Sending msg")
             val text = input.text.toString()
-            FirebaseDatabase
-                    .getInstance()
-                    .reference
-                    .push()
-                    .setValue(ChatMessage(text, Utils.getUserSharedPreferences(this@ChatActivity)
-                            .getString(LoginActivity.LOGIN_PREF_EMAIL, "")))
+//            FirebaseDatabase
+//                    .getInstance()
+//                    .reference
+//                    .push()
+//                    .setValue(ChatMessage(text, Utils.getUserSharedPreferences(this@ChatActivity)
+//                            .getString(LoginActivity.LOGIN_PREF_EMAIL, "")))
             input.setText("")
         }
 
@@ -71,11 +72,117 @@ class ChatActivity : AppCompatActivity() {
         list_of_messages.adapter = adapter
     }
 
-    private fun sendMessageToFireBaseUser(context: Context, chat: ChatMessage, recieverFBToken: String) {
-        val roomType1: String = "${null}_${Utils.getUserId(context)}"
+    private fun sendMessageToFireBaseUser(context: Context, chat: ChatMessage, senderUser: User, recieverUser: User) {
+        val roomType1: String = "cf_${recieverUser.id}_${senderUser.id}"
+        val roomType2: String = "cf_${senderUser.id}_${recieverUser.id}"
+
+        val dbReference = FirebaseDatabase.getInstance().reference
+        dbReference.child(ARG_CHAT_ROOMS).ref.addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onCancelled(dbError: DatabaseError?) {
+                Toast.makeText(this@ChatActivity, "Failed to send msg please try again", Toast.LENGTH_LONG).show()
+            }
+
+            override fun onDataChange(dataSnapShot: DataSnapshot?) {
+               if(dataSnapShot != null) {
+                   if(dataSnapShot.hasChild(roomType1)) {
+                       /*if the room exists okay create a new field(key) = timestamp -> always create a new one therefore creating log of chat neat!! */
+
+                        Log.e(TAG, "send msg to fb user $roomType1 exists")
+                       dbReference
+                               .child(ARG_CHAT_ROOMS)
+                               .child(roomType1)
+                               .child(chat.messageTime.toString()).setValue(chat)
+                   } else if (dataSnapShot.hasChild(roomType2)) {
+                       Log.e(TAG, "send msg to fb user $roomType2 exists")
+                       dbReference
+                               .child(ARG_CHAT_ROOMS)
+                               .child(roomType2)
+                               .child(chat.messageTime.toString()).setValue(chat)
+                   } else {
+                       dbReference
+                               .child(ARG_CHAT_ROOMS)
+                               .child(roomType1)
+                               .child(chat.messageTime.toString()).setValue(chat)
+                   }
+               }
+            }
+        })
+
     }
 
-    fun getHostUserDetails(onUserResponse: (user: User?) -> Unit) { //allowing null probably a bad idea but ...
+    private fun ge1tMessageFromFireBaseUser(senderUser: User, recieverUser: User) {
+        val roomType1: String = "cf_${recieverUser.id}_${senderUser.id}"
+        val roomType2: String = "cf_${senderUser.id}_${recieverUser.id}"
+
+        val dbReference = FirebaseDatabase.getInstance().reference
+
+        dbReference.child(ARG_CHAT_ROOMS).ref.addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onCancelled(p0: DatabaseError?) {
+                Toast.makeText(this@ChatActivity, "Failed to send msg please try again", Toast.LENGTH_LONG).show()
+            }
+
+            override fun onDataChange(dbSnapShot: DataSnapshot) {  //its a snapshot
+                if (dbSnapShot.hasChild(roomType1)) {
+                    Log.e(TAG, "geting msg form rooom $roomType1")
+
+                    FirebaseDatabase
+                            .getInstance()
+                            .getReference(ARG_CHAT_ROOMS)
+                            .child(roomType1)
+                            .addChildEventListener(object: ChildEventListener {
+                                override fun onCancelled(p0: DatabaseError?) {
+                                    Log.e(TAG, "sorry could not get msg $p0")
+
+                                }
+
+                                override fun onChildMoved(p0: DataSnapshot?, p1: String?) {
+                                }
+
+                                override fun onChildChanged(p0: DataSnapshot?, p1: String?) {
+                                }
+
+                                override fun onChildAdded(dataSnapShot: DataSnapshot, s: String?) {
+                                    val chatMessage: ChatMessage?  = dataSnapShot.getValue(ChatMessage::class.java)
+                                    Log.d(TAG, "The msg for room 1 is: $chatMessage")
+                                }
+
+                                override fun onChildRemoved(p0: DataSnapshot?) {
+                                }
+                            })
+                } else if (dbSnapShot.hasChild(roomType2)) {
+                    FirebaseDatabase
+                            .getInstance()
+                            .getReference(ARG_CHAT_ROOMS)
+                            .child(roomType2)
+                            .addChildEventListener(object: ChildEventListener {
+                                override fun onCancelled(p0: DatabaseError?) {
+                                    Log.e(TAG, "sorry could not get msg $p0")
+
+                                }
+
+                                override fun onChildMoved(p0: DataSnapshot?, p1: String?) {
+                                }
+
+                                override fun onChildChanged(p0: DataSnapshot?, p1: String?) {
+                                }
+
+                                override fun onChildAdded(dataSnapShot: DataSnapshot, s: String?) {
+                                    val chatMessage: ChatMessage?  = dataSnapShot.getValue(ChatMessage::class.java)
+                                    Log.d(TAG, "The msg room 2 is: $chatMessage")
+                                }
+
+                                override fun onChildRemoved(p0: DataSnapshot?) {
+                                }
+                            })
+                }
+            }
+        })
+    }
+
+
+
+
+   private fun getHostUserDetails(onUserResponse: (user: User?) -> Unit) { //allowing null probably a bad idea but ...
         val hostId: String = intent.getStringExtra(AccomList.POST_INT_HOST_ID)
         val client: ApiInterface = ApiClient.getClient().create(ApiInterface::class.java)
         client.getUser(hostId)
@@ -100,5 +207,6 @@ class ChatActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "ChatActivity"
+        const val ARG_CHAT_ROOMS = "chat_rooms"
     }
 }
