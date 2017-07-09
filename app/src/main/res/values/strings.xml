@@ -128,4 +128,5 @@
         16:00-17:00\n
     </string>
     <string name="title_activity_house">HouseActivity</string>
+    <string name="title_activity_host_panel">HostPanel</string>
 </resources>

@@ -105,8 +105,8 @@ public class Runner extends AppCompatActivity {
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        ProgressBar progressBar = (ProgressBar) findViewById(R.id.runnerTransLoad);
-        progressBar.setVisibility(View.INVISIBLE);
+//        ProgressBar progressBar = (ProgressBar) findViewById(R.id.runnerTransLoad);
+        mProgressBar.setVisibility(View.INVISIBLE);
 
         tabLayout.setupWithViewPager(mViewPager);
 

@@ -27,7 +27,6 @@ import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import gun0912.tedbottompicker.TedBottomPicker;
 import retrofit2.Call;
@@ -35,7 +34,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.activity.LoginActivity;
-import za.co.metalojiq.classfinder.someapp.activity.NewAccommodation;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.BookSearchFaculty;
 import za.co.metalojiq.classfinder.someapp.model.NetworksCategory;
 import za.co.metalojiq.classfinder.someapp.model.StatusRespose;
@@ -51,6 +49,7 @@ import static za.co.metalojiq.classfinder.someapp.activity.LoginActivity.LOGIN_P
  */
 
 //todo: should change this to a kotlin object class
+    //todo: this class need to be spit up
 public class Utils               {
 
     public static final String[] LOCATIONS = {"Auckland Park", "Braamfontein", "Doornfontein", "Soweto"};
@@ -103,6 +102,7 @@ public class Utils               {
         return password.length() >= 4;
     }
 
+    //TODO: GOOGLE SIGNuP
     @NonNull
     public static GoogleApiClient getGoogleSignUp(Context context,
                                                   GoogleApiClient.OnConnectionFailedListener onConnectionFailedListener) {
@@ -225,7 +225,7 @@ public class Utils               {
                 .getString(LoginActivity
                         .USER_LOGIN_TOKEN, "");
         if (!userToken.equals("")) {
-            String url = ApiClient.DEV_HOST + "/api/v1/refs?token=" + userToken + "&accom_id=" + accommodationId;
+            String url = ApiClient.PROD_HOST + "/api/v1/refs?token=" + userToken + "&accom_id=" + accommodationId;
             intent.putExtra(Intent.EXTRA_TEXT, url);
             intent.setType("text/plain");
             // this is where we send data to the internet
@@ -234,7 +234,7 @@ public class Utils               {
                     .enqueue(new Callback<StatusRespose>() {
                         @Override
                         public void onResponse(Call<StatusRespose> call, Response<StatusRespose> response) {
-                            //todo: add some logic
+                            //todo: add some logic notify the user of how many they have shared this link
                         }
 
                         @Override
@@ -251,11 +251,6 @@ public class Utils               {
 
 
     // image upload stuff
-
-    enum KEYS {BITMAP_ARRAY, IMAGES_URL_ARRAY}
-
-
-
 
     public interface OnImagesSelected {
         void onImagesSelected(Bitmap[] bitmaps, String[] imagesUrls);
@@ -332,5 +327,23 @@ public class Utils               {
 
         requestCameraPermissions(context, fragmentManager, imagesContainer, onImagesSelected);
     }
+
+    public static void notifyHost(String roomId, int hostId) {
+        ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
+        Call<StatusRespose> statusResposeCall = apiInterface.notifyHost(roomId, hostId);
+        statusResposeCall.enqueue(new Callback<StatusRespose>() {  // no respose here boss
+            @Override
+            public void onResponse(@NonNull Call<StatusRespose> call, @NonNull Response<StatusRespose> response) {
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<StatusRespose> call, @NonNull Throwable t) {
+
+            }
+        });
+    }
+
+
 
 }

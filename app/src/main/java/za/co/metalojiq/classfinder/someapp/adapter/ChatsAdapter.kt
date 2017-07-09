@@ -41,10 +41,17 @@ class ChatsAdapter(val chats: ArrayList<ChatMessage>) : RecyclerView.Adapter<Cha
 
     fun addAll(chatsMessages: ArrayList<ChatMessage>) {
         chats.addAll(chatsMessages)
+        notifyDataSetChanged()
+    }
+
+    fun addChat(chat: ChatMessage) {
+        chats.add(chat)
+        notifyDataSetChanged()
     }
 
     fun clear() {
         chats.clear()
+        notifyDataSetChanged()
     }
 
 }

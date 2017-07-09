@@ -235,6 +235,12 @@ public interface ApiInterface {
                                 @Query("user_id") int userId);
 
 
+    @Headers({"Accept: application/json"})
+    @GET("/api/v1/users/notify_host")
+    Call<StatusRespose> notifyHost(@Query("room_id") String roomId,
+                                @Query("user_id") int userId);
+
+
 
 
 }

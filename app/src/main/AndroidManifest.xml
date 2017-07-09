@@ -108,7 +108,11 @@
         <activity android:name=".activity.FragmentSurrogateActivity" />
         <activity android:name=".activity.HouseAccomsActivity" />
         <activity android:name=".activity.HostDashboard" />
-        <activity android:name=".activity.ChatActivity"></activity>
+        <activity android:name=".activity.ChatActivity" />
+        <activity
+            android:name=".activity.HostPanel"
+            android:label="@string/title_activity_host_panel"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
