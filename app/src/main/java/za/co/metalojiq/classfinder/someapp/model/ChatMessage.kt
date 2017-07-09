@@ -1,5 +1,8 @@
 package za.co.metalojiq.classfinder.someapp.model
 
+import android.os.Parcel
+import android.os.Parcelable
+import java.io.Serializable
 import java.util.*
 
 /**
@@ -7,6 +10,19 @@ import java.util.*
  */
 
 //sets up the getters and setters etc
-data class ChatMessage(var messageText: String = "", var messageUser: String = "") {
+class ChatMessage : Serializable {
     var messageTime: Long = Date().time
+    var messageText: String? = null
+    var messageUser: String? = null
+
+    constructor(messageText: String, messageUser: String) {
+        this.messageText = messageText
+        this.messageUser = messageUser
+    }
+
+    constructor() {}
+
+    override fun toString(): String {
+        return "{$messageText, : $messageUser}"
+    }
 }

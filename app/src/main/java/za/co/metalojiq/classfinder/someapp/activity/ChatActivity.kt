@@ -3,6 +3,8 @@ package za.co.metalojiq.classfinder.someapp.activity
 import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.text.format.DateFormat
 import android.util.Log
 import android.view.View
@@ -12,7 +14,9 @@ import kotlinx.android.synthetic.main.activity_chat.*
 import za.co.metalojiq.classfinder.someapp.model.ChatMessage
 import android.widget.TextView
 import android.widget.Toast
+import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.google.firebase.database.*
+import org.w3c.dom.Text
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,6 +28,9 @@ import za.co.metalojiq.classfinder.someapp.rest.ApiInterface
 import za.co.metalojiq.classfinder.someapp.util.Utils
 
 class ChatActivity : AppCompatActivity() {
+    //todo: should have single ton that stores user state here
+
+    val msgs: ArrayList<ChatMessage> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,24 +39,28 @@ class ChatActivity : AppCompatActivity() {
         var hostUser: User? = User()
         val senderUser: User = User()
         senderUser.id = Utils.getUserId(this)
+        senderUser.email = Utils.getUserSharedPreferences(this).getString(LoginActivity.LOGIN_PREF_EMAIL, "")
+
         //todo: set a progress bar here
         getHostUserDetails {
-           when(it) { //looks nicer
-               null -> {
-                   hostUser = null
-               }
-               else -> {
-                   hostUser = it
-                   getMessageFromFireBaseUser(senderUser, hostUser!!)
-               }
-           }
+            if (it == null) {
+                hostUser = null
+            } else {
+                hostUser = it
+                getMessageFromFireBaseUser(senderUser, hostUser!!)
+            }
         }
+
+        displayChatMessages()
 
         fab_send.setOnClickListener {
             Log.d(TAG, "Sending msg")
             val text = input.text.toString()
-            if (hostUser != null) {
-                val chat = ChatMessage(text)
+            Log.d(TAG, "the host information is this $hostUser")
+            Log.d(TAG, "the user information is this $senderUser")
+            Log.d(TAG, "the msg is $text")
+            if (hostUser?.id != null) {
+                val chat = ChatMessage(text, senderUser.email)
                 sendMessageToFireBaseUser(this@ChatActivity, chat, senderUser, hostUser!!)
                 input.setText("")
             } else {
@@ -58,28 +69,47 @@ class ChatActivity : AppCompatActivity() {
             }
         }
 
-        displayChatMessages()
     }
 
+    /*sets up the recycler view*/
     fun displayChatMessages() {
-        val adapter: FirebaseListAdapter<ChatMessage> =
-                object : FirebaseListAdapter<ChatMessage>(this@ChatActivity,
-                        ChatMessage::class.java, R.layout.list_item_chat, FirebaseDatabase.getInstance().reference) {
-                    override fun populateView(v: View, model: ChatMessage, position: Int) {
-                        val messageText = v.findViewById(R.id.message_text) as TextView
-                        val messageUser = v.findViewById(R.id.message_user) as TextView
-                        val messageTime = v.findViewById(R.id.message_time) as TextView
+        val linerLayoutManager: LinearLayoutManager = LinearLayoutManager(this)
+        val recyclerViewAdapter: FirebaseRecyclerAdapter<ChatMessage, ChatsViewHolder> =
+                object : FirebaseRecyclerAdapter<ChatMessage, ChatsViewHolder>(
+                ChatMessage::class.java,
+                R.layout.list_item_chat,
+                ChatsViewHolder::class.java,
+                FirebaseDatabase.getInstance().reference.child(ARG_CHAT_ROOMS).child("cf_1_1")) {
 
-                        // Set their text
-                        messageText.text = model.messageText
-                        messageUser.text = model.messageUser
+            override fun populateViewHolder(viewHolder: ChatsViewHolder, model: ChatMessage, position: Int) {
+                Log.d(TAG, "Called man and the model is $model")
+                viewHolder.messageText.text = model.messageText
+                viewHolder.messageTime.text = model.messageTime.toString()
+                viewHolder.messageUser.text = model.messageUser
+            }
 
-                        // Format the date before showing it
-                        messageTime.text = DateFormat.format("dd-MM-yyyy (HH:mm:ss)",
-                                model.messageTime)
-                    }
+             override fun onBindViewHolder(viewHolder: ChatsViewHolder, position: Int) {
+                super.onBindViewHolder(viewHolder, position)
+                 Log.d(TAG, "called many times + $position")
+             }
+            }
+//        list_of_messages.adapter = adapter
+
+        recyclerViewAdapter.registerAdapterDataObserver(object: RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                val numChats: Int = recyclerViewAdapter.itemCount
+                val lastVisiblePosition: Int = linerLayoutManager.findLastCompletelyVisibleItemPosition()
+                if (lastVisiblePosition == -1 ||
+                        (positionStart >= (numChats - 1) &&
+                                lastVisiblePosition == (positionStart - 1))) {
+                    list_of_messages.scrollToPosition(positionStart);
                 }
-        list_of_messages.adapter = adapter
+            }
+        })
+
+        list_of_messages.layoutManager = linerLayoutManager
+        list_of_messages.adapter = recyclerViewAdapter
     }
 
     private fun sendMessageToFireBaseUser(context: Context, chat: ChatMessage, senderUser: User, recieverUser: User) {
@@ -90,6 +120,7 @@ class ChatActivity : AppCompatActivity() {
         dbReference.child(ARG_CHAT_ROOMS).ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(dbError: DatabaseError?) {
                 Toast.makeText(this@ChatActivity, "Failed to send msg please try again", Toast.LENGTH_LONG).show()
+                Log.d(TAG, "failed to send msg please try agaain")
             }
 
             override fun onDataChange(dataSnapShot: DataSnapshot?) {
@@ -121,6 +152,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun getMessageFromFireBaseUser(senderUser: User, recieverUser: User) {
+        Log.d(TAG, "Called man ")
         val roomType1: String = "cf_${recieverUser.id}_${senderUser.id}"
         val roomType2: String = "cf_${senderUser.id}_${recieverUser.id}"
 
@@ -132,6 +164,7 @@ class ChatActivity : AppCompatActivity() {
             }
 
             override fun onDataChange(dbSnapShot: DataSnapshot) {  //its a snapshot
+                Log.d(TAG, "On Data Change")
                 if (dbSnapShot.hasChild(roomType1)) {
                     Log.e(TAG, "geting msg form rooom $roomType1")
 
@@ -154,6 +187,7 @@ class ChatActivity : AppCompatActivity() {
                                 override fun onChildAdded(dataSnapShot: DataSnapshot, s: String?) {
                                     val chatMessage: ChatMessage? = dataSnapShot.getValue(ChatMessage::class.java)
                                     Log.d(TAG, "The msg for room 1 is: $chatMessage")
+                                    msgs.add(chatMessage!!)
                                 }
 
                                 override fun onChildRemoved(p0: DataSnapshot?) {
@@ -179,6 +213,8 @@ class ChatActivity : AppCompatActivity() {
                                 override fun onChildAdded(dataSnapShot: DataSnapshot, s: String?) {
                                     val chatMessage: ChatMessage? = dataSnapShot.getValue(ChatMessage::class.java)
                                     Log.d(TAG, "The msg room 2 is: $chatMessage")
+                                    msgs.add(chatMessage!!)
+
                                 }
 
                                 override fun onChildRemoved(p0: DataSnapshot?) {
@@ -202,7 +238,7 @@ class ChatActivity : AppCompatActivity() {
 
                     override fun onResponse(call: Call<UserResponse?>?, response: Response<UserResponse?>) {
                         if (response.body() != null) {
-                            if (response.body()?.isStatus!!) {
+                            if (response.body() != null) {
                                 onUserResponse(response.body()?.user!!)
                                 return
                             }
@@ -217,3 +253,10 @@ class ChatActivity : AppCompatActivity() {
         const val ARG_CHAT_ROOMS = "chat_rooms"
     }
 }
+
+class ChatsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    val messageText: TextView = itemView.findViewById(R.id.message_text) as TextView
+    val messageUser: TextView = itemView.findViewById(R.id.message_user) as TextView
+    val messageTime: TextView = itemView.findViewById(R.id.message_time) as TextView
+}
+
