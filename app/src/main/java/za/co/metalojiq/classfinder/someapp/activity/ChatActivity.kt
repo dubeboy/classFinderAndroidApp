@@ -3,9 +3,9 @@ package za.co.metalojiq.classfinder.someapp.activity
 import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.text.format.DateFormat
 import android.util.Log
 import android.view.View
 import com.firebase.ui.database.FirebaseListAdapter
@@ -16,11 +16,11 @@ import android.widget.TextView
 import android.widget.Toast
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.google.firebase.database.*
-import org.w3c.dom.Text
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import za.co.metalojiq.classfinder.someapp.activity.fragment.AccomList
+import za.co.metalojiq.classfinder.someapp.adapter.ChatsAdapter
 import za.co.metalojiq.classfinder.someapp.model.User
 import za.co.metalojiq.classfinder.someapp.model.UserResponse
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient
@@ -74,27 +74,29 @@ class ChatActivity : AppCompatActivity() {
     /*sets up the recycler view*/
     fun displayChatMessages() {
         val linerLayoutManager: LinearLayoutManager = LinearLayoutManager(this)
-        val recyclerViewAdapter: FirebaseRecyclerAdapter<ChatMessage, ChatsViewHolder> =
-                object : FirebaseRecyclerAdapter<ChatMessage, ChatsViewHolder>(
-                ChatMessage::class.java,
-                R.layout.list_item_chat,
-                ChatsViewHolder::class.java,
-                FirebaseDatabase.getInstance().reference.child(ARG_CHAT_ROOMS).child("cf_1_1")) {
+//        val recyclerViewAdapter: FirebaseRecyclerAdapter<ChatMessage, ChatsViewHolder> =
+//                object : FirebaseRecyclerAdapter<ChatMessage, ChatsViewHolder>(
+//                ChatMessage::class.java,
+//                R.layout.list_item_chat,
+//                ChatsViewHolder::class.java,
+//                FirebaseDatabase.getInstance().reference.child(ARG_CHAT_ROOMS).child("cf_1_1")) {
+//
+//            override fun populateViewHolder(viewHolder: ChatsViewHolder, model: ChatMessage, position: Int) {
+//                Log.d(TAG, "Called man and the model is $model")
+//                viewHolder.messageText.text = model.messageText
+//                viewHolder.messageTime.text = model.messageTime.toString()
+//                viewHolder.messageUser.text = model.messageUser
+//            }
+//
+//             override fun onBindViewHolder(viewHolder: ChatsViewHolder, position: Int) {
+//                super.onBindViewHolder(viewHolder, position)
+//                 Log.d(TAG, "called many times + $position")
+//             }
+//            }
 
-            override fun populateViewHolder(viewHolder: ChatsViewHolder, model: ChatMessage, position: Int) {
-                Log.d(TAG, "Called man and the model is $model")
-                viewHolder.messageText.text = model.messageText
-                viewHolder.messageTime.text = model.messageTime.toString()
-                viewHolder.messageUser.text = model.messageUser
-            }
-
-             override fun onBindViewHolder(viewHolder: ChatsViewHolder, position: Int) {
-                super.onBindViewHolder(viewHolder, position)
-                 Log.d(TAG, "called many times + $position")
-             }
-            }
+        val recyclerViewAdapter = ChatsAdapter(msgs)
 //        list_of_messages.adapter = adapter
-
+        list_of_messages.itemAnimator = DefaultItemAnimator()
         recyclerViewAdapter.registerAdapterDataObserver(object: RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
@@ -252,11 +254,5 @@ class ChatActivity : AppCompatActivity() {
         const val TAG = "ChatActivity"
         const val ARG_CHAT_ROOMS = "chat_rooms"
     }
-}
-
-class ChatsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val messageText: TextView = itemView.findViewById(R.id.message_text) as TextView
-    val messageUser: TextView = itemView.findViewById(R.id.message_user) as TextView
-    val messageTime: TextView = itemView.findViewById(R.id.message_time) as TextView
 }
 
