@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import za.co.metalojiq.classfinder.someapp.R;
@@ -65,11 +66,16 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
          }
 
          void bind(Transaction transaction) {
-             Log.d(TAG, "JEJUNUM " + transaction.getEmail());
+             Log.d(TAG, "Loading runner transactions " + transaction.getEmail());
             runnerLocation.setText(transaction.getLocation());
             runnerStudentEmail.setText(transaction.getEmail());
             runnerStudentCell.setText(transaction.getStudentContact());
             runnerTime.setText(transaction.getViewTime());
          }
      }
+
+    public void addAll(ArrayList<Transaction> transactions) {
+        transactions.addAll(transactions);
+        notifyDataSetChanged();
+    }
 }

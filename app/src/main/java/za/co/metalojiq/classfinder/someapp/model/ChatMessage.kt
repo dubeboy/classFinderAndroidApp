@@ -1,7 +1,5 @@
 package za.co.metalojiq.classfinder.someapp.model
 
-import android.os.Parcel
-import android.os.Parcelable
 import java.io.Serializable
 import java.util.*
 
@@ -9,15 +7,18 @@ import java.util.*
  * Created by divine on 2017/07/07.
  */
 
-//sets up the getters and setters etc
 class ChatMessage : Serializable {
     var messageTime: Long = Date().time
     var messageText: String? = null
     var messageUser: String? = null
+    var senderId: Int = 0
+    var receiverId: Int = 0
 
-    constructor(messageText: String, messageUser: String) {
+    constructor(messageText: String, messageUser: String, senderId: Int, receiverId: Int) {
         this.messageText = messageText
         this.messageUser = messageUser
+        this.senderId = senderId
+        this.receiverId = receiverId
     }
 
     constructor() {}

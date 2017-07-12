@@ -25,6 +25,8 @@ public class User implements Serializable {
     private ArrayList<TimeSlot> timeSlots;
     @SerializedName("runner")
     private boolean runner;
+    @SerializedName("host")
+    private boolean isHost;
     @SerializedName("token")
     private String token;
     @SerializedName("fcm_token")

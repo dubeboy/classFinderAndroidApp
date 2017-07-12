@@ -24,9 +24,9 @@ import za.co.metalojiq.classfinder.someapp.model.User
 import za.co.metalojiq.classfinder.someapp.model.UserResponse
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface
+import za.co.metalojiq.classfinder.someapp.util.KtUtils
 import za.co.metalojiq.classfinder.someapp.util.Utils
 import java.util.*
-import kotlin.concurrent.timerTask
 
 class ChatActivity : AppCompatActivity() {
     //todo: should have single ton that stores user state here
@@ -39,59 +39,43 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
-        var hostUser: User? = User()
+        val hostUser: User = User()
+        hostUser.id = intent.getIntExtra(AccomList.POST_INT_HOST_ID, 0)
         val senderUser: User = User()
-        senderUser.id = Utils.getUserId(this)
-        senderUser.email = Utils.getUserSharedPreferences(this).getString(LoginActivity.LOGIN_PREF_EMAIL, "")
-
-        var roomType1: String = ""
-        val roomId: String? = intent.getStringExtra(EXTRA_ROOM_ID)
-        val advertId: String? = intent.getStringExtra(AccomList.POST_ADVERT_ID)
-
-        //todo: set a progress bar here
-        getHostUserDetails {
-            if (it == null) {
-                hostUser = null
-                Toast.makeText(this, "Please connect to the internet to chat", Toast.LENGTH_LONG).show()
-            } else {
-                hostUser = it
-                getMessageFromFireBaseUser(senderUser, hostUser!!)
-                roomType1 = "cf_${hostUser!!.id}_${senderUser.id}"
-                if (roomId == null) {
-                    displayChatMessages(roomType1)
-                } else {
-                    displayChatMessages(roomId)
-                }
-            }
+        val isOpenByHost = intent.getBooleanExtra(IS_OPEN_BY_HOST, false)
+        if(isOpenByHost) { //this means that this intent is opened on the Hosts phone I need the senderUser to send to
+            senderUser.id = intent.getIntExtra(SENDER_ID, 0)
+            Log.d(TAG, "the sender ID is: ${senderUser.id}")
+        } else {
+            senderUser.id = Utils.getUserId(this)
         }
-
+        senderUser.email = Utils.getUserSharedPreferences(this).getString(LoginActivity.LOGIN_PREF_EMAIL, "") // the email belong to who ever is sending
+        //todo: set a progress bar here
+        getMessageFromFireBaseUser(senderUser, hostUser)
+        val roomType1 = "cf_${hostUser.id}_${senderUser.id}"
+        displayChatMessages(roomType1, list_of_messages, hostUser)
         fab_send.setOnClickListener {
             Log.d(TAG, "Sending msg")
             val text = input.text.toString().trim()
             Log.d(TAG, "the host information is this $hostUser")
             Log.d(TAG, "the user information is this $senderUser")
             Log.d(TAG, "the msg is $text")
-            if (hostUser?.id != null) {
-                if (TextUtils.isEmpty(text)) {
-                    Toast.makeText(this@ChatActivity, "Please type something", Toast.LENGTH_SHORT).show()
-                } else {
-                    val chat = ChatMessage(text, senderUser.email)
-                    sendMessageToFireBaseUser(this@ChatActivity, chat, senderUser, hostUser!!)
-
-
-                    Utils.notifyHost(roomType1, hostUser!!.id)
-                    input.setText("")
-                }
-
+            if (TextUtils.isEmpty(text)) {
+                Toast.makeText(this@ChatActivity, "Please type something", Toast.LENGTH_SHORT).show()
+            } else if (hostUser.id == senderUser.id) {
+                Toast.makeText(this@ChatActivity, "You cannot chat to your self boss", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this@ChatActivity,
-                        "Failed to get hostUser data please make you are connected to the internet", Toast.LENGTH_LONG).show()
+                val chat = ChatMessage(text, senderUser.email, senderUser.id, hostUser.id)
+                sendMessageToFireBaseUser(this@ChatActivity, chat, senderUser, hostUser)
+                Utils.notifyHost(roomType1, hostUser.id, senderUser.id, !isOpenByHost) //who ever is on the recieving side should be the opposite of the other
+                input.setText("")
             }
         }
     }
 
     /*sets up the recycler view*/
-    fun displayChatMessages(child: String) {
+    fun displayChatMessages(child: String, listOfMessagesRecyclerView: RecyclerView, hostUser: User) {
+        val ARG_CHAT_ROOMS = hostUser.id.toString()
         val linerLayoutManager: LinearLayoutManager = LinearLayoutManager(this)
         val recyclerViewAdapter: FirebaseRecyclerAdapter<ChatMessage, ChatsViewHolder> =
                 object : FirebaseRecyclerAdapter<ChatMessage, ChatsViewHolder> (
@@ -124,18 +108,19 @@ class ChatActivity : AppCompatActivity() {
                 if (lastVisiblePosition == -1 ||
                         (positionStart >= (numChats - 1) &&
                                 lastVisiblePosition == (positionStart - 1))) {
-                    list_of_messages.scrollToPosition(positionStart);
+                    listOfMessagesRecyclerView.scrollToPosition(positionStart);
                 }
             }
         })
 
-        list_of_messages.layoutManager = linerLayoutManager
-        list_of_messages.adapter = recyclerViewAdapter
+        listOfMessagesRecyclerView.layoutManager = linerLayoutManager
+        listOfMessagesRecyclerView.adapter = recyclerViewAdapter
     }
 
     private fun sendMessageToFireBaseUser(context: Context, chat: ChatMessage, senderUser: User, recieverUser: User) {
         val roomType1: String = "cf_${recieverUser.id}_${senderUser.id}"
         val roomType2: String = "cf_${senderUser.id}_${recieverUser.id}"
+        val ARG_CHAT_ROOMS = recieverUser.id.toString()
 
         val dbReference = FirebaseDatabase.getInstance().reference
         dbReference.child(ARG_CHAT_ROOMS).ref.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -147,8 +132,6 @@ class ChatActivity : AppCompatActivity() {
             override fun onDataChange(dataSnapShot: DataSnapshot?) {
                 if (dataSnapShot != null) {
                     if (dataSnapShot.hasChild(roomType1)) {
-                        /*if the room exists okay create a new field(key) = timestamp -> always create a new one therefore creating log of chat neat!! */
-
                         Log.e(TAG, "send msg to fb user $roomType1 exists")
                         dbReference
                                 .child(ARG_CHAT_ROOMS)
@@ -176,6 +159,7 @@ class ChatActivity : AppCompatActivity() {
         Log.d(TAG, "Called man ")
         val roomType1: String = "cf_${recieverUser.id}_${senderUser.id}"
         val roomType2: String = "cf_${senderUser.id}_${recieverUser.id}"
+        val ARG_CHAT_ROOMS = recieverUser.id.toString()
 
         val dbReference = FirebaseDatabase.getInstance().reference
 
@@ -272,8 +256,9 @@ class ChatActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "ChatActivity"
-        const val ARG_CHAT_ROOMS = "chat_rooms"
-        const val EXTRA_ROOM_ID = "roomId"
+        const val IS_OPEN_BY_HOST = "isForHosT"
+        const val SENDER_ID = "senderID"
+        const val ROOM_LOC = "roomLoc"
     }
 }
 

@@ -13,6 +13,7 @@ import android.content.Context
 import android.util.Log
 import za.co.metalojiq.classfinder.someapp.activity.ChatActivity
 import za.co.metalojiq.classfinder.someapp.activity.MainActivity
+import za.co.metalojiq.classfinder.someapp.activity.fragment.AccomList
 
 
 /**
@@ -27,11 +28,18 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 .setContentTitle(remoteMessage.notification?.title.toString())
                 .setContentText(remoteMessage.notification?.body.toString())
 
+        val hostId: String? = remoteMessage.data["host_id"]
         val roomId: String? = remoteMessage.data["room_id"]
-        if(roomId != null) {
+        val roomLocation: String? = remoteMessage.data["room_location"]
+        val senderId: String? = remoteMessage.data["sender_id"]
+        val isOpenByHost: String? = remoteMessage.data["is_open_by_host"]
+        if(hostId != null) {
             //set up a laucher here to start the chats activityv
             val intent = Intent(this, ChatActivity::class.java)
-            intent.putExtra(ChatActivity.EXTRA_ROOM_ID, roomId)
+            intent.putExtra(AccomList.POST_INT_HOST_ID, hostId)
+            intent.putExtra(ChatActivity.ROOM_LOC, roomLocation)
+            intent.putExtra(ChatActivity.SENDER_ID, senderId)
+            intent.putExtra(ChatActivity.IS_OPEN_BY_HOST, isOpenByHost)
             val taskStackBuilder = TaskStackBuilder.create(this)
             taskStackBuilder.addParentStack(MainActivity::class.java);
             taskStackBuilder.addNextIntent(intent)

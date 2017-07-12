@@ -1,6 +1,7 @@
 package za.co.metalojiq.classfinder.someapp.activity.fragment
 
 import android.content.Intent
+import android.opengl.Visibility
 import android.support.v4.app.Fragment
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -20,6 +21,7 @@ import retrofit2.Response
 
 import za.co.metalojiq.classfinder.someapp.R
 import za.co.metalojiq.classfinder.someapp.activity.AddHouseActivity
+import za.co.metalojiq.classfinder.someapp.activity.HostPanel
 import za.co.metalojiq.classfinder.someapp.activity.HouseAccomsActivity
 import za.co.metalojiq.classfinder.someapp.activity.MainActivity
 import za.co.metalojiq.classfinder.someapp.adapter.EndlessRecyclerViewScrollListener
@@ -60,11 +62,13 @@ class HouseActivityFragment : Fragment() {
             }
         }
         recyclerView!!.addOnScrollListener(scrollListener) //TODO test if position matters
-        swipeRefreshLayout!!.setColorSchemeResources(android.R.color.holo_blue_bright,
+        swipeRefreshLayout!!.setColorSchemeResources(android.R.color.holo_blue_bright, //todo: our color should be this!
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light)
         swipeRefreshLayout!!.setOnRefreshListener({
+            houseAdapter!!.clear()
+            scrollListener!!.resetState()
             fetchMoreHousesData(0, userId)
             Toast.makeText(activity, "Refresh", Toast.LENGTH_SHORT).show()
         })
@@ -77,6 +81,13 @@ class HouseActivityFragment : Fragment() {
                 fab.visibility = View.GONE
                 makeToast("Please sign in to access this action", context)
             }
+        }
+
+        val fab2 = linearLayout.findViewById(R.id.fab2) as FloatingActionButton
+        fab2.visibility = View.VISIBLE
+        fab2.setOnClickListener {
+            val intent: Intent = Intent(context, HostPanel::class.java)
+            startActivity(intent)
         }
         fetchAndInitialiseFirstData(userId) // at last to this!
         return linearLayout

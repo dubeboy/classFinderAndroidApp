@@ -238,9 +238,13 @@ public interface ApiInterface {
     @Headers({"Accept: application/json"})
     @GET("/api/v1/users/notify_host")
     Call<StatusRespose> notifyHost(@Query("room_id") String roomId,
-                                @Query("user_id") int userId);
+                                   @Query("host_id") int hostId,
+                                   @Query("sender_id") int senderId,
+                                   @Query("is_open_by_host") boolean isOpenByHost);
 
 
-
-
+    @Headers({"Accept: application/json"})
+    @GET("/api/v1/users/get_host_info")
+    Call<TransactionResponse> getHostTrans(@Query("host_user_id") int hostUserId,
+                                           @Query("page") int page);
 }
