@@ -263,8 +263,8 @@ class ChatActivity : AppCompatActivity() {
 }
 
 class ChatsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val messageText: TextView = itemView.findViewById(R.id.message_text) as TextView
-    val messageUser: TextView = itemView.findViewById(R.id.message_user) as TextView
-    val messageTime: TextView = itemView.findViewById(R.id.message_time) as TextView
+    val messageText = itemView.findViewById(R.id.message_text) as TextView
+    val messageUser = itemView.findViewById(R.id.message_user) as TextView
+    val messageTime = itemView.findViewById(R.id.message_time) as TextView
 }
 

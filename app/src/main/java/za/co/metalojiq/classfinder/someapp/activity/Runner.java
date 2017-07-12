@@ -307,7 +307,7 @@ public class Runner extends AppCompatActivity {
 //            LoadTransactions loadTransactions = new LoadTransactions(); // TODO(NOT REQUIRED) i Don't think tht its required to have this!!!!!!
 //            loadTransactions.load(position, runnerId);
 //            if (fragment == null) {
-//                return  PlaceholderFragment.newInstance(null);
+//                return  HostBookings.newInstance(null);
 //            } else {
 //                return fragment;
 //            }

@@ -34,7 +34,6 @@ import za.co.metalojiq.classfinder.someapp.rest.ApiClient
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface
 import za.co.metalojiq.classfinder.someapp.util.KtUtils
 import za.co.metalojiq.classfinder.someapp.util.Utils
-import kotlin.reflect.jvm.internal.impl.incremental.UtilsKt
 
 class HostPanel : AppCompatActivity() {
 
@@ -98,11 +97,12 @@ class HostPanel : AppCompatActivity() {
     /**
      * A placeholder fragment containing a simple view.
      */
-    class PlaceholderFragment : Fragment() {
+    class HostBookings : Fragment() {
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                                   savedInstanceState: Bundle?): View? {
             val rootView = inflater.inflate(R.layout.fragment_host_panel, container, false)
+            Log.d(TAG, "HostBookings: is created")
             return rootView
         }
 
@@ -112,7 +112,7 @@ class HostPanel : AppCompatActivity() {
             val recyclerView = view.findViewById(R.id.host_content_list) as RecyclerView
             swipeRefreshLayout.isRefreshing = true
             var transactionAdapter: TransactionAdapter? = null
-            getTransactions(1) {
+            getTransactions(view, 1) {
                 swipeRefreshLayout.isRefreshing = false
                 transactionAdapter = TransactionAdapter(it, R.layout.list_item_runner, activity)
                 recyclerView.adapter = transactionAdapter
@@ -122,7 +122,7 @@ class HostPanel : AppCompatActivity() {
                 override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
                     Log.d(TAG, "the page is $page")
                     if (transactionAdapter != null && page != 0) {
-                        getTransactions(page + 1) {
+                        getTransactions(view, page + 1) {
                             transactionAdapter!!.addAll(it)
                         }
                     }
@@ -138,13 +138,14 @@ class HostPanel : AppCompatActivity() {
         }
 
 
-        private fun getTransactions(page: Int, onResponse: (v: ArrayList<Transaction>) -> Unit) {
+        private fun getTransactions(view: View, page: Int, onResponse: (v: ArrayList<Transaction>) -> Unit) {
             ApiClient.getClient().create(ApiInterface::class.java)
                     .getHostTrans(Utils.getUserId(activity), page)
                     .enqueue(object : Callback<TransactionResponse?> {
 
                         override fun onFailure(call: Call<TransactionResponse?>, t: Throwable?) {
-                            Snackbar.make(view!!, "Please connect to the internet and then swipe down to reload", Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(view, "Please connect to the internet and then swipe down to reload", Snackbar.LENGTH_LONG).show()
+                            Log.d(TAG, "failed to connect " )
                         }
 
                         override fun onResponse(call: Call<TransactionResponse?>?, response: Response<TransactionResponse?>) {
@@ -152,9 +153,10 @@ class HostPanel : AppCompatActivity() {
                             if (transactions != null) {
                                 if (transactions.isNotEmpty()) {
                                     onResponse(transactions) //dangerous name ayeye!! but ohh well...
+                                    Log.d(TAG, "got em " )
                                 } else {
                                     activity.runOnUiThread {
-                                        Snackbar.make(view!!, "You have no booking yet!, Share links of your accommodations on social media to get attraction.", Snackbar.LENGTH_LONG).show()
+                                        Snackbar.make(view, "You have no booking yet!, Share links of your accommodations on social media to get attraction.", Snackbar.LENGTH_LONG).show()
                                     }
                                 }
                             } else {
@@ -171,14 +173,14 @@ class HostPanel : AppCompatActivity() {
              * fragment.
              */
             private val ARG_SECTION_NUMBER = "section_number"
-            const val TAG = "__HOST_PANEL__"
+            const val TAG = "__HOST_BOOKINGS__"
 
             /**
              * Returns a new instance of this fragment for the given section
              * number. its not  0 indexed so no need to add one
              */
-            fun newInstance(sectionNumber: Int): PlaceholderFragment {
-                val fragment = PlaceholderFragment()
+            fun newInstance(sectionNumber: Int): HostBookings {
+                val fragment = HostBookings()
                 val args = Bundle()
                 args.putInt(ARG_SECTION_NUMBER, sectionNumber)
                 fragment.arguments = args
@@ -194,6 +196,7 @@ class HostPanel : AppCompatActivity() {
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                                   savedInstanceState: Bundle?): View? {
             val rootView = inflater.inflate(R.layout.fragment_host_panel, container, false)
+            Log.d(TAG, "On Fragment 2")
             return rootView
         }
 
@@ -202,36 +205,40 @@ class HostPanel : AppCompatActivity() {
             val swipeRefreshLayout = view.findViewById(R.id.swipeContainer) as SwipeRefreshLayout
             val recyclerView = view.findViewById(R.id.host_content_list) as RecyclerView
             swipeRefreshLayout.isRefreshing = true
-
+            Snackbar.make(view, "You have not chats yet!, share your cf accommodations on social media to get traction", Snackbar.LENGTH_INDEFINITE).show()
+            Log.d(TAG, "View is created")
             val hostUser = Utils.getUserId(activity)
-            KtUtils.displayChatMessages("cf_$hostUser", recyclerView, activity, hostUser, 1, object: KtUtils.OnItemClickListener {
-                override fun onItemClicked(hostId: Int, studentId: Int) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            KtUtils.displayChatMessages("cf_$hostUser", recyclerView, activity, hostUser, 1, { isRecyclerViewPopulated ->
+                if(!isRecyclerViewPopulated) {
+                    activity.runOnUiThread {
+                        Snackbar.make(view, "You have not chats yet!, share your cf accommodations on social media to get traction", Snackbar.LENGTH_INDEFINITE).show()
+                    }
+                    Log.d(TAG, "the list was not popuplated")
                 }
+                swipeRefreshLayout.isRefreshing = false
             })
+
+        }
+
+        companion object {
+            private val ARG_SECTION_NUMBER = "section_number"
+            const val TAG = "__HOST_CHAT_LISTS__"
+
+            /**
+             * Returns a new instance of this fragment for the given section
+             * number. its not  0 indexed so no need to add one
+             */
+            fun newInstance(sectionNumber: Int): HostChatsList {
+                val fragment = HostChatsList()
+                val args = Bundle()
+                args.putInt(ARG_SECTION_NUMBER, sectionNumber)
+                fragment.arguments = args
+                return fragment
+            }
         }
     }
 
-    companion object {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private val ARG_SECTION_NUMBER = "section_number"
-        const val TAG = "__HOST_PANEL__"
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number. its not  0 indexed so no need to add one
-         */
-        fun newInstance(sectionNumber: Int): PlaceholderFragment {
-            val fragment = PlaceholderFragment()
-            val args = Bundle()
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber)
-            fragment.arguments = args
-            return fragment
-        }
-    }
 
 
     /**
@@ -240,10 +247,19 @@ class HostPanel : AppCompatActivity() {
      */
     inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
-        override fun getItem(position: Int): Fragment {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1)
+        override fun getItem(position: Int): Fragment? {
+          return when(position) {
+                0 -> {
+                    Log.d("__SECTION_PAGER__", "paging to page!!! $position" )
+
+                    HostBookings.newInstance(position + 1)
+                }
+                1 -> {
+                    Log.d("__SECTION_PAGER__", "paging to page!!! $position" )
+                    HostChatsList.newInstance(position + 1)
+                }
+                else -> null
+            }
         }
 
         override fun getCount(): Int = 2 // Show 2 total pages.

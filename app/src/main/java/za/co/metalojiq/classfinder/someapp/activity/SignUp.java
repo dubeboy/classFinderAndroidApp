@@ -280,7 +280,7 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
         Call<UserResponse> call = apiService.signUp(email,
                                                     name,
-                                                    phone,
+                                                    phone.trim(),
                                                     password,
                                                     selected, //todo: deprecated
                                                     times, //todo: deprecated

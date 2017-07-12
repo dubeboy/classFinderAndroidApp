@@ -17,12 +17,15 @@ import za.co.metalojiq.classfinder.someapp.model.ChatMessage
  */
  class KtUtils {
     companion object {
+        const val TAG = "KUtils"
+
         fun displayChatMessages(uniqueHostAndStudentRoomId: String,
                                 listOfMessagesRecyclerView: RecyclerView,
                                 context: Context,
                                 hostUserId: Int,
-                                studentId: Int,
-                                onItemClick: OnItemClickListener ) {
+                                studentId: Int, onPopulated: (isPopulated: Boolean) -> Unit) {
+
+            Log.d(TAG, "we are int the kUtils: KtUtils()")
 
             val linerLayoutManager: LinearLayoutManager = LinearLayoutManager(context)
             val recyclerViewAdapter: FirebaseRecyclerAdapter<ChatMessage, ChatsViewHolder> =
@@ -37,7 +40,6 @@ import za.co.metalojiq.classfinder.someapp.model.ChatMessage
                             viewHolder.messageText.text = model.messageText
                             viewHolder.messageTime.text = DateFormat.format("dd-MM-yyyy (HH:mm:ss)", model.messageTime)
                             viewHolder.messageUser.text = model.messageUser
-                            onItemClick.onItemClicked(hostUserId, model.receiverId)
                         }
 
                         override fun onBindViewHolder(viewHolder: ChatsViewHolder, position: Int) {
@@ -60,10 +62,12 @@ import za.co.metalojiq.classfinder.someapp.model.ChatMessage
             })
             listOfMessagesRecyclerView.layoutManager = linerLayoutManager
             listOfMessagesRecyclerView.adapter = recyclerViewAdapter
+            onPopulated(recyclerViewAdapter.itemCount > 0)
+
         }
     }
     // not really useful!! can be done with lambdas yoh!!!!
     interface OnItemClickListener {
-        fun onItemClicked(hostId: Int, receiverId: Int)
+        //fun onItemClicked(itemView: View)
     }
 }

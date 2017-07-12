@@ -16,7 +16,7 @@ public class ApiClient {
     //todo:  this should be calling the api domain /api/v1/...
     public static final String PROD_HOST = "https://ancient-journey-18261.herokuapp.com";
     private static final String DEV_IMAGES_HOST = "http://192.168.43.154:3000";
-    public static final String DEV_HOST = "http://192.168.1.102:4200";
+    private static final String DEV_HOST = "http://10.254.109.20:4200";
 //    public static final String BASE_URL = HOST_URL + "/accommodations" ; not required man retrofit is cool
     private static Retrofit retrofit = null;
     public static Retrofit getClient() {
