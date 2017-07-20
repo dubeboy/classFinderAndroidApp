@@ -31,7 +31,7 @@ import static za.co.metalojiq.classfinder.someapp.util.Utils.shareButtonIntent;
 //view holder is a inner class which actually has instancies of our xml elements
 public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHolder> {
     private static final String TAG = AccomAdapter.class.getSimpleName();
-    List<Accommodation> accommodations;
+    private List<Accommodation> accommodations;
     private int rowLayout;
     private Context context;
     private final OnItemClickListener listener;

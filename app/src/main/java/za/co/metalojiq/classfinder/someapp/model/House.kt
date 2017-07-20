@@ -31,6 +31,9 @@ class House: Serializable {
     var isStatus: Boolean = false
     @SerializedName("city")
     var city: String? = null
+    @SerializedName("location")
     var location: String? = null
+    @SerializedName("pictures")
+    var pictures: List<Picture>? = null
 
 }

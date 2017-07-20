@@ -67,7 +67,7 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.Hous
         private final TextView tvTitle;
         private final TextView tvRoomType;
 
-        public HouseViewHolder(View itemView) {
+        HouseViewHolder(View itemView) {
             super(itemView);
             accomImageThumb = (ImageView) itemView.findViewById(R.id.img_thumbnail);
             tvTitle = (TextView) itemView.findViewById(R.id.tv_title);
@@ -85,17 +85,11 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.Hous
                 Log.d(TAG, house.getResults().get(0).getPicture(0).getImageUrl() + "^END%");
                 Picasso.with(itemView.getContext())
                         .load(house
-                                .getResults()
+                                .getPictures()
                                 .get(0)
-                                .getPicture(0)
                                 .getImageUrl()
                         ).into(accomImageThumb);
-            } else {
-
-                //TODO: Should add place holder image
-                accomImageThumb.setVisibility(View.GONE);
             }
-//            built in onClick listener for a view.. nice!!
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

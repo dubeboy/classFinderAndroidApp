@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class Accommodation implements Serializable {
 
-    @SerializedName("id=")
+    @SerializedName("id")
     private Integer id;
     @SerializedName("host_id")
     private Integer hostId;

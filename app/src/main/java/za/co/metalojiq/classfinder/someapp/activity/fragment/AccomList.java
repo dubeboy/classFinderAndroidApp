@@ -96,7 +96,9 @@ public class AccomList extends Fragment implements AccomAdapter.OnItemClickListe
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 Log.d(TAG, "Called");
                 progressBar.setVisibility(View.VISIBLE);
-                fetchAccomData(page);
+                if (page != 0) {
+                    fetchAccomData(page);
+                }
             }
         };
 
@@ -112,8 +114,10 @@ public class AccomList extends Fragment implements AccomAdapter.OnItemClickListe
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                fetchAccomData(0);
+                scrollListener.resetState();
+                if(accomAdapter != null)  accomAdapter.clear();
                 Toast.makeText(getActivity(), "Refresh", Toast.LENGTH_SHORT).show();
+                fetchAccomData(0);
             }
         });
 
@@ -127,16 +131,17 @@ public class AccomList extends Fragment implements AccomAdapter.OnItemClickListe
         if (accommodations != null) {  //I think its redundant.
             Log.d(TAG, "Number of elemets =" + accommodations.size());
             // I need to load the recycler view only if there are items to load!!!
-            if (accommodations.size() > 0) {
+         //   if (accommodations.size() > 0) {
                 accomAdapter = new AccomAdapter(accommodations,
                         R.layout.list_item_accom, getActivity().getApplicationContext(), this);
                 recyclerView.setAdapter(accomAdapter);
 
-            } else {
-                //Todo(FRAGMENT COMMIT ERROR) Should be an If statement here to Id which fragment
-                //so that we can change the text to match wheather a person is just loading all accommodation
-                textViewError.setVisibility(View.VISIBLE);
-            }
+       //     }
+// else {
+//                //Todo(FRAGMENT COMMIT ERROR) Should be an If statement here to Id which fragment
+//                //so that we can change the text to match wheather a person is just loading all accommodation
+//                textViewError.setVisibility(View.VISIBLE);
+//            }
         }
 
         final FloatingActionButton fab = (FloatingActionButton) linearLayout.findViewById(R.id.fab);
@@ -168,7 +173,7 @@ public class AccomList extends Fragment implements AccomAdapter.OnItemClickListe
             call = apiService.getAllAccommodations(1);
         } else {
             Log.d(TAG, "The page is here > 0 " + page);
-            call = apiService.getAllAccommodations(page);
+            call = apiService.getAllAccommodations(page + 1);
         }
         //FIXME I am not sure if there are new item this top item will show thos new items
         call.enqueue(new Callback<AccommodationResponse>() {

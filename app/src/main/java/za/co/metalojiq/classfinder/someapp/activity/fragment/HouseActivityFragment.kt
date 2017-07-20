@@ -58,7 +58,7 @@ class HouseActivityFragment : Fragment() {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
                 Log.d(TAG, "Called with page: $page")
                 swipeRefreshLayout!!.isRefreshing = true
-                fetchMoreHousesData(page, userId)
+                if(page !=  0) fetchMoreHousesData(page, userId)
             }
         }
         recyclerView!!.addOnScrollListener(scrollListener) //TODO test if position matters
