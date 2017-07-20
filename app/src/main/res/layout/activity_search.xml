@@ -5,9 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+
     tools:context="za.co.metalojiq.classfinder.someapp.activity.Search">
 
     <!--TODO: google how to make the grid layout elements face the wall-->
@@ -21,83 +19,96 @@
         android:orientation="vertical"
        >
 
-        <TextView
-            android:id="@+id/search_tv_location"
-            android:layout_height="wrap_content"
+        <fragment
+            android:id="@+id/place_autocomplete_fragment"
             android:layout_width="match_parent"
-            android:text="Location:"
-            android:textSize="20sp"
+            android:layout_height="wrap_content"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
             />
 
-        <Spinner
-            android:id="@+id/search_location_spinner"
+        <fragment
+            android:id="@+id/place_nearto_autocomplete_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
-         />
-
-
-
-        <TextView
-            android:id="@+id/search_tv_room_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Room Type:"
-            android:textSize="20sp" />
-
-        <Spinner
-            android:id="@+id/search_spinner_room_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
             />
 
-        <TextView
-            android:id="@+id/search_tv_auck_areas"
+
+
+        <LinearLayout
+            android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_height="wrap_content"
-            android:text="Auck Areas:"
-            android:textSize="20sp" />
-        <Spinner
-            android:id="@+id/search_spinner_auck_areas"
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_height="wrap_content" />
+            android:orientation="vertical"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            >
+
+            <TextView
+                android:id="@+id/search_tv_room_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Room Type:"
+                android:textSize="20sp" />
+
+            <Spinner
+                android:id="@+id/search_spinner_room_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+            <TextView
+                android:id="@+id/search_tv_auck_areas"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:text="Auck Areas:"
+                android:textSize="20sp" />
+            <Spinner
+                android:id="@+id/search_spinner_auck_areas"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_height="wrap_content" />
 
 
-        <EditText
-            android:id="@+id/search_price_from"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/search_enter_start_price"
+            <EditText
+                android:id="@+id/search_price_from"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/search_enter_start_price"
 
-            android:inputType="numberDecimal" />
+                android:inputType="numberDecimal" />
 
-        <EditText
-            android:id="@+id/search_price_to"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/search_enter_limit_price"
-            android:inputType="numberDecimal"
-          />
+            <EditText
+                android:id="@+id/search_price_to"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/search_enter_limit_price"
+                android:inputType="numberDecimal"
+                />
 
-        <CheckBox
-            android:id="@+id/ck_box_search_nsfas"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="NSFAS"
+            <CheckBox
+                android:id="@+id/ck_box_search_nsfas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NSFAS"
 
-            />
+                />
 
-        <Button
-            android:id="@+id/btn_search"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_columnSpan="2"
-            android:onClick="search"
-            android:text="@string/search_accommodation" />
+            <Button
+                android:id="@+id/btn_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_layout"
+                android:layout_columnSpan="2"
+                android:onClick="search"
+                android:text="@string/search_accommodation" />
+
+        </LinearLayout>
+
+
 
 
 

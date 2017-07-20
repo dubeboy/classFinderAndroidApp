@@ -1,10 +1,8 @@
 package za.co.metalojiq.classfinder.someapp.activity.fragment;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -19,13 +17,11 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.activity.AccomImageSlider;
-import za.co.metalojiq.classfinder.someapp.activity.LoginActivity;
 import za.co.metalojiq.classfinder.someapp.activity.MainActivity;
 import za.co.metalojiq.classfinder.someapp.activity.NewAccommodation;
 import za.co.metalojiq.classfinder.someapp.adapter.AccomAdapter;
@@ -34,19 +30,16 @@ import za.co.metalojiq.classfinder.someapp.model.Accommodation;
 import za.co.metalojiq.classfinder.someapp.model.AccommodationResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
-import za.co.metalojiq.classfinder.someapp.util.Utils;
 
 import java.util.ArrayList;
-
-import static za.co.metalojiq.classfinder.someapp.util.Utils.isLoggedIn;
-import static za.co.metalojiq.classfinder.someapp.util.Utils.makeToast;
-
 /**
  * This displays all the available accommodations
  */
 public class AccomList extends Fragment implements AccomAdapter.OnItemClickListener {
     private static final String TAG = AccomList.class.getSimpleName();
 
+
+    //todo: too long TAGS
     public static final String PICTURES_ARRAY_EXTRA = MainActivity.TAG + ".PICTURES_ARRAY_LIST";
     public static final String DOUBLE_PRICE_EXTRA = MainActivity.TAG + ".DOUBLE_PRICE";
     public static final String STRING_ROOM_TYPE_EXTRA = MainActivity.TAG + ".STRING_ROOM_TYPE";
@@ -72,7 +65,6 @@ public class AccomList extends Fragment implements AccomAdapter.OnItemClickListe
     public AccomList() {
         // Required empty public constructor
     }
-
 
     // this is really good because I would like show diffrent accom based on who is calling!!
     public static AccomList newInstance(ArrayList<Accommodation> accommodations, int houseId) {

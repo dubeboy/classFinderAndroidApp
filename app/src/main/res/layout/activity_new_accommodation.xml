@@ -78,6 +78,7 @@
                    android:layout_alignParentStart="true"/>
            <Button
                    android:text="Add Images"
+                   android:background="@drawable/card_layout"
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
                    android:id="@+id/newBtnAddImages"
@@ -102,6 +103,7 @@
            </HorizontalScrollView>
            <Button
                    android:text="Save"
+                   android:background="@drawable/card_layout"
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
                    android:id="@+id/newBtnSave"

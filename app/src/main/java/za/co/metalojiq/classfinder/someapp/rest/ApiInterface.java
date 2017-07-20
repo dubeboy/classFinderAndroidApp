@@ -25,12 +25,13 @@ public interface ApiInterface {
 
     @Headers({"Accept: application/json"})
     @GET("/api/v1/accommodations/search")
-    Call<AccommodationResponse> searchAccommodations(@Query(value = "name", encoded = true) String location,
+    Call<AccommodationResponse> searchAccommodations(@Query(value = "location", encoded = true) String location,
+                                                     @Query(value = "near_to", encoded = true) String nearTo,
                                                      @Query("room_type") String roomType,
 //                                                     @Query("auck_location") String auckLocation,
                                                      @Query("price_from") Integer priceFrom,
                                                      @Query("price_to") Integer priceTo,
-                                                     @Query("nsfas") boolean nsfas);
+                                                     @Query("nsfas") boolean nsfas); //Todo: add page param
     @GET("/api/v1/books")
     @Headers({"Accept: application/json"})
     Call<BooksResponse> getBooks(@Query("page") Integer page);
@@ -51,7 +52,8 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("/api/v1/sessions")
     Call<UserResponse> signIn(@Field("email") String email,
-                              @Field("password") String password, @Field("fcm_token") String fcmToken);
+                              @Field("password") String password,
+                              @Field("fcm_token") String fcmToken);
 
     @Headers({"Accept: application/json"}) //Todo: should remove this -> redundant
     @GET("/api/v1/users/get_user")
@@ -199,17 +201,17 @@ public interface ApiInterface {
 
     // House routes! // ================HOUSE ROUTES =====================
     @Headers({"Accept: application/json"})
-    @GET("/api/v1/users/{user_id}/house")
-    Call<HousesResponse> getHousesForUser(@Path("user_id") int userId,
+    @GET("/api/v1/house")
+    Call<HousesResponse> getHousesForUser(@Query("user_id") int userId,
                                           @Query("page") int page);
 
 
     @Headers({"Accept: application/json"})
-    @POST("/api/v1/users/{user_id}/house")
-    Call<House> postHouse(@Path("user_id") int userId,
+    @POST("/api/v1/house") //api/v1/users/1/house
+    @Multipart
+    Call<House> postHouse(@Query("user_id") int userId,
                           @NonNull @Query("address") String address,
-                          @NonNull @Query("location") String location,
-                          @NonNull @Query("city") String city,
+                          @NonNull @Query("near_to") String nearTo,
                           @NonNull @Query("common") String common,
                           @Query("nsfas") boolean nsfas,
                           @Query("wifi") boolean wifi,

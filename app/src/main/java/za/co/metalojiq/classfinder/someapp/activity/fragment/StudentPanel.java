@@ -2,6 +2,7 @@ package za.co.metalojiq.classfinder.someapp.activity.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +19,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import za.co.metalojiq.classfinder.someapp.R;
+import za.co.metalojiq.classfinder.someapp.activity.MainActivity;
 import za.co.metalojiq.classfinder.someapp.adapter.TransactionAdapter;
 import za.co.metalojiq.classfinder.someapp.model.Transaction;
 import za.co.metalojiq.classfinder.someapp.model.TransactionResponse;
@@ -36,7 +38,6 @@ public class StudentPanel extends Fragment {
 
     private RecyclerView recyclerView;
     private ProgressBar mProgressBar;
-    private TextView tvError;
 
     public StudentPanel() {
         // Required empty public constructor
@@ -88,8 +89,9 @@ public class StudentPanel extends Fragment {
             public void onResponse(Call<TransactionResponse> call, Response<TransactionResponse> response) {
                 ArrayList<Transaction> transactions = response.body().getTransactions();
                 if (transactions.size() == 0) {
-                    tvError.setText("Nothing to show.");
                    // recyclerView.setVisibility(View.GONE);
+                   // Snackbar.make(getView(), "You have not requested to view an accommodation yet!", Snackbar.LENGTH_INDEFINITE);
+                    Toast.makeText(getActivity(), "You have not requested to view an accommodation yet!", Toast.LENGTH_LONG).show();
                     mProgressBar.setVisibility(View.GONE);
                     return;
                 }

@@ -14,6 +14,8 @@ import android.widget.*;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -21,6 +23,7 @@ import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.model.UserResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
+import za.co.metalojiq.classfinder.someapp.util.KtUtils;
 
 import static za.co.metalojiq.classfinder.someapp.activity.LoginActivity.*;
 import static za.co.metalojiq.classfinder.someapp.util.Utils.*;
@@ -41,7 +44,7 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
     private boolean isGoogleUser;
     private HorizontalScrollView horScroll;
     //array of timeSlot the are like ids of time slots!!! 1 means that the time is selected 0 off
-    private byte times[] = {0,0,0,0,0};  //clever neh??
+    private byte times[] = {0, 0, 0, 0, 0};  //clever neh??
 
 
     @Override
@@ -75,7 +78,7 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
 
         //hide runner info
         toggleShowRunnerInfo(false);
-        final Spinner locationsSpinner =  setupSpinner(this, R.id.signUpSpinnerTime, R.array.locations_array);
+        final Spinner locationsSpinner = setupSpinner(this, R.id.signUpSpinnerTime, R.array.locations_array);
 
         mRunnerQuestion.setOnClickListener(new OnClickListener() {
             @Override
@@ -117,8 +120,8 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
             call.enqueue(new Callback<UserResponse>() {
                 @Override
                 public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-  //                  hideProgressDialog();
-                    if(response.body() != null) {
+                    //                  hideProgressDialog();
+                    if (response.body() != null) {
                         boolean exits = response.body().isExits();
                         if (exits) {
                             saveUserInfo(email, response.body().getUser().getId(), response.body().getUser().isRunner(), isGoogleUser, response.body().getUser().getToken());
@@ -149,26 +152,26 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
                             });
                         }
                     } else {
-           //             hideProgressDialog();
+                        //             hideProgressDialog();
                         makeToast("Fetal error, please restart the app and try again", SignUp.this);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<UserResponse> call, Throwable t) {
-             //       hideProgressDialog();
+                    //       hideProgressDialog();
                     makeToast("Sorry  internet problem, please connect to the internet", SignUp.this);
                 }
             });
 
-              //END GOOGLE USER
-        }  else {
+            //END GOOGLE USER
+        } else {
 
             signUp.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                     String email = mEmail.getText().toString().trim();
-                     String name = mName.getText().toString().trim();
+                    String email = mEmail.getText().toString().trim();
+                    String name = mName.getText().toString().trim();
 
                     if (checkPassword()) {
                         if (mCheckIsRunner.isChecked()) {
@@ -184,9 +187,9 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
                                     times,
                                     ((String) locationsSpinner.getSelectedItem()));
                         } else { // this part is for when a user does not want to be a runner
-                            signUp(email, name,  mPhone.getText().toString().trim(),
+                            signUp(email, name, mPhone.getText().toString().trim(),
                                     mPassword.getText().toString(), mCheckIsRunner.isChecked(), null,
-                                   null);
+                                    null);
                         }
                     }
                 }
@@ -203,9 +206,9 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
 
 
     private void toggleShowRunnerInfo(boolean show) {
-         horScroll = (HorizontalScrollView) findViewById(R.id.SignUpHorizontalTimes);
-        TextView tvSelectTime = (TextView)  findViewById(R.id.signUpTvSelectTime);
-        TextView signUpSelectTime = (TextView)  findViewById(R.id.signUpSelectTime);
+        horScroll = (HorizontalScrollView) findViewById(R.id.SignUpHorizontalTimes);
+        TextView tvSelectTime = (TextView) findViewById(R.id.signUpTvSelectTime);
+        TextView signUpSelectTime = (TextView) findViewById(R.id.signUpSelectTime);
         Spinner spinner = (Spinner) findViewById(R.id.signUpSpinnerTime);
         if (show) {
             tvSelectTime.setVisibility(View.VISIBLE);
@@ -258,11 +261,11 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
     }
 
     private boolean checkPhone() {
-         if (mPhone.getText().toString().trim().length() != 10) {
+        if (mPhone.getText().toString().trim().length() != 10) {
             mPhone.setError("Phone number should be 10 digits");
             return false;
-         }
-         return true;
+        }
+        return true;
     }
 
 
@@ -279,13 +282,13 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
     private void signUp(String email, String name, String phone, String password, boolean selected, byte[] times, String selectedItem) {
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
         Call<UserResponse> call = apiService.signUp(email,
-                                                    name,
-                                                    phone.trim(),
-                                                    password,
-                                                    selected, //todo: deprecated
-                                                    times, //todo: deprecated
-                                                    selectedItem,
-                                                    FirebaseInstanceId.getInstance().getToken());
+                name,
+                phone.trim(),
+                password,
+                selected, //todo: deprecated
+                times, //todo: deprecated
+                selectedItem,
+                FirebaseInstanceId.getInstance().getToken());
         call.enqueue(this);
         showProgressDialog();
 
@@ -309,6 +312,7 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
     private void showProgressDialog() {
         dialog = ProgressDialog.show(this, "", "Signing you up!, just hold on...", true);
     }
+
     private void hideProgressDialog() {
         dialog.hide();
     }
@@ -318,21 +322,43 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
     public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
         if (response.body().isStatus()) {
             saveUserInfo(response.body().getUser().getEmail(),
-                         response.body().getUser().getId(),
-                         response.body().getUser().isRunner(),
-                         isGoogleUser,
-                         response.body().getUser().getToken());
-            makeToast("Thank you you have signed up successfully", this);
-            startActivity(new Intent(this, MainActivity.class));
+                    response.body().getUser().getId(),
+                    response.body().getUser().isRunner(),
+                    isGoogleUser,
+                    response.body().getUser().getToken());
+
+            KtUtils.INSTANCE.signUserInToFirebase(SignUp.this,
+                    response.body().getUser().getJwtToken(),
+                    new Function1<Boolean, Unit>() {
+                        @Override
+                        public Unit invoke(final Boolean status) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //  showProgress(false);
+                                    if (status) {
+                                        makeToast("Thank you you have signed up successfully", SignUp.this);
+                                        startActivity(new Intent(SignUp.this, MainActivity.class));
+                                        hideProgressDialog();
+
+                                    } else {
+                                        Toast.makeText(SignUp.this, "you sorry could not completely sign you in, please try again", Toast.LENGTH_LONG).show();
+                                        hideProgressDialog();
+                                    }
+                                }
+                            });
+                            return Unit.INSTANCE;
+                        }
+                    });
         } else {
             makeToast("Please try again this account already exists, or rather sign in", this);
+            hideProgressDialog();
         }
-        hideProgressDialog();
     }
 
 
     public void saveUserInfo(String email, int id, boolean isRunner, boolean isGoogle, String token) {
-        SharedPreferences sharedPreferences  = getUserSharedPreferences(this) ;
+        SharedPreferences sharedPreferences = getUserSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(LOGIN_PREF_EMAIL, email);
         editor.putInt(LOGIN_PREF_USER_ID, id);
@@ -361,7 +387,7 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
             Log.d(TAG, "this one should have been OFF");
             times[id] = 0;
         }
-        for (byte i : times ) {
+        for (byte i : times) {
             Log.d(TAG, "onCheckedChanged: now the state is" + i);
         }
     }

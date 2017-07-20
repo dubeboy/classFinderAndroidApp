@@ -1,14 +1,17 @@
 package za.co.metalojiq.classfinder.someapp.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +32,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.PlaceDetectionApi;
+import com.google.firebase.auth.FirebaseAuth;
 
 import okhttp3.internal.Util;
 import retrofit2.Call;
@@ -65,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private Animation fab_open, fab_close, rotate_forward, rotate_backward;
     EditText etOwnerPhone;
 
-
     //fragment injection required code
     FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
@@ -73,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        userId = sharedPreferences.getInt(LoginActivity.LOGIN_PREF_USER_ID, 0);  //need this for action menu invalidation
         Log.d(TAG, "The ID of the user  is: " + userId);
         boolean isRunner = sharedPreferences.getBoolean(LoginActivity.LOGIN_IS_RUNNER, false);
         MenuItem itemLogin = menu.findItem(R.id.action_login);
@@ -160,8 +165,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove(LoginActivity.LOGIN_PREF_USER_ID);
         editor.commit(); // commit the changes and then invalidate option menu
-        supportInvalidateOptionsMenu();
-//        googleSignOut();  // todo: reactivate soon
+        this.supportInvalidateOptionsMenu();
+        googleSignOut();  // todo: reactivate soon
     }
 
 
@@ -169,7 +174,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.accomLoad);
         supportInvalidateOptionsMenu();  //TODO Called in the wrong places
 
@@ -181,8 +185,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         userId = sharedPreferences.getInt(LoginActivity.LOGIN_PREF_USER_ID, 0);  // getting the user Id yey !
 
         //@author - https://www.learn2crack.com/2015/10/android-floating-action-button-animations.html
+        Log.d(TAG, "onCreate: hello tye fcm token is: " + Utils.getUserSharedPreferences(this).getAll());
         // it was exactly what i needed
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setVisibility(View.VISIBLE);
         fab1 = (FloatingActionButton) findViewById(R.id.fab1);
         fab2 = (FloatingActionButton) findViewById(R.id.fab2);
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
@@ -243,6 +249,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        supportInvalidateOptionsMenu(); //todo: should work
+    }
+
     private void startAccomListActivity(AccomList accomList, FragmentTransaction fragmentTransaction) {
         fragmentTransaction.add(R.id.activity_main, accomList, "ACCOM_LIST_FRAGMENT");
         fragmentTransaction.commitAllowingStateLoss(); //this is causing problem #Fixme
@@ -256,7 +268,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     public void animateFAB() {
 
         if (isFabOpen) {
-
             fab.startAnimation(rotate_backward);
             fab1.startAnimation(fab_close);
             fab2.startAnimation(fab_close);
@@ -266,7 +277,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             Log.d("Raj", "close");
 
         } else {
-
             fab.startAnimation(rotate_forward);
             fab1.startAnimation(fab_open);
             fab2.startAnimation(fab_open);

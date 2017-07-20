@@ -23,6 +23,8 @@ import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Places;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
@@ -50,7 +52,7 @@ import static za.co.metalojiq.classfinder.someapp.activity.LoginActivity.LOGIN_P
 
 //todo: should change this to a kotlin object class
     //todo: this class need to be spit up
-public class Utils               {
+public class Utils {
 
     public static final String[] LOCATIONS = {"Auckland Park", "Braamfontein", "Doornfontein", "Soweto"};
     public static final String[] INSTITUTIONS = {"Wits", "UJ-Auckland Park", "UJ-DFC", "UJ-Soweto", "Other"};
@@ -112,11 +114,14 @@ public class Utils               {
                 .build();
 
         return new GoogleApiClient.Builder(context)
-                .enableAutoManage((FragmentActivity) context /* FragmentActivity */, onConnectionFailedListener /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .addApi(LocationServices.API)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+
+                .enableAutoManage((FragmentActivity) context, onConnectionFailedListener /* OnConnectionFailedListener */)
                 .build();
     }
-
     //fixme please really bad!!!
     public static boolean isEmailValid(String email) {
         //TODO: Replace regex NB!!!!!!!!
@@ -344,7 +349,4 @@ public class Utils               {
             }
         });
     }
-
-
-
 }

@@ -31,9 +31,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.FirebaseInstanceIdService;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,6 +43,7 @@ import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.model.UserResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
+import za.co.metalojiq.classfinder.someapp.util.KtUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -295,35 +298,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
+        mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+        mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
+        });
 
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
+        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        mProgressView.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
     }
 
     @Override
@@ -388,6 +381,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public class UserLoginTask {
         private final String mEmail;
         private final String mPassword;
+        private FirebaseAuth mAuth;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -402,7 +396,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             final boolean yes[] = {false}; //todo: bad!
             call.enqueue(new Callback<UserResponse>() {
                 @Override
-                public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                public void onResponse(Call<UserResponse> call, final Response<UserResponse> response) {
                     Log.d(TAG + " USER LOGIN", "stuff do if null: " + response.body().toString());
                     Log.d(TAG + " ERRoR USER LOGIN", "stuff do if null: " + response.body().getUser().getEmail());
                     //todo: bad code!!!!!!! i think...
@@ -410,8 +404,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     Log.d(TAG, "is its a yes: 10000 " + yes[0]);
                     yes[0] = response.body().isStatus();
                     Log.d(TAG, "is its a yes: 20000 " + yes[0]);
-                    Toast.makeText(LoginActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
-                    if (response.body().isStatus()) {
+                    Toast.makeText(LoginActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show(); //possibly deadly NPE!!!
+                    if (response.body().isStatus() && response.body() != null) {
                         SharedPreferences sharedPreferences = getSharedPreferences(LOGIN_PREF_FILENAME, MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString(LOGIN_PREF_EMAIL, response.body().getUser().getEmail());
@@ -419,10 +413,29 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         editor.putBoolean(LOGIN_IS_RUNNER, response.body().getUser().isRunner());
                         editor.putString(USER_LOGIN_TOKEN, response.body().getUser().getToken());
                         editor.commit(); //i want it to save now because we abould to finish the activity
-                        Log.d(TAG, sharedPreferences.getString(LOGIN_PREF_EMAIL, "YOHHHHHHH this is a problem NO EMAIL MAN DAMN!!!"));
+                        Log.e(TAG, sharedPreferences.getString(LOGIN_PREF_EMAIL, "YOHHHHHHH this is a problem NO EMAIL MAN DAMN!!!"));
                         // only here you should finish
-                        showProgress(false);
-                        finish();
+
+                        KtUtils.INSTANCE.signUserInToFirebase(LoginActivity.this,
+                                response.body().getUser().getJwtToken(),
+                                new Function1<Boolean, Unit>() {
+                                    @Override
+                                    public Unit invoke(final Boolean status) {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                showProgress(false);
+                                                if (status) {
+                                                    Toast.makeText(LoginActivity.this, "you have successfully signed in", Toast.LENGTH_LONG).show();
+                                                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                                } else {
+                                                    Toast.makeText(LoginActivity.this, "you sorry could not completely sign you up, please try again", Toast.LENGTH_LONG).show();
+                                                }
+                                            }
+                                        });
+                                        return Unit.INSTANCE;
+                                    }
+                                });
                     } else {
                         showProgress(false);
                         mEmailView.requestFocus();

@@ -3,63 +3,31 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:padding="15dp"
+    android:padding="10dp"
     android:layout_height="match_parent"
     tools:context="za.co.metalojiq.classfinder.someapp.activity.AddHouseActivity"
     android:orientation="vertical">
 
-    <android.support.design.widget.TextInputLayout
+    <fragment
+        android:id="@+id/place_autocomplete_fragment"
         android:layout_width="match_parent"
-        android:paddingBottom="10dp"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+        />
 
-        <EditText
-            android:id="@+id/input_address"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter house address" />
-
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
+    <fragment
+        android:id="@+id/place_nearto_autocomplete_fragment"
         android:layout_width="match_parent"
-        android:paddingBottom="10dp"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+        />
 
-        <EditText
-            android:id="@+id/input_common"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Common areas about your house, eg Kitchen, etc " />
-
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
+    <EditText
+        android:id="@+id/input_nearby"
         android:layout_width="match_parent"
-        android:paddingBottom="10dp"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:id="@+id/input_location"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter location" />
-
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:paddingBottom="10dp"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:id="@+id/input_city"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter city" />
-
-    </android.support.design.widget.TextInputLayout>
-
+        android:layout_height="wrap_content"
+        android:hint="Near by Places"
+         />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -83,6 +51,19 @@
             android:text="Prepaid Electricity"
             android:layout_height="wrap_content" />
     </LinearLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:paddingBottom="10dp"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/input_common"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter other common areas in your house, eg Kitchen, etc " />
+
+    </android.support.design.widget.TextInputLayout>
 
     <Button
         android:text="Add Images"

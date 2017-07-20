@@ -93,13 +93,15 @@
 
         <Button
             android:id="@+id/btnSecureAccom"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:background="@drawable/card_layout"
             android:layout_height="wrap_content"
             android:layout_gravity="center|bottom"
             android:text="I`m Hooked, Book to view room now!" />
         <Button
             android:id="@+id/btnRentRoom"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:background="@drawable/card_layout"
             android:layout_height="wrap_content"
             android:layout_gravity="center|bottom"
             android:text="I Want to pay deposit now and rent now" />

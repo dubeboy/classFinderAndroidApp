@@ -92,11 +92,12 @@ class HouseActivityFragment : Fragment() {
         fetchAndInitialiseFirstData(userId) // at last to this!
         return linearLayout
     }
+
     fun fetchAndInitialiseFirstData(userId: Int) {
         Log.d(TAG, "fetching initial house data for user : $userId")
         val apiService = ApiClient.getClient().create<ApiInterface>(ApiInterface::class.java)
-        val call: Call<HousesResponse> = apiService.getHousesForUser(userId, 1)
-        call.enqueue(object : Callback<HousesResponse?> {
+        val apiCall: Call<HousesResponse> = apiService.getHousesForUser(userId, 1)
+        apiCall.enqueue(object : Callback<HousesResponse?> {
             override fun onResponse(call: Call<HousesResponse?>?, response: Response<HousesResponse?>) {
                 if (response.body() != null) {
                     val houses = response.body()!!.houses
@@ -116,9 +117,10 @@ class HouseActivityFragment : Fragment() {
                     scrollListener!!.resetState()
                 }
             }
+
             override fun onFailure(call: Call<HousesResponse?>?, t: Throwable?) {
-                Snackbar.make(linearLayout, "Sorry classFinder error, we will be back shortly.",
-                        Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(linearLayout, "Sorry classFinder error, we will be back shortly.", //todo: crashes some times saying no suitable parent please give valid view
+                            Snackbar.LENGTH_LONG).show()
             }
         })
     }
@@ -128,23 +130,22 @@ class HouseActivityFragment : Fragment() {
         Log.d(TAG, "you scrolling to page: " + page)
 
         val apiService = ApiClient.getClient().create<ApiInterface>(ApiInterface::class.java)
-        val call: Call<HousesResponse>
+        val apiCall: Call<HousesResponse>
         if (page == 0) {
             Log.d(TAG, "The page is here " + page)
-            call = apiService.getHousesForUser(userId, 1)
+            apiCall = apiService.getHousesForUser(userId, 1)
         } else {
             Log.d(TAG, "The page is here > 0 " + page)
-            call = apiService.getHousesForUser(userId, page)
+            apiCall = apiService.getHousesForUser(userId, page)
         }
         //FIXME I am not sure if there are new item this top item will show those new items
-        call.enqueue(object : Callback<HousesResponse> {
+        apiCall.enqueue(object : Callback<HousesResponse> {
             override fun onResponse(call: Call<HousesResponse>,
                                     response: Response<HousesResponse>) {
                 if (response.body() == null)
                     Snackbar.make(linearLayout, "An error happened please try again", Snackbar.LENGTH_SHORT)
                 if (response.body()!!.houses!!.size != 0) {
                     val houses = response.body()!!.houses
-
                     if (page == 0) {
                         Log.d(TAG, "Page is here reload")
                         Log.d(TAG, "the houses is: $houses")

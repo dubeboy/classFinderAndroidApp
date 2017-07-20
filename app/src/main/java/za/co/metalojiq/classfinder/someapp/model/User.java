@@ -31,7 +31,8 @@ public class User implements Serializable {
     private String token;
     @SerializedName("fcm_token")
     private String fcm_token;
-
+    @SerializedName("jwt_token")
+    private String jwtToken;
 
     public ArrayList<TimeSlot> getTimeSlots() {
         return timeSlots;
@@ -98,6 +99,14 @@ public class User implements Serializable {
 
     public void setFcm_token(String fcm_token) {
         this.fcm_token = fcm_token;
+    }
+
+    public String getJwtToken() {
+        return jwtToken;
+    }
+
+    public void setJwtToken(String jwtToken) {
+        this.jwtToken = jwtToken;
     }
 
     //This class belongs to the user and nowhere else so u can only get to it via a user object.

@@ -28,6 +28,8 @@ import za.co.metalojiq.classfinder.someapp.util.KtUtils
 import za.co.metalojiq.classfinder.someapp.util.Utils
 import java.util.*
 
+
+//todo: need refactoring big time
 class ChatActivity : AppCompatActivity() {
     //todo: should have single ton that stores user state here
 
@@ -39,17 +41,22 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
+
+        val chatRoomId = intent.getStringExtra(CHAT_ROOM_ID)
         val hostUser: User = User()
         hostUser.id = intent.getIntExtra(AccomList.POST_INT_HOST_ID, 0)
         val senderUser: User = User()
-        val isOpenByHost = intent.getBooleanExtra(IS_OPEN_BY_HOST, false)
-        if(isOpenByHost) { //this means that this intent is opened on the Hosts phone I need the senderUser to send to
+        val isOpenByHost = intent.getBooleanExtra(IS_OPEN_BY_HOST, false)  //todo: should really have it say is from notification
+        if (isOpenByHost) { //this means that this intent is opened on the Hosts phone I need the senderUser to send to
             senderUser.id = intent.getIntExtra(SENDER_ID, 0)
+            senderUser.email = intent.getStringExtra(LoginActivity.LOGIN_PREF_EMAIL)
             Log.d(TAG, "the sender ID is: ${senderUser.id}")
+            Log.d(TAG, "expected this from the notifications to be: $chatRoomId and got: cf_${hostUser.id}_${senderUser.id}")
         } else {
             senderUser.id = Utils.getUserId(this)
+            senderUser.email = Utils.getUserSharedPreferences(this).getString(LoginActivity.LOGIN_PREF_EMAIL, "") // the email belong to who ever is sending
         }
-        senderUser.email = Utils.getUserSharedPreferences(this).getString(LoginActivity.LOGIN_PREF_EMAIL, "") // the email belong to who ever is sending
+
         //todo: set a progress bar here
         getMessageFromFireBaseUser(senderUser, hostUser)
         val roomType1 = "cf_${hostUser.id}_${senderUser.id}"
@@ -78,7 +85,7 @@ class ChatActivity : AppCompatActivity() {
         val ARG_CHAT_ROOMS = hostUser.id.toString()
         val linerLayoutManager: LinearLayoutManager = LinearLayoutManager(this)
         val recyclerViewAdapter: FirebaseRecyclerAdapter<ChatMessage, ChatsViewHolder> =
-                object : FirebaseRecyclerAdapter<ChatMessage, ChatsViewHolder> (
+                object : FirebaseRecyclerAdapter<ChatMessage, ChatsViewHolder>(
                         ChatMessage::class.java,
                         R.layout.list_item_chat,
                         ChatsViewHolder::class.java,
@@ -255,10 +262,11 @@ class ChatActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val TAG = "ChatActivity"
+        const val TAG = "__ChatActivity__"
         const val IS_OPEN_BY_HOST = "isForHosT"
         const val SENDER_ID = "senderID"
         const val ROOM_LOC = "roomLoc"
+        const val CHAT_ROOM_ID = "roomID"
     }
 }
 

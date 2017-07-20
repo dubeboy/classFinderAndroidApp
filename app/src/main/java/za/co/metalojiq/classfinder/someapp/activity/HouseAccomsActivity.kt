@@ -31,8 +31,8 @@ class HouseAccomsActivity : AppCompatActivity() {
 
         val houseId = intent.getIntExtra(HouseActivityFragment.HOUSE_ID, -1)
         val apiClient = ApiClient.getClient().create(ApiInterface::class.java)
-        val call = apiClient.getAccommodationsForHouse(houseId)
-        call.enqueue(object: Callback<AccommodationResponse?> {
+        val apiCall = apiClient.getAccommodationsForHouse(houseId)
+        apiCall.enqueue(object: Callback<AccommodationResponse?> {
             override fun onResponse(call: Call<AccommodationResponse?>, response: Response<AccommodationResponse?>) {
                 progressBar.visibility = View.GONE //Hide the progress bar man
 
