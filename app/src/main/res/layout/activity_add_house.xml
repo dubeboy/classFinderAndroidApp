@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,92 +9,112 @@
     tools:context="za.co.metalojiq.classfinder.someapp.activity.AddHouseActivity"
     android:orientation="vertical">
 
-    <fragment
-        android:id="@+id/place_autocomplete_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-        />
-
-    <fragment
-        android:id="@+id/place_nearto_autocomplete_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-        />
-
-    <EditText
-        android:id="@+id/input_nearby"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Near by Places"
-         />
-
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:text="Wifi"
-            android:id="@+id/checkbox_wifi"
-            android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:text="NSFAS"
-            android:id="@+id/checkbox_nsfas"
-            android:layout_height="wrap_content" />
-
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:id="@+id/checkbox_prepaid_elec"
-            android:text="Prepaid Electricity"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:paddingBottom="10dp"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:id="@+id/input_common"
+        <fragment
+            android:id="@+id/place_autocomplete_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter other common areas in your house, eg Kitchen, etc " />
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            />
 
-    </android.support.design.widget.TextInputLayout>
+        <fragment
+            android:id="@+id/place_nearto_autocomplete_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            />
 
-    <Button
-        android:text="Add Images"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/newBtnAddImages"
-        android:layout_below="@+id/newEtDeposit"
-        />
-    <!--Will hold the images selected ny the user-->
-    <HorizontalScrollView android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:id="@+id/newImagesScrollView"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="3dp"
-        android:visibility="gone"
-        android:layout_below="@+id/newBtnAddImages">
+        <com.pchmn.materialchips.ChipsInput
+            android:id="@+id/chips_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:inputType="none"
+            app:chip_deletable="true"
+            app:hint="Near by Places" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:id="@+id/newImagesHorizontalScroll">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
+
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:text="Wifi"
+                android:id="@+id/checkbox_wifi"
+                android:layout_height="wrap_content" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:text="NSFAS"
+                android:id="@+id/checkbox_nsfas"
+                android:layout_height="wrap_content" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:id="@+id/checkbox_prepaid_elec"
+                android:text="Prepaid Electricity"
+                android:layout_height="wrap_content" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:id="@+id/checkbox_laundry"
+                android:text="Laundry"
+                android:layout_height="wrap_content" />
         </LinearLayout>
-    </HorizontalScrollView>
 
-    <Button
-        android:layout_width="match_parent"
-        android:id="@+id/btn_add_house"
-        android:text="Add house"
-        android:layout_height="wrap_content" />
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:paddingBottom="10dp"
+            android:layout_height="wrap_content">
 
-</LinearLayout>
+            <EditText
+                android:id="@+id/input_common"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter other common areas in your house, eg Kitchen, etc " />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:text="Add Images"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/card_layout"
+            android:id="@+id/newBtnAddImages"
+            android:layout_below="@+id/newEtDeposit"
+            />
+        <!--Will hold the images selected ny the user-->
+        <HorizontalScrollView android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:id="@+id/newImagesScrollView"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            android:visibility="gone"
+            android:layout_below="@+id/newBtnAddImages">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:id="@+id/newImagesHorizontalScroll">
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <Button
+            android:layout_width="match_parent"
+            android:id="@+id/btn_add_house"
+            android:background="@drawable/card_layout"
+            android:layout_marginTop="10dp"
+            android:text="Add house"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+</ScrollView>

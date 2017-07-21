@@ -207,7 +207,7 @@ public interface ApiInterface {
 
 
     @Headers({"Accept: application/json"})
-    @POST("/api/v1/house") //api/v1/users/1/house
+    @POST("/api/v1/house") //api/v1/house
     @Multipart
     Call<House> postHouse(@Query("user_id") int userId,
                           @NonNull @Query("address") String address,

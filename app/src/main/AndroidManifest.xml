@@ -39,7 +39,7 @@
 
         <activity
             android:name=".activity.AccomImageSlider"
-            android:label="Accommodation Images" />
+            android:label="Accommodation Details" />
         <activity
             android:name=".activity.Search"
             android:label="@string/search_accommodation" />

@@ -23,7 +23,6 @@ import za.co.metalojiq.classfinder.someapp.R
 import za.co.metalojiq.classfinder.someapp.activity.AddHouseActivity
 import za.co.metalojiq.classfinder.someapp.activity.HostPanel
 import za.co.metalojiq.classfinder.someapp.activity.HouseAccomsActivity
-import za.co.metalojiq.classfinder.someapp.activity.MainActivity
 import za.co.metalojiq.classfinder.someapp.adapter.EndlessRecyclerViewScrollListener
 import za.co.metalojiq.classfinder.someapp.adapter.HouseListAdapter
 import za.co.metalojiq.classfinder.someapp.model.HousesResponse
@@ -54,11 +53,13 @@ class HouseActivityFragment : Fragment() {
         val userId = Utils.getUserId(activity)
         progressBar = linearLayout.findViewById(R.id.accomLoad) as ProgressBar
         progressBar!!.visibility = View.GONE // set the progressbar to be gone
+        Log.d(TAG, "Houses fragments called big time")
+
         scrollListener = object : EndlessRecyclerViewScrollListener(gridLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
                 Log.d(TAG, "Called with page: $page")
                 swipeRefreshLayout!!.isRefreshing = true
-                if(page !=  0) fetchMoreHousesData(page, userId)
+                if(page !=  1) fetchMoreHousesData(page, userId) else swipeRefreshLayout?.isRefreshing = false
             }
         }
         recyclerView!!.addOnScrollListener(scrollListener) //TODO test if position matters
@@ -66,12 +67,12 @@ class HouseActivityFragment : Fragment() {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light)
-        swipeRefreshLayout!!.setOnRefreshListener({
+        swipeRefreshLayout!!.setOnRefreshListener {
             houseAdapter!!.clear()
             scrollListener!!.resetState()
             fetchMoreHousesData(0, userId)
             Toast.makeText(activity, "Refresh", Toast.LENGTH_SHORT).show()
-        })
+        }
         recyclerView!!.layoutManager = gridLayoutManager
         fab.setOnClickListener {
             if (isLoggedIn(activity)) {
@@ -115,12 +116,16 @@ class HouseActivityFragment : Fragment() {
                             })
                     recyclerView!!.adapter = houseAdapter
                     scrollListener!!.resetState()
+
                 }
+                swipeRefreshLayout?.isRefreshing =false
             }
 
             override fun onFailure(call: Call<HousesResponse?>?, t: Throwable?) {
                     Snackbar.make(linearLayout, "Sorry classFinder error, we will be back shortly.", //todo: crashes some times saying no suitable parent please give valid view
                             Snackbar.LENGTH_LONG).show()
+                swipeRefreshLayout?.isRefreshing =false
+                Log.e(TAG, t!!.toString())
             }
         })
     }
@@ -178,7 +183,7 @@ class HouseActivityFragment : Fragment() {
     }
 
     companion object {
-        private val TAG = HouseActivityFragment::class.simpleName
+        private val TAG = "__HouseFragment__"
         val HOUSE_ID = TAG + "_HOUSE_ID"
         val HOUSE_NAME = TAG + "_HOUSE_NAME"
 

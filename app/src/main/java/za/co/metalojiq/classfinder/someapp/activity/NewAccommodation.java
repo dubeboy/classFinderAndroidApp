@@ -159,7 +159,8 @@ public class NewAccommodation extends AppCompatActivity implements Utils.OnImage
                 @Override
                 public void onFailure(Call<AccommodationResponse> call, Throwable t) {
                     Log.e(TAG, t.toString());
-                    makeToast("Please connect to the internet  ", NewAccommodation.this);
+                    makeToast("Please connect to the internet", NewAccommodation.this);
+                    dialog.dismiss();
                 }
             });
         } else {

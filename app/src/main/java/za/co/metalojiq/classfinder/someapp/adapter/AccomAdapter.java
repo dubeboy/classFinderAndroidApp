@@ -21,6 +21,7 @@ import za.co.metalojiq.classfinder.someapp.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static za.co.metalojiq.classfinder.someapp.rest.ApiClient.DEV_HOST;
 import static za.co.metalojiq.classfinder.someapp.util.Utils.shareButtonIntent;
 
 
@@ -85,7 +86,7 @@ public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHol
             tvLocation = (TextView) itemView.findViewById(R.id.tv_location);
             tvRoomType = (TextView) itemView.findViewById(R.id.tv_room_type);
             btnShare = (ImageButton) itemView.findViewById(R.id.btn_share);
-
+            btnShare.setVisibility(View.VISIBLE);
         }
 
 
@@ -98,7 +99,7 @@ public class AccomAdapter extends RecyclerView.Adapter<AccomAdapter.AccomViewHol
             tvRoomType.setText(accommodation.getRoomType());
             Log.d(TAG,accommodation.getPicture(0).getImageUrl() + "^END%");
             Picasso.with(itemView.getContext())
-                    .load( accommodation.getPicture(0)
+                    .load(DEV_HOST + accommodation.getPicture(0)
                             .getImageUrl()).into(accomImageThumb);
 //            built in onClick listener for a view.. nice!!
             itemView.setOnClickListener(new View.OnClickListener() {

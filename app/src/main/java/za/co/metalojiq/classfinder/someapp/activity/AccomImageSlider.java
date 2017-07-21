@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
@@ -36,6 +37,7 @@ import za.co.metalojiq.classfinder.someapp.activity.fragment.ListBottomSheet;
 import za.co.metalojiq.classfinder.someapp.activity.fragment.TimePickerFragment;
 import za.co.metalojiq.classfinder.someapp.adapter.AccomImageAdapter;
 import za.co.metalojiq.classfinder.someapp.model.AccommodationResponse;
+import za.co.metalojiq.classfinder.someapp.model.House;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
 import za.co.metalojiq.classfinder.someapp.util.Utils;
@@ -93,6 +95,7 @@ public class AccomImageSlider extends AppCompatActivity implements
         String description = intent.getStringExtra(AccomList.STRING_ROOM_DESC);
         String address = intent.getStringExtra(AccomList.STRING_ROOM_ADDRESS_EXTRA);
         String city = intent.getStringExtra(AccomList.STRING_ROOM_CITY_EXTRA);
+        House house = (House) intent.getSerializableExtra(AccomList.OBJECT_ROOM_HOUSE);
         final String deposit = intent.getStringExtra(AccomList.DOUBLE_ROOM_DEPOSIT_EXTRA);
         hostId = intent.getIntExtra(AccomList.POST_INT_HOST_ID, 0);
 
@@ -120,12 +123,19 @@ public class AccomImageSlider extends AppCompatActivity implements
         tvPrice.setText(p);
 
         tvRoomType.setText(roomType);
+        String wifi = house.getWifi().equals("wifi") ? "Wifi: Yes" : "Wifi: No";
+        String common = TextUtils.isEmpty(house.getCommon()) ? "" : house.getCommon() + "\n";
 
-        tvDesc.setText(description);
+        tvDesc.setText(
+                "City: " + city + "\n"
+                + wifi + "\n"
+                + "Address: " + house.getAddress() + "\n"
+                + common
+                        + description + "\n");
 
         //TODO the parsing activity should be the one sanitising this info!!!!
         //this should be in array somewhere I think
-        String s = (location.equals("Auckland Park")) ? "" : "Around " + location;
+        String s = "Location: " + location;
         tvLocation.setText(s);
 
         //Trick inspired by @Akuru

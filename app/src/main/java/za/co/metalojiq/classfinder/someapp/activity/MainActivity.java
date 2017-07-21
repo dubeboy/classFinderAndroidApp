@@ -83,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         MenuItem itemLogin = menu.findItem(R.id.action_login);
         MenuItem itemRunner = menu.findItem(R.id.action_runner);
         MenuItem itemSignOut = menu.findItem(R.id.action_sign_out);
-        MenuItem itemNetworks = menu.findItem(R.id.action_networks);
         MenuItem itemHouses = menu.findItem(R.id.action_houses);
         if (userId == 0) { // means that the user is not logged in !!!
             itemRunner.setVisible(false);
@@ -93,10 +92,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             itemRunner.setVisible(true);
             itemLogin.setVisible(false);
             itemSignOut.setVisible(true);
-            itemNetworks.setVisible(true);
         } else {  // this is when the user is signed in but is not a runner!
             itemRunner.setVisible(true);
-            itemNetworks.setVisible(true);
             itemSignOut.setVisible(true);
             itemHouses.setVisible(true);
         }
@@ -120,25 +117,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 Intent runner = new Intent(this, Runner.class);
                 startActivity(runner);
                 return true;
-            case R.id.action_settings:
-                Intent settings = new Intent(this, SettingsActivity.class);
-                startActivity(settings);
-                return true;
-            case R.id.action_books:
-                Intent books = new Intent(this, BooksList.class);
-                startActivity(books);
-                return true;
-            case R.id.action_venues:
-                Intent venues = new Intent(this, VenueFinder.class);
-                startActivity(venues);
-                return true;
             case R.id.action_sign_out:
                 SharedPreferences sharedPreferences = getSharedPreferences(LoginActivity.LOGIN_PREF_FILENAME, MODE_PRIVATE);
                 signOut(sharedPreferences);
-                return true;
-            case R.id.action_networks:
-                Intent networksIntent = new Intent(this, Networks.class);
-                startActivity(networksIntent);
                 return true;
             case R.id.action_houses:
                 Intent housesIntent = new Intent(this, HouseActivity.class);

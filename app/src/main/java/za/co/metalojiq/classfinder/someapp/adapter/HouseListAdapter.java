@@ -17,6 +17,8 @@ import java.util.List;
 import za.co.metalojiq.classfinder.someapp.R;
 import za.co.metalojiq.classfinder.someapp.model.House;
 
+import static za.co.metalojiq.classfinder.someapp.rest.ApiClient.DEV_HOST;
+
 /**
  * Created by divine on 2017/06/16.
  */
@@ -76,15 +78,19 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.Hous
         }
 
         void bind(final House house, final HouseListAdapter.OnItemClickListener listener) {
-            tvLocation.setText(house.getWifi().trim() + "\n" + house.isNsfas() + "\n" + house.isPrepaidElectricity() + "\n" + house.getCommon().trim());
-            String price = house.getAddress();
-            tvTitle.setText(price);
+            String wifi = house.getWifi().trim().equals("true") ? "wifi: Available": "wifi: Not available";
+            String nsfas = house.isNsfas() ? "NSFAS: Yes" : "NSFAS: No";
+            String prePaidElectricity = house.isPrepaidElectricity() ? "Prepaid elctricity: Yes" : "Prepaid elctricity: No";
+
+            tvLocation.setText(wifi + "\n" + nsfas + "\n" + prePaidElectricity + "\n" + house.getCommon().trim());
+            String address = house.getAddress();
+            tvTitle.setText(address);
             tvRoomType.setText(""); //Todo this should have the tot num people
 
             if (house.getResults() != null && house.getResults().size() > 0) {  // we want to this if the house has more than item
                 Log.d(TAG, house.getResults().get(0).getPicture(0).getImageUrl() + "^END%");
                 Picasso.with(itemView.getContext())
-                        .load(house
+                        .load(DEV_HOST + house
                                 .getPictures()
                                 .get(0)
                                 .getImageUrl()

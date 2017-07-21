@@ -71,6 +71,7 @@ class Search : AppCompatActivity() {
                 LatLng(-22.1254241,32.8909911)))
         val typeFilter: AutocompleteFilter = AutocompleteFilter.Builder()
                 .setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES)
+                .setCountry("ZA")
                 .setTypeFilter(AutocompleteFilter.TYPE_FILTER_REGIONS)
                 .build()
         autocompleteFragment.setFilter(typeFilter)
@@ -92,6 +93,7 @@ class Search : AppCompatActivity() {
         autoPlaceNearTocompleteFragment.setHint("Places of Interest")
         val typeFilter2: AutocompleteFilter = AutocompleteFilter.Builder()  // todo: bad can be done better all of this aouto complete code
                 .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ESTABLISHMENT)
+                .setCountry("ZA")
                 .build()
         autoPlaceNearTocompleteFragment.setFilter(typeFilter2)
         autoPlaceNearTocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {

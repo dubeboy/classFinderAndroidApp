@@ -65,12 +65,6 @@ class HostPanel : AppCompatActivity() {
         val tabLayout = findViewById(R.id.tabs) as TabLayout
         tabLayout.setupWithViewPager(mViewPager)
 
-        val fab = findViewById(R.id.fab) as FloatingActionButton
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
-
     }
 
 
@@ -112,7 +106,7 @@ class HostPanel : AppCompatActivity() {
             val recyclerView = view.findViewById(R.id.host_content_list) as RecyclerView
             swipeRefreshLayout.isRefreshing = true
             var transactionAdapter: TransactionAdapter? = null
-            getTransactions(view, 1) {
+            getTransactions(view, swipeRefreshLayout,  1) {
                 swipeRefreshLayout.isRefreshing = false
                 transactionAdapter = TransactionAdapter(it, R.layout.list_item_runner, activity)
                 recyclerView.adapter = transactionAdapter
@@ -122,7 +116,7 @@ class HostPanel : AppCompatActivity() {
                 override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
                     Log.d(TAG, "the page is $page")
                     if (transactionAdapter != null && page != 0) {
-                        getTransactions(view, page + 1) {
+                        getTransactions(view, swipeRefreshLayout,  page + 1) {
                             transactionAdapter!!.addAll(it)
                         }
                     }
@@ -138,7 +132,7 @@ class HostPanel : AppCompatActivity() {
         }
 
 
-        private fun getTransactions(view: View, page: Int, onResponse: (v: ArrayList<Transaction>) -> Unit) {
+        private fun getTransactions(view: View, swipeRefreshLayout: SwipeRefreshLayout,  page: Int, onResponse: (v: ArrayList<Transaction>) -> Unit) {
             ApiClient.getClient().create(ApiInterface::class.java)
                     .getHostTrans(Utils.getUserId(activity), page)
                     .enqueue(object : Callback<TransactionResponse?> {
@@ -146,10 +140,12 @@ class HostPanel : AppCompatActivity() {
                         override fun onFailure(call: Call<TransactionResponse?>, t: Throwable?) {
                             Snackbar.make(view, "Please connect to the internet and then swipe down to reload", Snackbar.LENGTH_LONG).show()
                             Log.d(TAG, "failed to connect " )
+                            swipeRefreshLayout.isRefreshing = false
                         }
 
                         override fun onResponse(call: Call<TransactionResponse?>?, response: Response<TransactionResponse?>) {
                             val transactions = response.body()?.transactions
+                            swipeRefreshLayout.isRefreshing = false
                             if (transactions != null) {
                                 if (transactions.isNotEmpty()) {
                                     onResponse(transactions) //dangerous name ayeye!! but ohh well...
@@ -157,6 +153,7 @@ class HostPanel : AppCompatActivity() {
                                 } else {
                                     activity.runOnUiThread {
                                         Snackbar.make(view, "You have no booking yet!, Share links of your accommodations on social media to get attraction.", Snackbar.LENGTH_LONG).show()
+
                                     }
                                 }
                             } else {
@@ -212,7 +209,8 @@ class HostPanel : AppCompatActivity() {
                 if(!isRecyclerViewPopulated) {
                     activity.runOnUiThread {
                         Log.d(TAG, "you have no chats yet man ")
-                        Snackbar.make(view, "You have not chats yet!, share your cf accommodations on social media to get traction", Snackbar.LENGTH_INDEFINITE).show()
+                        Snackbar.make(view, "You have not chats yet!," +
+                                " share your cf accommodations on social media to get traction", Snackbar.LENGTH_INDEFINITE).show()
                     }
                     Log.d(TAG, "the list was not populated")
                 }

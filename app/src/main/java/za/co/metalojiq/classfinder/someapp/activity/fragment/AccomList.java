@@ -52,6 +52,7 @@ public class AccomList extends Fragment implements AccomAdapter.OnItemClickListe
     public static final String ACCOM_BUNDLE_KEY = TAG + ".ACCOM_KEY";
     public static final String POST_ADVERT_ID = TAG + "POST_INT_ADVERT_ID";
     public static final String DOUBLE_ROOM_DEPOSIT_EXTRA = "DOUBLE_DEPOSIT";
+    public static final String OBJECT_ROOM_HOUSE = "houseObject";
     private Button btnShare;
 
 
@@ -96,9 +97,8 @@ public class AccomList extends Fragment implements AccomAdapter.OnItemClickListe
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 Log.d(TAG, "Called");
                 progressBar.setVisibility(View.VISIBLE);
-                if (page != 0) {
                     fetchAccomData(page);
-                }
+                swipeRefreshLayout.setRefreshing(false);
             }
         };
 
@@ -212,6 +212,7 @@ public class AccomList extends Fragment implements AccomAdapter.OnItemClickListe
                 Log.d(TAG, t.toString());
                 Snackbar.make(linearLayout, "Oops... failing to load more items. Please try connecting to the internet.",
                         Snackbar.LENGTH_SHORT).show();
+                //todo: hise
             }
         });
     }
@@ -225,7 +226,9 @@ public class AccomList extends Fragment implements AccomAdapter.OnItemClickListe
         intent.putExtra(STRING_ROOM_LOCATION_EXTRA, accommodation.getHouse().getLocation());
         intent.putExtra(STRING_ROOM_ADDRESS_EXTRA, accommodation.getHouse().getAddress());
         intent.putExtra(STRING_ROOM_CITY_EXTRA, accommodation.getHouse().getCity());
-        intent.putExtra(STRING_ROOM_DESC, accommodation.getDescription());
+        String desc = "Description: " + accommodation.getDescription();
+        intent.putExtra(STRING_ROOM_DESC,desc);
+        intent.putExtra(OBJECT_ROOM_HOUSE, accommodation.getHouse());
         intent.putExtra(POST_INT_HOST_ID, accommodation.getHostId());
         intent.putExtra(DOUBLE_ROOM_DEPOSIT_EXTRA,String.valueOf(accommodation.getDeposit()));
 

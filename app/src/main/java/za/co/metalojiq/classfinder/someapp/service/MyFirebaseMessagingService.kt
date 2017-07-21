@@ -12,11 +12,9 @@ import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Context
 import android.util.Log
-import za.co.metalojiq.classfinder.someapp.activity.ChatActivity
-import za.co.metalojiq.classfinder.someapp.activity.LoginActivity
-import za.co.metalojiq.classfinder.someapp.activity.MainActivity
 import za.co.metalojiq.classfinder.someapp.activity.fragment.AccomList
 import android.media.RingtoneManager
+import za.co.metalojiq.classfinder.someapp.activity.*
 import java.util.*
 
 
@@ -44,6 +42,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val roomLocation: String? = remoteMessage.data["room_location"]
         val senderId: String? = remoteMessage.data["sender_id"]
         val isOpenByHost: String? = remoteMessage.data["is_open_by_host"]
+
+        val for_host = remoteMessage.data["for_host"]
+        val taskStackBuilder = TaskStackBuilder.create(this)
         if(hostId != null) {
             //set up a laucher here to start the chats activityv
             val intent = Intent(this, ChatActivity::class.java)
@@ -53,13 +54,22 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             intent.putExtra(ChatActivity.IS_OPEN_BY_HOST, isOpenByHost!!.toBoolean())
             intent.putExtra(ChatActivity.CHAT_ROOM_ID, roomId)
             intent.putExtra(LoginActivity.LOGIN_PREF_EMAIL, remoteMessage.data["sender_email"])
-            val taskStackBuilder = TaskStackBuilder.create(this)
-            taskStackBuilder.addParentStack(MainActivity::class.java);
+//            taskStackBuilder.addParentStack(MainActivity::class.java);
             taskStackBuilder.addNextIntent(intent)
             val pendingIntent = taskStackBuilder.getPendingIntent(Random().nextInt(), PendingIntent.FLAG_UPDATE_CURRENT )
             mBuilder.setContentIntent(pendingIntent)
+        } else if (for_host != null) {
+            val pendingIntent = taskStackBuilder.getPendingIntent(Random().nextInt(), PendingIntent.FLAG_UPDATE_CURRENT )
+            if(for_host == "no") {
+                val runner = Intent(this, Runner::class.java)
+                taskStackBuilder.addNextIntent(runner)
+                mBuilder.setContentIntent(pendingIntent)
+            } else {
+                val intent = Intent(this, HostPanel::class.java)
+                taskStackBuilder.addNextIntent(intent)
+                mBuilder.setContentIntent(pendingIntent)
+            }
         }
-
         val mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         mNotificationManager.notify(1, mBuilder.build())
     }

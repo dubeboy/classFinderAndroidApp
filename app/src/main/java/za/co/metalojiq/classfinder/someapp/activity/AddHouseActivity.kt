@@ -4,6 +4,8 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
@@ -33,6 +35,7 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.pchmn.materialchips.model.ChipInterface
 
 
 //todo: should use chips for common areas
@@ -45,14 +48,14 @@ class AddHouseActivity : AppCompatActivity(), Utils.OnImagesSelected {
     private lateinit var imagesContainer: LinearLayout
     private var mLocationPermissionGranted: Boolean = false
     private val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: Int = 1000
-//    private val nearByLocations: ArrayList<String> = ArrayList(10)
+    //    private val nearByLocations: ArrayList<String> = ArrayList(10)
     private var hasSelectedSomething: Boolean = false
     private var inputNearByFilled: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_house)
-
+        title = "Add House"
         val userId = Utils.getUserId(this)
         Log.d(TAG, "$TAG the user id is: $userId")
         val etCommon = findViewById(R.id.input_common) as EditText
@@ -73,8 +76,13 @@ class AddHouseActivity : AppCompatActivity(), Utils.OnImagesSelected {
 
         val autocompleteFragment = fragmentManager.findFragmentById(R.id.place_autocomplete_fragment) as PlaceAutocompleteFragment
         autocompleteFragment.setHint("Enter Address")
-        autocompleteFragment.setBoundsBias(LatLngBounds(LatLng(-34.833232300000006,16.4535919),
-                                                        LatLng(-22.1254241,32.8909911)))
+        autocompleteFragment.setBoundsBias(LatLngBounds(LatLng(-34.833232300000006, 16.4535919),
+                LatLng(-22.1254241, 32.8909911)))
+        val autoCompTypeFilter = AutocompleteFilter.Builder()
+                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS)
+                .setCountry("ZA")
+                .build()
+        autocompleteFragment.setFilter(autoCompTypeFilter)
         autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
                 address = place.address.toString()
@@ -89,21 +97,21 @@ class AddHouseActivity : AppCompatActivity(), Utils.OnImagesSelected {
             }
         })
 
+
+
         val autoPlaceNearTocompleteFragment = fragmentManager.findFragmentById(R.id.place_nearto_autocomplete_fragment) as PlaceAutocompleteFragment
         autoPlaceNearTocompleteFragment.setHint("Enter near by places")
         val typeFilter: AutocompleteFilter = AutocompleteFilter.Builder()
                 .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ESTABLISHMENT)
+                .setCountry("ZA")
                 .build()
         autoPlaceNearTocompleteFragment.setFilter(typeFilter)
+        var chipId = 0;
         autoPlaceNearTocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
                 val name: String = place.name.toString()
-//                nearByLocations += name
-                if (input_nearby.text.toString().isEmpty()){
-                    input_nearby.setText("$name" )
-                } else {
-                    input_nearby.setText("${input_nearby.text}, $name" )
-                }
+                chipId += 1
+                chips_input.addChip(NearToChip(name, chipId, place.address.toString()))
                 inputNearByFilled = true
             }
 
@@ -113,14 +121,22 @@ class AddHouseActivity : AppCompatActivity(), Utils.OnImagesSelected {
             }
         })
 
-
-
         btnAddHouse.setOnClickListener({
-            if (validate(userId, address, etCommon.text.toString(), hasSelectedSomething, inputNearByFilled)) {
+            if (validate(userId, address, hasSelectedSomething, inputNearByFilled)) {
+                val selectedChipList = chips_input.selectedChipList
+                var nearBy: String = ""
+                selectedChipList.forEach {
+                    if (nearBy.isEmpty()) {
+                        nearBy += it.label
+                    } else {
+                        nearBy += "," + it.label
+                    }
+                }
+                Log.d(TAG, "the near bys are $nearBy")
                 saveHouse(userId,
                         address,
                         etCommon.text.toString(),
-                        input_nearby.text.toString(),
+                        nearBy,
                         ckNSFAS.isChecked,
                         ckWifi.isChecked,
                         ckPrepaid.isChecked)
@@ -132,10 +148,7 @@ class AddHouseActivity : AppCompatActivity(), Utils.OnImagesSelected {
         newBtnAddImages.setOnClickListener({
             Utils.launchImagesPicker(this@AddHouseActivity, supportFragmentManager, imagesContainer, this@AddHouseActivity)
         })
-
-
     }
-
 
     private fun requestFineLocation() {
         if (ContextCompat.checkSelfPermission(this.applicationContext,
@@ -172,10 +185,6 @@ class AddHouseActivity : AppCompatActivity(), Utils.OnImagesSelected {
             Toast.makeText(this, "Please at least select one image", Toast.LENGTH_LONG).show()
             return
         }
-        val mime = MediaType.parse("text/plain")
-        val price = RequestBody.create(mime,  "")
-
-
         val multiPartBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)
         for (imageUri in imagesUris) {
             val file = File(imageUri)
@@ -190,7 +199,7 @@ class AddHouseActivity : AppCompatActivity(), Utils.OnImagesSelected {
 
         progressDialog.show() // show the dialog
         val apiService = ApiClient.getClient().create(ApiInterface::class.java)
-        val apiCaller = apiService.postHouse(userId, address, nearTo,  common, nsfas, wifi, prepaid, body.parts())
+        val apiCaller = apiService.postHouse(userId, address, nearTo, common, nsfas, wifi, prepaid, body.parts())
 
         apiCaller.enqueue(object : Callback<House?> {
             override fun onResponse(call: Call<House?>?, response: Response<House?>) {
@@ -232,14 +241,37 @@ class AddHouseActivity : AppCompatActivity(), Utils.OnImagesSelected {
         private val TAG = "__AddHouseActivity__"
 
         private fun validate(userId: Int,
-                             address: String,
-                             common: String, hasSelectedSomething: Boolean, inputNearByFilled: Boolean): Boolean {
+                             address: String, hasSelectedSomething: Boolean, inputNearByFilled: Boolean): Boolean {
             if (!hasSelectedSomething) return false
             if (!inputNearByFilled) return false
             if (userId < 1) return false
             if (TextUtils.isEmpty(address)) return false
-            if (TextUtils.isEmpty(common)) return false
             return true
         }
+    }
+
+
+    private class NearToChip(val name: String, val id: Int, val address: String) : ChipInterface {
+
+        override fun getAvatarDrawable(): Drawable? {
+            return null
+        }
+
+        override fun getLabel(): String {
+            return this.name
+        }
+
+        override fun getId(): Any {
+            return this.id
+        }
+
+        override fun getAvatarUri(): Uri? {
+            return null
+        }
+
+        override fun getInfo(): String {
+            return this.address
+        }
+
     }
 }
