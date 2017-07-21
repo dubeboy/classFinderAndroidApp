@@ -35,5 +35,4 @@ class House: Serializable {
     var location: String? = null
     @SerializedName("pictures")
     var pictures: List<Picture>? = null
-
 }

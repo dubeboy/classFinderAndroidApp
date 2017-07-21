@@ -63,7 +63,7 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.Hous
     }
 
     static class HouseViewHolder extends RecyclerView.ViewHolder {
-        private static final String TAG = "HouseViewHolder";
+        private static final String TAG = "__HouseViewHolder__";
         private final ImageView accomImageThumb;
         private final TextView tvLocation;
         private final TextView tvTitle;
@@ -87,8 +87,8 @@ public class HouseListAdapter extends RecyclerView.Adapter<HouseListAdapter.Hous
             tvTitle.setText(address);
             tvRoomType.setText(""); //Todo this should have the tot num people
 
-            if (house.getResults() != null && house.getResults().size() > 0) {  // we want to this if the house has more than item
-                Log.d(TAG, house.getResults().get(0).getPicture(0).getImageUrl() + "^END%");
+            if (house.getPictures()!= null && house.getPictures().size() > 0) {  // we want to this if the house has more than item
+                Log.d(TAG,"the image URL is this: "  +  house.getPictures().get(0).getImageUrl());
                 Picasso.with(itemView.getContext())
                         .load(DEV_HOST + house
                                 .getPictures()

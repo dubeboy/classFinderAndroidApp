@@ -148,7 +148,7 @@ public class NewAccommodation extends AppCompatActivity implements Utils.OnImage
                 @Override
                 public void onResponse(Call<AccommodationResponse> call, Response<AccommodationResponse> response) {
                     if (response.body() != null && response.body().isStatus()) {
-                        makeToast("uploaded", NewAccommodation.this);
+                        makeToast("uploaded, swipe down to refresh.", NewAccommodation.this);
                         dialog.dismiss(); //todo: this is redundant
                         finish();
                     } else {
