@@ -41,7 +41,6 @@ class Search : AppCompatActivity() {
 
     private var auckAreaSpinner: Spinner? = null
     private var roomTypeSpinner: Spinner? = null
-    private var locationSpinner: Spinner? = null
     private var priceFrom: EditText? = null
     private var priceTo: EditText? = null
     private var location: String = ""
@@ -129,10 +128,10 @@ class Search : AppCompatActivity() {
 
         val priceT = Integer.valueOf(if (TextUtils.isEmpty(priceTo!!.text.toString())) "0" else priceTo!!.text.toString())!!
         val priceF = Integer.valueOf(if (TextUtils.isEmpty(priceFrom!!.text.toString())) "0" else priceFrom!!.text.toString())!!
-
+        val userId: Int = Utils.getUserId(this)
         //put this in a runner so that we will just get the result from thread
         val apiService = ApiClient.getClient().create(ApiInterface::class.java)
-        val apiCall = apiService.searchAccommodations(location, nearTo, roomType, priceF, priceT, nsfas)
+        val apiCall = apiService.searchAccommodations(location, nearTo, userId,roomType, priceF, priceT, nsfas)
 
         Log.d(TAG, apiCall.request().toString())
         val intent = Intent(this, SearchResults::class.java)

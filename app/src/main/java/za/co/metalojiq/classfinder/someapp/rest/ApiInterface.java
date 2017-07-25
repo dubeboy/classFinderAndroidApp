@@ -27,8 +27,8 @@ public interface ApiInterface {
     @GET("/api/v1/accommodations/search")
     Call<AccommodationResponse> searchAccommodations(@Query(value = "location", encoded = true) String location,
                                                      @Query(value = "near_to", encoded = true) String nearTo,
+                                                     @Query("searcher_id") int searcherId,
                                                      @Query("room_type") String roomType,
-//                                                     @Query("auck_location") String auckLocation,
                                                      @Query("price_from") Integer priceFrom,
                                                      @Query("price_to") Integer priceTo,
                                                      @Query("nsfas") boolean nsfas); //Todo: add page param
