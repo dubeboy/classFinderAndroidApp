@@ -38,8 +38,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         //todo: there should be button of not available here
 
         val hostId: String? = remoteMessage.data["host_id"]
-        val roomId: String? = remoteMessage.data["room_id"]
-        val roomLocation: String? = remoteMessage.data["room_location"]
+//      @Deprecated  val roomId: String? = remoteMessage.data["room_id"]   // TODO: should remove these
+        val roomLocation: String? = remoteMessage.data["room_location"]  //TODO: should add this on the server
         val senderId: String? = remoteMessage.data["sender_id"]
         val isOpenByHost: String? = remoteMessage.data["is_open_by_host"]
         val search: String? = remoteMessage.data["search"]
@@ -53,7 +53,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             intent.putExtra(ChatActivity.ROOM_LOC, roomLocation)
             intent.putExtra(ChatActivity.SENDER_ID, senderId!!.toInt()) //cannot be null
             intent.putExtra(ChatActivity.IS_OPEN_BY_HOST, isOpenByHost!!.toBoolean())
-            intent.putExtra(ChatActivity.CHAT_ROOM_ID, roomId)
             intent.putExtra(LoginActivity.LOGIN_PREF_EMAIL, remoteMessage.data["sender_email"])
             taskStackBuilder.addNextIntent(intent)
             val pendingIntent = taskStackBuilder.getPendingIntent(Random().nextInt(), PendingIntent.FLAG_UPDATE_CURRENT )

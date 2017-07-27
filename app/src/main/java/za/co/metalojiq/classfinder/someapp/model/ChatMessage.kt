@@ -12,7 +12,7 @@ class ChatMessage : Serializable {
     var messageText: String? = null
     var messageUser: String? = null
     var senderId: Int = 0
-    var receiverId: Int = 0
+    var receiverId: Int = 0  //this should be the host ID::
 
     constructor(messageText: String, messageUser: String, senderId: Int, receiverId: Int) {
         this.messageText = messageText
