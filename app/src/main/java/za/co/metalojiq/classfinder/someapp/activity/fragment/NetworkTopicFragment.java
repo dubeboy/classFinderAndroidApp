@@ -108,7 +108,7 @@ public class NetworkTopicFragment extends Fragment {
         LinearLayoutManager linearLayout = new LinearLayoutManager(getContext());
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayout) {
             @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView recyclerView1) {
                 Log.d(TAG, "Called");
                 swipeRefreshLayout.setRefreshing(true);
                 fetchMoreNetworkTopics(page, userId);

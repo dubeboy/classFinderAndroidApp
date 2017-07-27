@@ -1,7 +1,6 @@
 package za.co.metalojiq.classfinder.someapp.activity
 
 import android.support.design.widget.TabLayout
-import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -16,7 +15,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -113,11 +111,12 @@ class HostPanel : AppCompatActivity() {
             }
             val linearLayoutManager: LinearLayoutManager = LinearLayoutManager(activity)
             val scrollListener: EndlessRecyclerViewScrollListener = object : EndlessRecyclerViewScrollListener(linearLayoutManager) {
-                override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
+                override fun onLoadMore(page: Int, totalItemsCount: Int, recyclerView1: RecyclerView) {
                     Log.d(TAG, "the page is $page")
                     if (transactionAdapter != null && page != 0) {
-                        getTransactions(view, swipeRefreshLayout,  page + 1) {
+                        getTransactions(recyclerView1, swipeRefreshLayout,  page + 1) {
                             transactionAdapter!!.addAll(it)
+                            swipeRefreshLayout.isRefreshing = false
                         }
                     }
                 }
@@ -131,14 +130,13 @@ class HostPanel : AppCompatActivity() {
             recyclerView.addOnScrollListener(scrollListener)
         }
 
-
         private fun getTransactions(view: View, swipeRefreshLayout: SwipeRefreshLayout,  page: Int, onResponse: (v: ArrayList<Transaction>) -> Unit) {
             ApiClient.getClient().create(ApiInterface::class.java)
                     .getHostTrans(Utils.getUserId(activity), page)
                     .enqueue(object : Callback<TransactionResponse?> {
 
                         override fun onFailure(call: Call<TransactionResponse?>, t: Throwable?) {
-                            Snackbar.make(view, "Please connect to the internet and then swipe down to reload", Snackbar.LENGTH_LONG).show()
+                            Utils.makeToast("Please connect to the internet and then swipe down to reload", context)
                             Log.d(TAG, "failed to connect " )
                             swipeRefreshLayout.isRefreshing = false
                         }
@@ -152,8 +150,7 @@ class HostPanel : AppCompatActivity() {
                                     Log.d(TAG, "got em " )
                                 } else {
                                     activity.runOnUiThread {
-                                        Snackbar.make(view, "You have no booking yet!, Share links of your accommodations on social media to get attraction.", Snackbar.LENGTH_LONG).show()
-
+                                        Utils.makeToast("You have no booking yet!, Share links of your accommodations on social media to get attraction", context)
                                     }
                                 }
                             } else {
@@ -215,6 +212,12 @@ class HostPanel : AppCompatActivity() {
                     Log.d(TAG, "the list was not populated")
                 }
                 swipeRefreshLayout.isRefreshing = false
+            })
+
+            swipeRefreshLayout.setOnRefreshListener({
+                swipeRefreshLayout.isRefreshing = false  //because this windows auto upadtes there is no need th
+                // the first one is just for animation sake!!!
+//                scrollListener.resetState()
             })
 
         }

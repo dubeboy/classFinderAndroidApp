@@ -78,27 +78,26 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
 
         //hide runner info
         toggleShowRunnerInfo(false);
-        final Spinner locationsSpinner = setupSpinner(this, R.id.signUpSpinnerTime, R.array.locations_array);
+     //   final Spinner locationsSpinner = setupSpinner(this, R.id.signUpSpinnerTime, R.array.locations_array);
 
         mRunnerQuestion.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                String s = "As an Accommodation Assistant you are expected to take clients to view rooms around" +
-                        "an area you are familiar with.Select an area around which you are available to take clients to view rooms.";
+                String s = "As an accommodation owner you can advertise you accommodations and also chat to possible occupants";
                 showTooltip(s, mRunnerQuestion);
             }
         });
 
-        mCheckIsRunner.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mCheckIsRunner.isChecked()) {
-                    toggleShowRunnerInfo(true);
-                } else {
-                    toggleShowRunnerInfo(false);
-                }
-            }
-        });
+//        mCheckIsRunner.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (mCheckIsRunner.isChecked()) {
+//                    toggleShowRunnerInfo(true);
+//                } else {
+//                    toggleShowRunnerInfo(false);
+//                }
+//            }
+//        });
 
 
         Intent intent = getIntent();
@@ -135,17 +134,15 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
                                         // all these actions are for a new user
                                         if (mCheckIsRunner.isChecked()) {
                                             //this makes sure atleast one is checked and then sets message if not checked
-                                            if (!isSelectedAtleastOneTimePeriod()) {
-                                                return;
-                                            }
+//
                                             googleSignUp(googleUserToken, email, name,
                                                     mPhone.getText().toString().trim(),
-                                                    mCheckIsRunner.isSelected(), times, ((String) locationsSpinner.getSelectedItem()));
+                                                    mCheckIsRunner.isSelected());
                                         } else { // this part is for when a user does not want to be a runner
                                             googleSignUp(googleUserToken,
                                                     email, name,
                                                     mPhone.getText().toString().trim(),
-                                                    mCheckIsRunner.isSelected(), null, null);
+                                                    mCheckIsRunner.isSelected());
                                         }
                                     }
                                 }
@@ -175,21 +172,15 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
 
                     if (checkPassword()) {
                         if (mCheckIsRunner.isChecked()) {
-                            //this makes sure atleast one is checked and then sets message if not checked
-                            if (!isSelectedAtleastOneTimePeriod()) {
-                                return;
-                            }
                             signUp(email,
                                     name,
                                     mPhone.getText().toString().trim(),
                                     mPassword.getText().toString(),
-                                    mCheckIsRunner.isSelected(),
-                                    times,
-                                    ((String) locationsSpinner.getSelectedItem()));
+                                    mCheckIsRunner.isSelected()
+                                  );
                         } else { // this part is for when a user does not want to be a runner
                             signUp(email, name, mPhone.getText().toString().trim(),
-                                    mPassword.getText().toString(), mCheckIsRunner.isChecked(), null,
-                                    null);
+                                    mPassword.getText().toString(), mCheckIsRunner.isChecked());
                         }
                     }
                 }
@@ -208,18 +199,18 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
     private void toggleShowRunnerInfo(boolean show) {
         horScroll = (HorizontalScrollView) findViewById(R.id.SignUpHorizontalTimes);
         TextView tvSelectTime = (TextView) findViewById(R.id.signUpTvSelectTime);
-        TextView signUpSelectTime = (TextView) findViewById(R.id.signUpSelectTime);
-        Spinner spinner = (Spinner) findViewById(R.id.signUpSpinnerTime);
+      //  TextView signUpSelectTime = (TextView) findViewById(R.id.signUpSelectTime);
+//        Spinner spinner = (Spinner) findViewById(R.id.signUpSpinnerTime);
         if (show) {
             tvSelectTime.setVisibility(View.VISIBLE);
             horScroll.setVisibility(View.VISIBLE);
-            signUpSelectTime.setVisibility(View.VISIBLE);
-            spinner.setVisibility(View.VISIBLE);
+         //   signUpSelectTime.setVisibility(View.VISIBLE);
+//            spinner.setVisibility(View.VISIBLE);
         } else {
             tvSelectTime.setVisibility(View.GONE);
             horScroll.setVisibility(View.GONE);
-            signUpSelectTime.setVisibility(View.GONE);
-            spinner.setVisibility(View.GONE);
+         //   signUpSelectTime.setVisibility(View.GONE);
+//            spinner.setVisibility(View.GONE);
         }
     }
 
@@ -237,17 +228,17 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
     }
 
 
-    private boolean isSelectedAtleastOneTimePeriod() {
-        for (byte i : times) {
-            if (i == 1) {
-                Log.d(TAG, "isSelectedAtleastOneTimePeriod: something selected");
-                return true;
-            }
-        }
-        Log.d(TAG, "isSelectedAtleastOneTimePeriod: uhhm did not loop");
-        showTooltip("Please Select at least one assistant time at which you available", horScroll);
-        return false;
-    }
+//    private boolean isSelectedAtleastOneTimePeriod() {
+//        for (byte i : times) {
+//            if (i == 1) {
+//                Log.d(TAG, "isSelectedAtleastOneTimePeriod: something selected");
+//                return true;
+//            }
+//        }
+//        Log.d(TAG, "isSelectedAtleastOneTimePeriod: uhhm did not loop");
+//        showTooltip("Please Select at least one assistant time at which you available", horScroll);
+//        return false;
+//    }
 
     private void showTooltip(String msg, View anchorView) {
         new SimpleTooltip.Builder(this)
@@ -279,15 +270,13 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
 
     // these function are very useless
 
-    private void signUp(String email, String name, String phone, String password, boolean selected, byte[] times, String selectedItem) {
+    private void signUp(String email, String name, String phone, String password, boolean selected) {
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
         Call<UserResponse> call = apiService.signUp(email,
                 name,
                 phone.trim(),
                 password,
                 selected, //todo: deprecated
-                times, //todo: deprecated
-                selectedItem,
                 FirebaseInstanceId.getInstance().getToken());
         call.enqueue(this);
         showProgressDialog();
@@ -298,12 +287,10 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
                               String email,
                               String name,
                               String phone,
-                              boolean selected,
-                              byte[] times,
-                              String selectedItem) {
+                              boolean selected) {
         //call retrofit
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        Call<UserResponse> call = apiService.googleUserSignUp(email, name, phone, token, selected, times, selectedItem, FirebaseInstanceId.getInstance().getToken());
+        Call<UserResponse> call = apiService.googleUserSignUp(email, name, phone, token, selected, FirebaseInstanceId.getInstance().getToken());
         call.enqueue(this);
         showProgressDialog();
 

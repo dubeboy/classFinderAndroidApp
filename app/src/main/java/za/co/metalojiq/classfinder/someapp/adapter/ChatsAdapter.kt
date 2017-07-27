@@ -14,10 +14,11 @@ import android.text.format.DateFormat
 /**
  * Created by divine on 2017/07/09.
  */
-class ChatsAdapter(val chats: ArrayList<ChatMessage>) : RecyclerView.Adapter<ChatMessageViewHolder>() {
+class ChatsAdapter(val chats: ArrayList<ChatMessage>,var onItemClick: OnItemClick) : RecyclerView.Adapter<ChatMessageViewHolder>() {
 
     override fun onBindViewHolder(holder: ChatMessageViewHolder, position: Int) {
         holder.bind(chats[position])
+        holder.onItemClick = this.onItemClick
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatMessageViewHolder {
@@ -32,12 +33,19 @@ class ChatsAdapter(val chats: ArrayList<ChatMessage>) : RecyclerView.Adapter<Cha
         val messageUser: TextView = itemView.findViewById(R.id.message_user) as TextView
         val messageTime: TextView = itemView.findViewById(R.id.message_time) as TextView
 
+        lateinit var onItemClick: OnItemClick
+
+        // bind each Item
         fun bind(chats: ChatMessage) {
             messageText.text = chats.messageText
             messageUser.text = chats.messageUser
             messageTime.text = DateFormat.format("dd-MM-yyyy (HH:mm:ss)", chats.messageTime)
+            itemView.setOnClickListener {
+              onItemClick.onItemClick(chats)
+            }
         }
     }
+
 
     fun addAll(chatsMessages: ArrayList<ChatMessage>) {
         chats.addAll(chatsMessages)
@@ -52,6 +60,10 @@ class ChatsAdapter(val chats: ArrayList<ChatMessage>) : RecyclerView.Adapter<Cha
     fun clear() {
         chats.clear()
         notifyDataSetChanged()
+    }
+
+    interface OnItemClick {
+       fun onItemClick(chats: ChatMessage)
     }
 
 }

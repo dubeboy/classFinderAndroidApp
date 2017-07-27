@@ -54,9 +54,8 @@ import static za.co.metalojiq.classfinder.someapp.activity.LoginActivity.LOGIN_P
     //todo: this class need to be spit up
 public class Utils {
 
-    public static final String[] LOCATIONS = {"Auckland Park", "Braamfontein", "Doornfontein", "Soweto"};
-    public static final String[] INSTITUTIONS = {"Wits", "UJ-Auckland Park", "UJ-DFC", "UJ-Soweto", "Other"};
-    public static final String AUCK_AREA_PREFIX = "Auckland Park, ";
+    private static final String[] LOCATIONS = {"Auckland Park", "Braamfontein", "Doornfontein", "Soweto"};
+    private static final String[] INSTITUTIONS = {"Wits", "UJ-Auckland Park", "UJ-DFC", "UJ-Soweto", "Other"};
 
     //cannot instantiate this class
     private Utils() {}
@@ -249,6 +248,7 @@ public class Utils {
                     });
             return intent;
         } else {
+            Log.d("__UTILS__", "please login!");
             Toast.makeText(activity, "Please Sign in before you can share accommodation and start getting some money", Toast.LENGTH_LONG).show();
             return null;
         }

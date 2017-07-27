@@ -113,9 +113,7 @@ public interface ApiInterface {
     @POST("/api/v1/users")
     Call<UserResponse> signUp(@Field("email") String email, @Field("name") String name,
                               @Field("phone") String phone, @Field("password") String password,
-                              @Field("is_runner") boolean selected,
-                              @Field("time_slots_ids") byte[] times,
-                              @Field("run_location") String runLocation,
+                              @Field("is_host") boolean selected,
                               @Field("fcm_token") String fcmToken);
 
     @Headers({"Accept: application/json"})
@@ -123,9 +121,7 @@ public interface ApiInterface {
     @POST("/api/v1/users")
     Call<UserResponse> googleUserSignUp(@Field("email") String email, @Field("name") String name,
                                         @Field("phone") String phone, @Field("token") String token,
-                                        @Field("is_runner") boolean selected,
-                                        @Field("time_slots_ids") byte[] times,
-                                        @Field("run_location") String runLocation,
+                                        @Field("is_host") boolean selected,
                                         @Field("fcm_token") String fcmToken);
 
     @Headers({"Accept: application/json"})

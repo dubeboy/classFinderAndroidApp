@@ -56,7 +56,7 @@ class HouseActivityFragment : Fragment() {
         Log.d(TAG, "Houses fragments called big time")
 
         scrollListener = object : EndlessRecyclerViewScrollListener(gridLayoutManager) {
-            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
+            override fun onLoadMore(page: Int, totalItemsCount: Int, recyclerView1: RecyclerView) {
                 Log.d(TAG, "Called with page: $page")
                 swipeRefreshLayout!!.isRefreshing = true
                 if(page !=  1) fetchMoreHousesData(page, userId) else swipeRefreshLayout?.isRefreshing = false

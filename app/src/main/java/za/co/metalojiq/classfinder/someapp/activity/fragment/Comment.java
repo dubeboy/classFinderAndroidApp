@@ -86,7 +86,7 @@ public class Comment extends BottomSheetDialogFragment {
 
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView recyclerView1) {
                 getAllComments(page);
             }
         };

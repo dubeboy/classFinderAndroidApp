@@ -21,7 +21,7 @@ class ChatMessage : Serializable {
         this.receiverId = receiverId
     }
 
-    constructor() {}
+    constructor()
 
     override fun toString(): String {
         return "{$messageText, : $messageUser}"

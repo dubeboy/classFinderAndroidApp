@@ -95,7 +95,7 @@ public class NetworkPost extends Fragment implements NetworkPostAdapter.OnNetwor
         final int userId = Utils.getUserId(getContext());
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView recyclerView1) {
                 Log.d(TAG, "Called From Networks");
                 progressBar.setVisibility(View.VISIBLE);
                 fetchNetworkPostData(getArguments().getInt(ARG_PARAM_CAT_ID), mParamTopicId ,page, userId);

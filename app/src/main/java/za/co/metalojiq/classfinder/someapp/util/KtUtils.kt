@@ -11,12 +11,16 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import za.co.metalojiq.classfinder.someapp.R
-import za.co.metalojiq.classfinder.someapp.activity.ChatActivity
 import za.co.metalojiq.classfinder.someapp.activity.ChatsViewHolder
+import za.co.metalojiq.classfinder.someapp.adapter.ChatsAdapter
 import za.co.metalojiq.classfinder.someapp.model.ChatMessage
+import za.co.metalojiq.classfinder.someapp.model.ChatsList
 
 /**
  * Created by divine on 2017/07/10.
@@ -32,52 +36,70 @@ object KtUtils {
                             hostUserId: Int,
                             studentId: Int, onPopulated: (isPopulated: Boolean) -> Unit) {
 
+        Log.d(TAG, "the uniques $uniqueHostAndStudentRoomId")
+
         Log.d(TAG, "we are int the kUtils: KtUtils()")
 
         val linerLayoutManager: LinearLayoutManager = LinearLayoutManager(context)
-        val recyclerViewAdapter: FirebaseRecyclerAdapter<ChatMessage, ChatsViewHolder> =
-                object : FirebaseRecyclerAdapter<ChatMessage, ChatsViewHolder>(
-                        ChatMessage::class.java,
-                        R.layout.list_item_chat,
-                        ChatsViewHolder::class.java,
-                        FirebaseDatabase.getInstance().reference.child(hostUserId.toString()).child(uniqueHostAndStudentRoomId)) {
+        val hostDatabaseReference = FirebaseDatabase.getInstance().reference.child(hostUserId.toString())
 
-                    override fun populateViewHolder(viewHolder: ChatsViewHolder, model: ChatMessage, position: Int) {
-                        Log.d(TAG, "Called man and the model is $model")
-                        viewHolder.messageText.text = model.messageText
-                        viewHolder.messageTime.text = DateFormat.format("dd-MM-yyyy (HH:mm:ss)", model.messageTime)
-                        viewHolder.messageUser.text = model.messageUser
-                    }
 
-                    override fun onBindViewHolder(viewHolder: ChatsViewHolder, position: Int) {
-                        super.onBindViewHolder(viewHolder, position)
-                        Log.d(ChatActivity.TAG, "called many times + $position")
-                    }
+        val chatListArrayList: ArrayList<ChatMessage> = arrayListOf()
+        hostDatabaseReference.addValueEventListener(object: ValueEventListener {
+            override fun onCancelled(dbError: DatabaseError?) {
+                Log.d(TAG, "oops an error happend here is the error $dbError")
+            }
 
-                }
-        recyclerViewAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                super.onItemRangeInserted(positionStart, itemCount)
-                val numChats: Int = recyclerViewAdapter.itemCount
-                val lastVisiblePosition: Int = linerLayoutManager.findLastCompletelyVisibleItemPosition()
-                if (lastVisiblePosition == -1 ||
-                        (positionStart >= (numChats - 1) &&
-                                lastVisiblePosition == (positionStart - 1))) {
-                    listOfMessagesRecyclerView.scrollToPosition(positionStart);
+            override fun onDataChange(dbSnapShot: DataSnapshot?) {
+                Log.d(TAG, "the dataSnap is: $dbSnapShot")
+//                Log.d(TAG, "__CHILD_the dataSnap and the children is: ${dbSnapShot?.children}")
+                dbSnapShot?.children?.forEach { chatsList ->
+                    val chatId = chatsList.key  //TODO HAVE TO PASS IT FORWARD
+                    val chatMessage = chatsList.children?.first()?.getValue(ChatMessage::class.java)
+                    if (chatMessage != null)
+                        chatListArrayList.add(chatMessage)
                 }
             }
         })
-        listOfMessagesRecyclerView.layoutManager = linerLayoutManager
-        listOfMessagesRecyclerView.adapter = recyclerViewAdapter
-        onPopulated(recyclerViewAdapter.itemCount > 0)
 
+        val chatsAdapter: ChatsAdapter = ChatsAdapter(chatListArrayList, {
+
+        })
+//        val recyclerViewAdapter: FirebaseRecyclerAdapter<ChatsList, ChatsViewHolder> =
+//                object : FirebaseRecyclerAdapter<ChatsList, ChatsViewHolder>(ChatsList::class.java,
+//                                                                                R.layout.list_item_chat,
+//                                                                                ChatsViewHolder::class.java,
+//                                                                                hostDatabaseReference) {
+//
+//                    override fun populateViewHolder(viewHolder: ChatsViewHolder, model: ChatsList, position: Int) {
+//                        Log.d(TAG, "Called man and the model is $model")
+//                        viewHolder.messageText.text = model.chatsList!!.messageText
+//                        viewHolder.messageTime.text = DateFormat.format("dd-MM-yyyy (HH:mm:ss)", model.chatsList!!.messageTime)
+//                        viewHolder.messageUser.text = model.chatsList!!.messageUser
+//                    }
+//
+//                    override fun onBindViewHolder(viewHolder: ChatsViewHolder, position: Int) {
+//                        super.onBindViewHolder(viewHolder, position)
+//                        Log.d(TAG, "called many times + $position")
+//                    }
+//
+//                }
+//        recyclerViewAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+//            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+//                super.onItemRangeInserted(positionStart, itemCount)
+//                val numChats: Int = recyclerViewAdapter.itemCount
+//                val lastVisiblePosition: Int = linerLayoutManager.findLastCompletelyVisibleItemPosition()
+//                if (lastVisiblePosition == -1 ||
+//                        (positionStart >= (numChats - 1) &&
+//                                lastVisiblePosition == (positionStart - 1))) {
+//                    listOfMessagesRecyclerView.scrollToPosition(positionStart);
+//                }
+//            }
+//        })
+//        listOfMessagesRecyclerView.layoutManager = linerLayoutManager
+//        listOfMessagesRecyclerView.adapter = recyclerViewAdapter
+//        onPopulated(recyclerViewAdapter.itemCount > 0)
     }
-
-    // not really useful!! can be done with lambdas yoh!!!!
-    interface OnItemClickListener {
-        //fun onItemClicked(itemView: View)
-    }
-
 
     fun signUserInToFirebase(context: Context, jwtToken: String, onResults: (status: Boolean) -> Unit) {
         val mAuth = FirebaseAuth.getInstance()
@@ -100,5 +122,4 @@ object KtUtils {
                     }
                 })
     }
-
 }

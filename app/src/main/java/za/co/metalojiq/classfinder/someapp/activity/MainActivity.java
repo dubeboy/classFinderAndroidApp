@@ -145,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private void signOut(SharedPreferences sharedPreferences) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove(LoginActivity.LOGIN_PREF_USER_ID);
+        editor.remove(LoginActivity.USER_LOGIN_TOKEN);
         editor.commit(); // commit the changes and then invalidate option menu
         this.supportInvalidateOptionsMenu();
         googleSignOut();  // todo: reactivate soon
@@ -224,6 +225,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 ArrayList<Accommodation> accommodations = new ArrayList<>();
                 final AccomList accomList = AccomList.newInstance(accommodations, -1);
                 //    final HouseActivityFragment myHousesList = HouseActivityFragment.Companion.newInstance(userId);
+
+                // start the activity tu
                 setTitle("Error");
                 startAccomListActivity(accomList, fragmentTransaction);
             }

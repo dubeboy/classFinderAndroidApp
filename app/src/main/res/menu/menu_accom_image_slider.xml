@@ -4,7 +4,8 @@
     <item
         android:id="@+id/action_chat"
         android:orderInCategory="100"
+        android:icon="@drawable/ic_chat_black_24dp"
         android:title="Chat"
-
         app:showAsAction="always" />
+
 </menu>

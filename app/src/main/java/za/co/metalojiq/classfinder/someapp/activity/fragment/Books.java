@@ -102,7 +102,7 @@ public class Books extends Fragment {
         booksAdapter = new BooksAdapter((ArrayList<Book>) getArguments().getSerializable(BOOKS_BUNDLE), R.layout.list_row_books, getActivity(), null);
         scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
             @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView recyclerView1) {
                 Log.d(TAG, "Called");
                 progressBar.setVisibility(View.VISIBLE);
                 fetchAccomData(page, false);
