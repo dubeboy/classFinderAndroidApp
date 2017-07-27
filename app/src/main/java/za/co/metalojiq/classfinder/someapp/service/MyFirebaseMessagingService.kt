@@ -1,6 +1,5 @@
 package za.co.metalojiq.classfinder.someapp.service
 
-import android.app.Notification
 import android.content.Intent
 
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -54,6 +53,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             intent.putExtra(ChatActivity.SENDER_ID, senderId!!.toInt()) //cannot be null
             intent.putExtra(ChatActivity.IS_OPEN_BY_HOST, isOpenByHost!!.toBoolean())
             intent.putExtra(LoginActivity.LOGIN_PREF_EMAIL, remoteMessage.data["sender_email"])
+            taskStackBuilder.addParentStack(ChatActivity::class.java)
             taskStackBuilder.addNextIntent(intent)
             val pendingIntent = taskStackBuilder.getPendingIntent(Random().nextInt(), PendingIntent.FLAG_UPDATE_CURRENT )
             mBuilder.setContentIntent(pendingIntent)
@@ -61,10 +61,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             val pendingIntent = taskStackBuilder.getPendingIntent(Random().nextInt(), PendingIntent.FLAG_UPDATE_CURRENT )
             if(for_host == "no") {
                 val runner = Intent(this, Runner::class.java)
+                taskStackBuilder.addParentStack(Runner::class.java)
                 taskStackBuilder.addNextIntent(runner)
                 mBuilder.setContentIntent(pendingIntent)
             } else {
                 val intent = Intent(this, HostPanel::class.java)
+                taskStackBuilder.addParentStack(HostPanel::class.java)
                 taskStackBuilder.addNextIntent(intent)
                 mBuilder.setContentIntent(pendingIntent)
             }
