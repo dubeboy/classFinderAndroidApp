@@ -202,22 +202,10 @@ class HostPanel : AppCompatActivity() {
             Snackbar.make(view, "You have not chats yet!, share your cf accommodations on social media to get traction", Snackbar.LENGTH_INDEFINITE).show()
             Log.d(TAG, "View is created")
             val hostUser = Utils.getUserId(activity)
-            KtUtils.displayChatMessages("cf_$hostUser", recyclerView, activity, hostUser, 1, { isRecyclerViewPopulated ->
-                if(!isRecyclerViewPopulated) {
-                    activity.runOnUiThread {
-                        Log.d(TAG, "you have no chats yet man ")
-                        Snackbar.make(view, "You have not chats yet!," +
-                                " share your cf accommodations on social media to get traction", Snackbar.LENGTH_INDEFINITE).show()
-                    }
-                    Log.d(TAG, "the list was not populated")
-                }
-                swipeRefreshLayout.isRefreshing = false
-            })
+            KtUtils.displayChatMessages("cf_$hostUser", recyclerView, activity, hostUser, swipeRefreshLayout)
 
             swipeRefreshLayout.setOnRefreshListener({
                 swipeRefreshLayout.isRefreshing = false  //because this windows auto upadtes there is no need th
-                // the first one is just for animation sake!!!
-//                scrollListener.resetState()
             })
 
         }

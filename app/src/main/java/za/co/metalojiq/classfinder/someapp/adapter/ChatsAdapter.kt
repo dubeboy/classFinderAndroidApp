@@ -63,7 +63,7 @@ class ChatsAdapter(val chats: ArrayList<ChatMessage>,var onItemClick: OnItemClic
     }
 
     interface OnItemClick {
-       fun onItemClick(chats: ChatMessage)
+       fun onItemClick(chat: ChatMessage)
     }
 
 }
