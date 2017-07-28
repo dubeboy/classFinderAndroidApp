@@ -19,7 +19,8 @@ import za.co.metalojiq.classfinder.someapp.model.Transaction;
  */
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.UserViewHolder> {
-    private static final String TAG = TransactionAdapter.class.getSimpleName() ;
+    private static final String TAG = TransactionAdapter.class.getSimpleName();
+    private final OnClickListener onClick;
     //row row of data
     private int rowLayout;
 
@@ -27,11 +28,12 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     private Context context;
 
 
-    public TransactionAdapter(List<Transaction> transactions, int rowLayout, Context context) {
-        Log.d(TAG, "here are the transactions" + transactions); 
+    public TransactionAdapter(List<Transaction> transactions, int rowLayout, Context context, OnClickListener onClick) {
+        Log.d(TAG, "here are the transactions" + transactions);
         this.rowLayout = rowLayout;
         this.transactions = transactions;
         this.context = context;
+        this.onClick = onClick;
     }
 
     @Override
@@ -42,40 +44,60 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     @Override
     public void onBindViewHolder(UserViewHolder holder, int position) {
-        Log.d(TAG, "GEtting the transaction for item: " + transactions.get(position).getEmail());
+        Log.d(TAG, "GEtting the transaction for item: " + transactions.get(position).getStudentEmail());
         holder.bind(transactions.get(position));
+        holder.setOnClickListener(onClick);
     }
 
     @Override
     public int getItemCount() {
-        Log.d(TAG, "the number of eleemts for runner is " + transactions.size() );
-        return transactions.size() ;
+        Log.d(TAG, "the number of eleemts for runner is " + transactions.size());
+        return transactions.size();
     }
 
-     static class UserViewHolder extends RecyclerView.ViewHolder {
-         TextView runnerLocation;
-         TextView runnerStudentEmail;
-         TextView runnerStudentCell;
-         TextView runnerTime;
-         public UserViewHolder(View itemView) {
-             super(itemView);
-             runnerLocation = (TextView) itemView.findViewById(R.id.runnerLocation);
-             runnerStudentEmail = (TextView) itemView.findViewById(R.id.runnerEmail);
-             runnerStudentCell = (TextView) itemView.findViewById(R.id.runnerCell);
-             runnerTime = (TextView) itemView.findViewById(R.id.runnerTime);
-         }
+    static class UserViewHolder extends RecyclerView.ViewHolder {
+        TextView runnerLocation;
+        TextView runnerStudentEmail;
+        TextView runnerStudentCell;
+        TextView runnerTime;
+        OnClickListener onClickListener;
 
-         void bind(Transaction transaction) {
-             Log.d(TAG, "Loading runner transactions " + transaction.getEmail());
+        UserViewHolder(View itemView) {
+            super(itemView);
+            runnerLocation = (TextView) itemView.findViewById(R.id.runnerLocation);
+            runnerStudentEmail = (TextView) itemView.findViewById(R.id.runnerEmail);
+            runnerStudentCell = (TextView) itemView.findViewById(R.id.runnerCell);
+            runnerTime = (TextView) itemView.findViewById(R.id.runnerTime);
+        }
+
+        void bind(final Transaction transaction) {
+            Log.d(TAG, "Loading runner transactions " + transaction.getStudentEmail());
             runnerLocation.setText(transaction.getLocation());
-            runnerStudentEmail.setText(transaction.getEmail());
+            runnerStudentEmail.setText(transaction.getStudentEmail());
             runnerStudentCell.setText(transaction.getStudentContact());
             runnerTime.setText(transaction.getViewTime());
-         }
-     }
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickListener.click(transaction);
+                }
+            });
+        }
+
+        public void setOnClickListener(OnClickListener onClickListener) {
+            this.onClickListener = onClickListener;
+        }
+
+
+    }
 
     public void addAll(ArrayList<Transaction> transactions) {
         transactions.addAll(transactions);
         notifyDataSetChanged();
+    }
+
+
+    public interface OnClickListener {
+        void click(Transaction transaction);
     }
 }

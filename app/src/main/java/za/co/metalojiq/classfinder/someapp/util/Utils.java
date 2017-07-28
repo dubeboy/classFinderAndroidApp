@@ -334,9 +334,9 @@ public class Utils {
     }
 
 
-    public static void notifyHost(String roomId, int hostId, int senderId, boolean isOpenByHost) {
+    public static void notifyHost(String text, String roomId, int hostId, int senderId, boolean isOpenByHost) {
         ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
-        Call<StatusRespose> statusResposeCall = apiInterface.notifyHost(roomId, hostId, senderId, isOpenByHost );
+        Call<StatusRespose> statusResposeCall = apiInterface.notifyHost(text, roomId, hostId, senderId, isOpenByHost );
         statusResposeCall.enqueue(new Callback<StatusRespose>() {  // no respose here boss
             @Override
             public void onResponse(@NonNull Call<StatusRespose> call, @NonNull Response<StatusRespose> response) {

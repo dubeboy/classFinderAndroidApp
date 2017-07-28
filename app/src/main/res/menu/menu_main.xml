@@ -33,18 +33,11 @@
         app:showAsAction="never" />
 
     <item
-            android:id="@+id/action_settings"
-            android:orderInCategory="700"
-            android:title="@string/action_settings"
-            app:showAsAction="never" />
-
-
-    <item
         android:id="@+id/action_houses"
         android:orderInCategory="80"
         android:title="House"
         android:visible="false"
-        android:icon="@drawable/ic_record_voice_over_black_24dp"
-        app:showAsAction="ifRoom" />
+        android:icon="@drawable/ic_home_black_24dp"
+        app:showAsAction="always" />
 
 </menu>

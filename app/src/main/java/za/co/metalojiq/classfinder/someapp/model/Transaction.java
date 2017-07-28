@@ -14,9 +14,9 @@ public class Transaction implements Serializable {
     //Todo these mapping should change because they are now generic
     @SerializedName("accom_id")
     private String id;
-    @SerializedName("student_email")
-    private String email;
-    @SerializedName("student_contact")
+    @SerializedName("email")
+    private String studentEmail;
+    @SerializedName("contact")
     private String StudentContact;
     @SerializedName("location")
     private String location;
@@ -31,12 +31,22 @@ public class Transaction implements Serializable {
     @SerializedName("view_time")
     private String viewTime;
 
-    public String getEmail() {
-        return email;
+    @SerializedName("host_id")
+    private int hostId;
+    @SerializedName("student_id")
+    private int studentId;
+    @SerializedName("room_address")
+    private String roomAddress;
+    @SerializedName("price")
+    private double price;
+
+
+    public String getStudentEmail() {
+        return studentEmail;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setStudentEmail(String studentEmail) {
+        this.studentEmail = studentEmail;
     }
 
     public String getStudentContact() {
@@ -94,5 +104,37 @@ public class Transaction implements Serializable {
 
     public void setViewTime(String viewTime) {
         this.viewTime = viewTime;
+    }
+
+    public int getHostId() {
+        return hostId;
+    }
+
+    public void setHostId(int hostId) {
+        this.hostId = hostId;
+    }
+
+    public int getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(int studentId) {
+        this.studentId = studentId;
+    }
+
+    public String getRoomAddress() {
+        return roomAddress;
+    }
+
+    public void setRoomAddress(String roomAddress) {
+        this.roomAddress = roomAddress;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 }

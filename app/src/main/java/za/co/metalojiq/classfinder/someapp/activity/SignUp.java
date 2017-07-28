@@ -78,7 +78,7 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
 
         //hide runner info
         toggleShowRunnerInfo(false);
-     //   final Spinner locationsSpinner = setupSpinner(this, R.id.signUpSpinnerTime, R.array.locations_array);
+        //   final Spinner locationsSpinner = setupSpinner(this, R.id.signUpSpinnerTime, R.array.locations_array);
 
         mRunnerQuestion.setOnClickListener(new OnClickListener() {
             @Override
@@ -123,7 +123,13 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
                     if (response.body() != null) {
                         boolean exits = response.body().isExits();
                         if (exits) {
-                            saveUserInfo(email, response.body().getUser().getId(), response.body().getUser().isRunner(), isGoogleUser, response.body().getUser().getToken());
+                            saveUserInfo(email,
+                                    response.body().getUser().getId(),
+                                    response.body().getUser().isRunner(),
+                                    isGoogleUser,
+                                    response.body().getUser().getToken(),
+                                    response.body().getUser().isHost());
+
                             startActivity(new Intent(SignUp.this, MainActivity.class));
                         } else {  // if the google user does not exit
                             hideAllFieldsExceptPhone();
@@ -177,7 +183,7 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
                                     mPhone.getText().toString().trim(),
                                     mPassword.getText().toString(),
                                     mCheckIsRunner.isSelected()
-                                  );
+                            );
                         } else { // this part is for when a user does not want to be a runner
                             signUp(email, name, mPhone.getText().toString().trim(),
                                     mPassword.getText().toString(), mCheckIsRunner.isChecked());
@@ -199,17 +205,17 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
     private void toggleShowRunnerInfo(boolean show) {
         horScroll = (HorizontalScrollView) findViewById(R.id.SignUpHorizontalTimes);
         TextView tvSelectTime = (TextView) findViewById(R.id.signUpTvSelectTime);
-      //  TextView signUpSelectTime = (TextView) findViewById(R.id.signUpSelectTime);
+        //  TextView signUpSelectTime = (TextView) findViewById(R.id.signUpSelectTime);
 //        Spinner spinner = (Spinner) findViewById(R.id.signUpSpinnerTime);
         if (show) {
             tvSelectTime.setVisibility(View.VISIBLE);
             horScroll.setVisibility(View.VISIBLE);
-         //   signUpSelectTime.setVisibility(View.VISIBLE);
+            //   signUpSelectTime.setVisibility(View.VISIBLE);
 //            spinner.setVisibility(View.VISIBLE);
         } else {
             tvSelectTime.setVisibility(View.GONE);
             horScroll.setVisibility(View.GONE);
-         //   signUpSelectTime.setVisibility(View.GONE);
+            //   signUpSelectTime.setVisibility(View.GONE);
 //            spinner.setVisibility(View.GONE);
         }
     }
@@ -312,7 +318,8 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
                     response.body().getUser().getId(),
                     response.body().getUser().isRunner(),
                     isGoogleUser,
-                    response.body().getUser().getToken());
+                    response.body().getUser().getToken(),
+                    response.body().getUser().isHost());
 
             KtUtils.INSTANCE.signUserInToFirebase(SignUp.this,
                     response.body().getUser().getJwtToken(),
@@ -344,7 +351,7 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
     }
 
 
-    public void saveUserInfo(String email, int id, boolean isRunner, boolean isGoogle, String token) {
+    public void saveUserInfo(String email, int id, boolean isRunner, boolean isGoogle, String token, Boolean isHost) {
         SharedPreferences sharedPreferences = getUserSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(LOGIN_PREF_EMAIL, email);
@@ -352,7 +359,7 @@ public class SignUp extends AppCompatActivity implements Callback<UserResponse>,
         editor.putBoolean(LOGIN_IS_RUNNER, isRunner);
         editor.putBoolean(IS_GOOGLE_LOGIN, isGoogle);
         editor.putString(USER_LOGIN_TOKEN, token);
-
+        editor.putBoolean(USER_LOGIN_IS_HOST, isHost);
         editor.commit(); //fixme does this backgroud thing effect any thing
     }
 

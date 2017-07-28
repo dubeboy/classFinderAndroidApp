@@ -71,10 +71,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public static final String LOGIN_IS_RUNNER = TAG + "IS_RUNNER";
     private static final int RC_SIGN_IN = 1011;
     public static final String IS_GOOGLE_LOGIN = TAG + "IS_GOOGLE_SIGN_IN";
-    public static final String GOOGLE_USER_TOKEN = "GOOGLE_USER_TOKEN";
+    public static final String GOOGLE_USER_TOKEN = "GOOGLE_USER_TOKEN"; // todo: should be private yoh
     public static final String GOOGLE_USER_EMAIL = "GOOGLE_USER_EMAIL";
     public static final String GOOGLE_USER_NAME = "GOOGLE_USER_NAME";
     public static final String USER_LOGIN_TOKEN = "USER_LOGIN_TOKEN";
+    public static final String USER_LOGIN_IS_HOST = "USER_LOGIN_IS_HOST";
+
     /**
      * Keep track of the login task to ensure we can onCancelCallback it if requested.
      */
@@ -173,7 +175,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             //Todo remove this is bad!!
             Log.d(TAG, "Hello You have signed in using google " + acct.getDisplayName());
             Log.d(TAG, "Hello Your token is this " + acct.getId());
-            //  makeToast("Hello " + acct.getEmail(), this);
+            //  makeToast("Hello " + acct.getStudentEmail(), this);
             Log.d("TOKEN ", acct.getIdToken());
             Log.d("TOKEN ID", acct.getId());
 
@@ -412,6 +414,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         editor.putInt(LOGIN_PREF_USER_ID, response.body().getUser().getId());
                         editor.putBoolean(LOGIN_IS_RUNNER, response.body().getUser().isRunner());
                         editor.putString(USER_LOGIN_TOKEN, response.body().getUser().getToken());
+                        editor.putBoolean(USER_LOGIN_IS_HOST, response.body().getUser().isHost());
                         editor.commit(); //i want it to save now because we abould to finish the activity
                         Log.e(TAG, sharedPreferences.getString(LOGIN_PREF_EMAIL, "YOHHHHHHH this is a problem NO EMAIL MAN DAMN!!!"));
                         // only here you should finish

@@ -43,6 +43,7 @@ import za.co.metalojiq.classfinder.someapp.model.Transaction;
 import za.co.metalojiq.classfinder.someapp.model.TransactionResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
+import za.co.metalojiq.classfinder.someapp.util.KtUtils;
 
 
 //this should be a fragment loaded by the user class
@@ -68,7 +69,7 @@ public class Runner extends AppCompatActivity {
         int id = sharedPreferences.getInt(LoginActivity.LOGIN_PREF_USER_ID, 0);
 
         boolean runner = sharedPreferences.getBoolean(LoginActivity.LOGIN_IS_RUNNER, false);
-        Log.d(TAG,"User Email ma nikkka " +  sharedPreferences.getString(LoginActivity.LOGIN_PREF_EMAIL, "NO email oops"));
+        Log.d(TAG, "User Email ma nikkka " + sharedPreferences.getString(LoginActivity.LOGIN_PREF_EMAIL, "NO email oops"));
 
         //Todo fix this should be removed
         mProgressBar = (ProgressBar) findViewById(R.id.runnerTransLoad);
@@ -86,7 +87,7 @@ public class Runner extends AppCompatActivity {
             StudentPanel stdPanel = StudentPanel.newInstance(id);
             FragmentManager fragmentManager = getSupportFragmentManager();
             final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.add(R.id.main_content, stdPanel, "ACCOM_LIST_FRAGMENT");
+            fragmentTransaction.add(R.id.main_content, stdPanel, "ACCOM_STUDENT_LIST_FRAGMENT");
             fragmentTransaction.commit();
             return;
         }
@@ -100,7 +101,6 @@ public class Runner extends AppCompatActivity {
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
-
 
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -146,7 +146,7 @@ public class Runner extends AppCompatActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment implements Callback<TransactionResponse>{
+    public static class PlaceholderFragment extends Fragment implements Callback<TransactionResponse> {
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -170,9 +170,9 @@ public class Runner extends AppCompatActivity {
         public static PlaceholderFragment newInstance(int position, int runnerId) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
-                args.putInt(ARG_POSITION, position);
-                args.putInt(ARG_RUNNER_ID, runnerId);
-                fragment.setArguments(args);
+            args.putInt(ARG_POSITION, position);
+            args.putInt(ARG_RUNNER_ID, runnerId);
+            fragment.setArguments(args);
             return fragment;
         }
 
@@ -208,45 +208,61 @@ public class Runner extends AppCompatActivity {
         }
 
 
-          private void load(final int position, final int runnerId) {
-                ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-                switch (position) {
-                    case 0:
-                        Call<TransactionResponse> call = apiService.getRunner(runnerId, 1);
-                        call.enqueue(this);
-                        break;
-                    case 1:
-                        Call<TransactionResponse> callPaid = apiService.getRunner(runnerId, 2);
-                        callPaid.enqueue(this);
-                        break;
-                }
+        private void load(final int position, final int runnerId) {
+            ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+            switch (position) {
+                case 0:
+                    Call<TransactionResponse> call = apiService.getRunner(runnerId, 1);
+                    call.enqueue(this);
+                    break;
+                case 1:
+                    Call<TransactionResponse> callPaid = apiService.getRunner(runnerId, 2);
+                    callPaid.enqueue(this);
+                    break;
             }
+        }
 
-            @Override
-            public void onResponse(Call<TransactionResponse> call, Response<TransactionResponse> response) {  //TOdo can produce NullPointerException
-                ArrayList<Transaction> transactions = response.body().getTransactions();
-                userAdapter = new TransactionAdapter(transactions, R.layout.list_item_runner, getActivity());
-                recyclerView.setAdapter(userAdapter);
+        @Override
+        public void onResponse(Call<TransactionResponse> call, Response<TransactionResponse> response) {  //TOdo can produce NullPointerException
+            ArrayList<Transaction> transactions = response.body().getTransactions();
+            userAdapter = new TransactionAdapter(transactions, R.layout.list_item_runner, getActivity(), new TransactionAdapter.OnClickListener() {
+                @Override
+                public void click(Transaction transaction) {
+                    Intent intent = KtUtils.INSTANCE.setIntentForChatActivity(
+                            getContext(),
+                            transaction.getHostId(),
+                            transaction.getStudentId(),
+                            transaction.getRoomAddress(),
+                            false,
+                            transaction.getStudentEmail(),
+                            transaction.getPrice(),
+                            transaction.getRoomType());
+                    startActivity(intent);
+
+                }
+            });
+            recyclerView.setAdapter(userAdapter);
 //                recyclerView.postInvalidate();
-                showProgress(false);
-                if (transactions.size() == 0) {
-                    recyclerView.setVisibility(View.GONE);
-                    tvError.setVisibility(View.VISIBLE);
-                    tvError.setText("Good job you have no leads yet! contact Admin if you cant wait to get lead and get your cash at" +
-                            "089 blah blah ");
-                } else {
-                   Log.d(TAG, "Number of element " + userAdapter.getItemCount());
-                }
-            }
-            @Override
-            public void onFailure(Call<TransactionResponse> call, Throwable t) {
-                //BAD!!!
-                Log.d(TAG, t.toString());
+            showProgress(false);
+            if (transactions.size() == 0) {
                 recyclerView.setVisibility(View.GONE);
-                showProgress(false);
                 tvError.setVisibility(View.VISIBLE);
-
+                tvError.setText("Good job you have no leads yet! contact Admin if you cant wait to get lead and get your cash at" +
+                        "089 blah blah ");
+            } else {
+                Log.d(TAG, "Number of element " + userAdapter.getItemCount());
             }
+        }
+
+        @Override
+        public void onFailure(Call<TransactionResponse> call, Throwable t) {
+            //BAD!!!
+            Log.d(TAG, t.toString());
+            recyclerView.setVisibility(View.GONE);
+            showProgress(false);
+            tvError.setVisibility(View.VISIBLE);
+
+        }
 
 
         @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
@@ -254,32 +270,25 @@ public class Runner extends AppCompatActivity {
             // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
             // for very easy animations. If available, use these APIs to fade-in
             // the progress spinner.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-                int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-                recyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
-                recyclerView.animate().setDuration(shortAnimTime).alpha(
-                        show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        recyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
-                    }
-                });
+            recyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
+            recyclerView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    recyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
 
-                mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
-                mProgressBar.animate().setDuration(shortAnimTime).alpha(
-                        show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
-                    }
-                });
-            } else {
-                // The ViewPropertyAnimator APIs are not available, so simply show
-                // and hide the relevant UI components.
-                mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
-                mProgressBar.setVisibility(show ? View.GONE : View.VISIBLE);
-            }
+            mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressBar.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
         }
     }
 
@@ -297,10 +306,12 @@ public class Runner extends AppCompatActivity {
             this.runnerId = runnerId;
 
         }
+
         Fragment fragment;
+
         @Override
         public Fragment getItem(int position) {
-           return PlaceholderFragment.newInstance(position, runnerId);
+            return PlaceholderFragment.newInstance(position, runnerId);
         }
 
 //        private Fragment getFragment(int position, int runnerId) {
@@ -312,8 +323,6 @@ public class Runner extends AppCompatActivity {
 //                return fragment;
 //            }
 //        }
-
-
 
 
         @Override

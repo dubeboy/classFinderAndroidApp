@@ -14,6 +14,7 @@ import android.util.Log
 import za.co.metalojiq.classfinder.someapp.activity.fragment.AccomList
 import android.media.RingtoneManager
 import za.co.metalojiq.classfinder.someapp.activity.*
+import za.co.metalojiq.classfinder.someapp.util.KtUtils
 import java.util.*
 
 
@@ -38,21 +39,34 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val hostId: String? = remoteMessage.data["host_id"]
 //      @Deprecated  val roomId: String? = remoteMessage.data["room_id"]   // TODO: should remove these
-        val roomLocation: String? = remoteMessage.data["room_location"]  //TODO: should add this on the server
         val senderId: String? = remoteMessage.data["sender_id"]
         val isOpenByHost: String? = remoteMessage.data["is_open_by_host"]
         val search: String? = remoteMessage.data["search"]
+        // extra data for the accommodations
+        val roomAddress: String? = remoteMessage.data["room_address"]
+        val roomPrice: String? = remoteMessage.data["room_price"]
+        val roomType: String? = remoteMessage.data["room_address"]
 
         val for_host = remoteMessage.data["for_host"]
         val taskStackBuilder = TaskStackBuilder.create(this)
         if(hostId != null) {
             //set up a laucher here to start the chats activityv
-            val intent = Intent(this, ChatActivity::class.java)
-            intent.putExtra(AccomList.POST_INT_HOST_ID, hostId.toInt())
-            intent.putExtra(ChatActivity.ROOM_LOC, roomLocation)
-            intent.putExtra(ChatActivity.SENDER_ID, senderId!!.toInt()) //cannot be null
-            intent.putExtra(ChatActivity.IS_OPEN_BY_HOST, isOpenByHost!!.toBoolean())
-            intent.putExtra(LoginActivity.LOGIN_PREF_EMAIL, remoteMessage.data["sender_email"])
+//            val intent = Intent(this, ChatActivity::class.java)
+//            intent.putExtra(AccomList.POST_INT_HOST_ID, hostId.toInt())
+////            intent.putExtra(AccomList.STRING_ROOM_ADDRESS_EXTRA, roomLocation)
+//            intent.putExtra(ChatActivity.SENDER_ID, senderId!!.toInt()) //cannot be null
+//            intent.putExtra(ChatActivity.IS_OPEN_BY_HOST, isOpenByHost!!.toBoolean())
+//            intent.putExtra(LoginActivity.LOGIN_PREF_EMAIL, remoteMessage.data["sender_email"])
+
+            val intent = KtUtils.setIntentForChatActivity(
+                    this,hostId.toInt(),
+                    senderId!!.toInt(), roomAddress!!,
+                    /*true*/ isOpenByHost!!.toBoolean(),
+                    remoteMessage.data["sender_email"]!!,
+                    roomPrice!!.toDouble(),  roomType!! )
+
+            //TODO: replace with the utility class
+
             taskStackBuilder.addParentStack(ChatActivity::class.java)
             taskStackBuilder.addNextIntent(intent)
             val pendingIntent = taskStackBuilder.getPendingIntent(Random().nextInt(), PendingIntent.FLAG_UPDATE_CURRENT )

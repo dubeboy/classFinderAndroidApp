@@ -1,5 +1,6 @@
 package za.co.metalojiq.classfinder.someapp.activity.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -25,6 +26,7 @@ import za.co.metalojiq.classfinder.someapp.model.Transaction;
 import za.co.metalojiq.classfinder.someapp.model.TransactionResponse;
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient;
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface;
+import za.co.metalojiq.classfinder.someapp.util.KtUtils;
 
 import java.util.ArrayList;
 
@@ -95,7 +97,21 @@ public class StudentPanel extends Fragment {
                     mProgressBar.setVisibility(View.GONE);
                     return;
                 }
-                recyclerView.setAdapter(new TransactionAdapter(transactions, R.layout.list_item_runner, getActivity()));
+                recyclerView.setAdapter(new TransactionAdapter(transactions, R.layout.list_item_runner, getActivity(), new TransactionAdapter.OnClickListener() {
+                    @Override
+                    public void click(Transaction transaction) {
+                        Intent intent = KtUtils.INSTANCE.setIntentForChatActivity(
+                                getContext(),
+                                transaction.getHostId(),
+                                transaction.getStudentId(),
+                                transaction.getRoomAddress(),
+                                false,
+                                transaction.getStudentEmail(),
+                                transaction.getPrice(),
+                                transaction.getRoomType());
+                        startActivity(intent);
+                    }
+                }));
                 mProgressBar.setVisibility(View.GONE);
             }
             @Override

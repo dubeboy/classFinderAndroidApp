@@ -1,7 +1,6 @@
 package za.co.metalojiq.classfinder.someapp.activity
 
 import android.support.design.widget.TabLayout
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 
@@ -106,7 +105,19 @@ class HostPanel : AppCompatActivity() {
             var transactionAdapter: TransactionAdapter? = null
             getTransactions(view, swipeRefreshLayout,  1) {
                 swipeRefreshLayout.isRefreshing = false
-                transactionAdapter = TransactionAdapter(it, R.layout.list_item_runner, activity)
+                transactionAdapter = TransactionAdapter(it, R.layout.list_item_runner, activity,  { transaction ->
+                    Log.d(TAG, "The transaction row was clicked")
+                    val intentForChatActivity = KtUtils.setIntentForChatActivity(
+                            context,
+                            transaction.hostId,
+                            transaction.studentId,
+                            transaction.roomAddress,
+                            true,
+                            transaction.studentEmail,
+                            transaction.price,
+                            transaction.roomType )
+                    startActivity(intentForChatActivity)
+                })
                 recyclerView.adapter = transactionAdapter
             }
             val linearLayoutManager: LinearLayoutManager = LinearLayoutManager(activity)
@@ -199,7 +210,7 @@ class HostPanel : AppCompatActivity() {
             val swipeRefreshLayout = view.findViewById(R.id.swipeContainer) as SwipeRefreshLayout
             val recyclerView = view.findViewById(R.id.host_content_list) as RecyclerView
             swipeRefreshLayout.isRefreshing = true
-            Snackbar.make(view, "You have not chats yet!, share your cf accommodations on social media to get traction", Snackbar.LENGTH_INDEFINITE).show()
+
             Log.d(TAG, "View is created")
             val hostUser = Utils.getUserId(activity)
             KtUtils.displayChatMessages("cf_$hostUser", recyclerView, activity, hostUser, swipeRefreshLayout)

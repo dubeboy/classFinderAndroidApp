@@ -109,6 +109,14 @@ public class User implements Serializable {
         this.jwtToken = jwtToken;
     }
 
+    public boolean isHost() {
+        return isHost;
+    }
+
+    public void setHost(boolean host) {
+        isHost = host;
+    }
+
     //This class belongs to the user and nowhere else so u can only get to it via a user object.
     private class TimeSlot { // you can picture this class a c++ struct ;)
         @SerializedName("id")

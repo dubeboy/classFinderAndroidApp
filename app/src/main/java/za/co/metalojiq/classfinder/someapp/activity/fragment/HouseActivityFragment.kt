@@ -122,7 +122,7 @@ class HouseActivityFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<HousesResponse?>?, t: Throwable?) {
-                    Snackbar.make(linearLayout, "Sorry classFinder error, we will be back shortly.", //todo: crashes some times saying no suitable parent please give valid view
+                    Snackbar.make(view!!, "Sorry classFinder error, we will be back shortly.", //todo: crashes some times saying no suitable parent please give valid view
                             Snackbar.LENGTH_LONG).show()
                 swipeRefreshLayout?.isRefreshing =false
                 Log.e(TAG, t!!.toString())

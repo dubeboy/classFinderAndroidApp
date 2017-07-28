@@ -235,7 +235,8 @@ public interface ApiInterface {
 
     @Headers({"Accept: application/json"})
     @GET("/api/v1/users/notify_host")
-    Call<StatusRespose> notifyHost(@Query("room_id") String roomId,
+    Call<StatusRespose> notifyHost(@Query("chat_msg") String msg,
+                                   @Query("room_id") String roomId,
                                    @Query("host_id") int hostId,
                                    @Query("sender_id") int senderId,
                                    @Query("is_open_by_host") boolean isOpenByHost);

@@ -24,7 +24,6 @@ import za.co.metalojiq.classfinder.someapp.model.User
 import za.co.metalojiq.classfinder.someapp.model.UserResponse
 import za.co.metalojiq.classfinder.someapp.rest.ApiClient
 import za.co.metalojiq.classfinder.someapp.rest.ApiInterface
-import za.co.metalojiq.classfinder.someapp.util.KtUtils
 import za.co.metalojiq.classfinder.someapp.util.Utils
 import java.util.*
 
@@ -34,18 +33,22 @@ class ChatActivity : AppCompatActivity() {
     //todo: should have single ton that stores user state here
 
     val msgs: ArrayList<ChatMessage> = ArrayList()
-//    lateinit var recyclerViewAdapter: ChatsAdapter
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
+        val (price, address, roomType) = getAccomDetails()
+        if (supportActionBar != null) {
+            supportActionBar!!.setTitle(address)
+            supportActionBar!!.setSubtitle("Room type: $roomType - price: $price")
+        }
 
 
         val hostUser: User = User()
         hostUser.id = intent.getIntExtra(AccomList.POST_INT_HOST_ID, 0)
         val senderUser: User = User()
         val isOpenByHost = intent.getBooleanExtra(IS_OPEN_BY_HOST, false)  //todo: should really have it say is from notification
+
         if (isOpenByHost) { //this means that this intent is opened on the Hosts phone I need the senderUser to send to
             senderUser.id = intent.getIntExtra(SENDER_ID, 0)
             senderUser.email = intent.getStringExtra(LoginActivity.LOGIN_PREF_EMAIL)
@@ -54,11 +57,11 @@ class ChatActivity : AppCompatActivity() {
             senderUser.id = Utils.getUserId(this)
             senderUser.email = Utils.getUserSharedPreferences(this).getString(LoginActivity.LOGIN_PREF_EMAIL, "") // the email belong to who ever is sending
         }
-
         //todo: set a progress bar here
         getMessageFromFireBaseUser(senderUser, hostUser)
         val roomType1 = "cf_${hostUser.id}_${senderUser.id}"
         displayChatMessages(roomType1, list_of_messages, hostUser)
+
         fab_send.setOnClickListener {
             Log.d(TAG, "Sending msg")
             val text = input.text.toString().trim()
@@ -70,14 +73,22 @@ class ChatActivity : AppCompatActivity() {
             } else if (hostUser.id == senderUser.id) {
                 Toast.makeText(this@ChatActivity, "You cannot chat to your self boss", Toast.LENGTH_SHORT).show()
             } else {
-                val chat = ChatMessage(text, senderUser.email, senderUser.id, hostUser.id)
+                val chat = ChatMessage(text, senderUser.email, senderUser.id, hostUser.id, price, roomType, address)
                 sendMessageToFireBaseUser(this@ChatActivity, chat, senderUser, hostUser)
-                Utils.notifyHost(roomType1, hostUser.id, senderUser.id, !isOpenByHost) //who ever is on the recieving side should be the opposite of the other
+                Utils.notifyHost(text, roomType1, hostUser.id, senderUser.id, !isOpenByHost) //who ever is on the recieving side should be the opposite of the other
                 input.setText("")
             }
         }
     }
 
+
+    data class AccomDetails(val price: Double, val address: String, val roomType: String)
+    private fun getAccomDetails(): AccomDetails {
+        val price = intent.getDoubleExtra(AccomList.DOUBLE_PRICE_EXTRA, 0.0)
+        val roomType = intent.getStringExtra(AccomList.STRING_ROOM_TYPE_EXTRA)
+        val address = intent.getStringExtra(AccomList.STRING_ROOM_ADDRESS_EXTRA)
+        return  AccomDetails(price, address, roomType)
+    }
     /*sets up the recycler view*/
     fun displayChatMessages(child: String, listOfMessagesRecyclerView: RecyclerView, hostUser: User) {
         val ARG_CHAT_ROOMS = hostUser.id.toString()
@@ -263,7 +274,6 @@ class ChatActivity : AppCompatActivity() {
         const val TAG = "__ChatActivity__"
         const val IS_OPEN_BY_HOST = "isForHosT"
         const val SENDER_ID = "senderID"
-        const val ROOM_LOC = "roomLoc"
     }
 }
 

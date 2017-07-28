@@ -57,8 +57,6 @@ public class AccomImageSlider extends AppCompatActivity implements
     private final Calendar c = Calendar.getInstance();
     private int hostId;
     private int advertId;
-    private Button btnRent;
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -73,6 +71,13 @@ public class AccomImageSlider extends AppCompatActivity implements
                 Intent intent = new Intent(this, ChatActivity.class);
                 intent.putExtra(AccomList.POST_INT_HOST_ID, hostId);
                 intent.putExtra(AccomList.POST_ADVERT_ID, advertId);
+                // these are the datum for the action bar // datum haha!!
+                intent.putExtra(AccomList.STRING_ROOM_ADDRESS_EXTRA,
+                        getIntent().getStringExtra(AccomList.STRING_ROOM_ADDRESS_EXTRA));
+                intent.putExtra(AccomList.DOUBLE_PRICE_EXTRA,
+                        Double.parseDouble(getIntent().getStringExtra(AccomList.DOUBLE_PRICE_EXTRA)));
+                intent.putExtra(AccomList.STRING_ROOM_TYPE_EXTRA,
+                        getIntent().getStringExtra(AccomList.STRING_ROOM_TYPE_EXTRA));
                 startActivity(intent);
                 return true;
         }
@@ -89,7 +94,7 @@ public class AccomImageSlider extends AppCompatActivity implements
         ArrayList<String> stringArrayList =
                 intent.getStringArrayListExtra(AccomList.PICTURES_ARRAY_EXTRA);
 
-        String price = intent.getStringExtra(AccomList.DOUBLE_PRICE_EXTRA);
+        String price = intent.getStringExtra(AccomList.DOUBLE_PRICE_EXTRA);   //todo should be sent as double
         String roomType = intent.getStringExtra(AccomList.STRING_ROOM_TYPE_EXTRA);
         String location = intent.getStringExtra(AccomList.STRING_ROOM_LOCATION_EXTRA);
         String description = intent.getStringExtra(AccomList.STRING_ROOM_DESC);
@@ -192,7 +197,7 @@ public class AccomImageSlider extends AppCompatActivity implements
         });
 
         final String finalEmail = email; // copy of the email var, coz email var cannot be final :(
-        btnRent = (Button) findViewById(R.id.btnRentRoom);
+        Button btnRent = (Button) findViewById(R.id.btnRentRoom);
 
 
         btnRent.setOnClickListener(new View.OnClickListener() {

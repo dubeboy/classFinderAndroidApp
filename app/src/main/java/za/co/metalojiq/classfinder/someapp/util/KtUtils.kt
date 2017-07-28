@@ -49,12 +49,15 @@ object KtUtils {
         val chatListArrayList: ArrayList<ChatMessage> = arrayListOf()
         val chatsAdapter: ChatsAdapter = ChatsAdapter(chatListArrayList, object : ChatsAdapter.OnItemClick {
             override fun onItemClick(chat: ChatMessage) {
-                val intentForChatActivity = getIntentForChatActivity(context,
+                val intentForChatActivity = setIntentForChatActivity(
+                        context,
                         chat.receiverId,
                         chat.senderId,
-                        "TODO",
+                        chat.houseAddress,
                         true,
-                        chat.messageUser!!)
+                        chat.messageUser,
+                        chat.price,
+                        chat.roomType)
 
                 Toast.makeText(context, "Opening Chat, Loading messages...", Toast.LENGTH_LONG).show()
                 context.startActivity(intentForChatActivity)
@@ -89,22 +92,26 @@ object KtUtils {
     }
 
 
-    fun getIntentForChatActivity(context: Context,
+    fun setIntentForChatActivity(context: Context,
                                  hostId: Int,
                                  @NonNull senderId: Int, //should not be null please
                                  roomAddress: String,
                                  isOpenByHost: Boolean,
-                                 senderEmail: String): Intent {
+                                 senderEmail: String,
+                                 price: Double,
+                                 roomType: String): Intent {
 
         if (senderId <= 0)
             throw IllegalArgumentException("please provide the right sender id it has to be > 0")
 
         val intent = Intent(context, ChatActivity::class.java)
         intent.putExtra(AccomList.POST_INT_HOST_ID, hostId)
-        intent.putExtra(ChatActivity.ROOM_LOC, roomAddress)
         intent.putExtra(ChatActivity.SENDER_ID, senderId) //cannot be null
         intent.putExtra(ChatActivity.IS_OPEN_BY_HOST, isOpenByHost)
         intent.putExtra(LoginActivity.LOGIN_PREF_EMAIL, senderEmail)
+        intent.putExtra(AccomList.STRING_ROOM_ADDRESS_EXTRA, roomAddress)
+        intent.putExtra(AccomList.DOUBLE_PRICE_EXTRA, price)
+        intent.putExtra(AccomList.STRING_ROOM_TYPE_EXTRA, roomType)
         return intent
     }
 

@@ -60,7 +60,7 @@ import static za.co.metalojiq.classfinder.someapp.util.Utils.makeToast;
 //// TODO: 1/11/17   this class should use fragments to display the activity based on the which callback
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
-    public static final String TAG = MainActivity.class.getSimpleName();
+    public static final String TAG = "__MainActivity__";
     public static final String USER_ID = "userId";
     private GoogleApiClient mGoogleApiClient;
     private SharedPreferences sharedPreferences;
@@ -79,7 +79,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         getMenuInflater().inflate(R.menu.menu_main, menu);
         userId = sharedPreferences.getInt(LoginActivity.LOGIN_PREF_USER_ID, 0);  //need this for action menu invalidation
         Log.d(TAG, "The ID of the user  is: " + userId);
-        boolean isRunner = sharedPreferences.getBoolean(LoginActivity.LOGIN_IS_RUNNER, false);
+        boolean isHost = sharedPreferences.getBoolean(LoginActivity.USER_LOGIN_IS_HOST, false);
+        Log.d(TAG, "is the user a host? " + isHost);
         MenuItem itemLogin = menu.findItem(R.id.action_login);
         MenuItem itemRunner = menu.findItem(R.id.action_runner);
         MenuItem itemSignOut = menu.findItem(R.id.action_sign_out);
@@ -88,16 +89,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             itemRunner.setVisible(false);
             itemLogin.setVisible(true);
             itemSignOut.setVisible(false);
-        } else if (isRunner) {
-            itemRunner.setVisible(true);
+        } else if (isHost) {
+            itemRunner.setVisible(false);
             itemLogin.setVisible(false);
             itemSignOut.setVisible(true);
-        } else {  // this is when the user is signed in but is not a runner!
+            itemHouses.setVisible(true);
+        } else {  // this is when the user is signed in but is not a host!
             itemRunner.setVisible(true);
             itemSignOut.setVisible(true);
-            itemHouses.setVisible(true);
+            itemHouses.setVisible(false);
         }
-
         return true;
     }
 
@@ -186,7 +187,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             startActivity(new Intent(this, LoginActivity.class));
         }
 
-
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
         Call<AccommodationResponse> call = apiService.getAllAccommodations(1); //just get the first 6 elements
 
@@ -197,10 +197,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 progressBar.setVisibility(View.GONE);
 
                 try {
-                    if (response != null && response.errorBody() != null)
+                    if (response.errorBody() != null)
                         Log.d(TAG, "RAW RESPONSE OF UNSUCCESSFUL ==>" + response.errorBody().string());
-                    Snackbar.make((((Activity) MainActivity.this).findViewById(android.R.id.content)),
-                            "Ops!, an Error happened!", Snackbar.LENGTH_LONG);
+                    Snackbar.make(((MainActivity.this).findViewById(android.R.id.content)),
+                            "Opps!, an Error happened!", Snackbar.LENGTH_LONG);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -289,14 +289,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 LayoutInflater inflater = getLayoutInflater();
                 View dialogView = inflater.inflate(R.layout.fragment_invite_accommodation_owner, null);
                 builder.setView(dialogView);
-                builder.setTitle("Invite LandLord");
+                builder.setTitle("Invite landLord to Checkinn (free)");
                 etOwnerPhone = (EditText) dialogView.findViewById(R.id.accom_owner_phone);
                 builder.setPositiveButton("Invite", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String phoneNumber = etOwnerPhone.getText().toString();
                         if(validateNumber(phoneNumber.trim())) {
-                            makeToast("Inviting Landload", MainActivity.this);
+                            makeToast("Inviting Landlord (free)", MainActivity.this);
                             ApiClient.getClient().create(ApiInterface.class)
                                     .sendSms(phoneNumber, Utils.getUserId(MainActivity.this))
                                     .enqueue(new Callback<StatusRespose>() {
@@ -305,10 +305,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                             if (response.body() != null) {
                                                 if (response.body().isStatus()) {
                                                     Toast.makeText(MainActivity.this,
-                                                            "Invited Landload via SMS", Toast.LENGTH_LONG).show();
+                                                            "sent invitation to landlord", Toast.LENGTH_LONG).show();
                                                 } else {
                                                     Toast.makeText(MainActivity.this,
-                                                            "Sorry could not send SMS please make sure you are signed in", Toast.LENGTH_LONG).show();
+                                                            "Sorry could not invite landload", Toast.LENGTH_LONG).show();
 
                                                 }
                                             } else {
@@ -321,7 +321,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                         @Override
                                         public void onFailure(Call<StatusRespose> call, Throwable t) {
                                             Toast.makeText(MainActivity.this,
-                                                    "To send an sms you need to be connected to the internet", Toast.LENGTH_LONG).show();
+                                                    "To invite a landlord you need to be connected to the internet", Toast.LENGTH_LONG).show();
                                         }
                                     });
                             dialog.dismiss();
