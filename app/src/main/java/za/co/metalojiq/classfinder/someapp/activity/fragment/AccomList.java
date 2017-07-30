@@ -204,6 +204,7 @@ public class AccomList extends Fragment implements AccomAdapter.OnItemClickListe
                     Snackbar.make(linearLayout, "No more accommodationds to load. ", Snackbar.LENGTH_SHORT).show();
                     call.cancel();
                 }
+                swipeRefreshLayout.setRefreshing(false);
                 progressBar.setVisibility(View.GONE);
             }
 

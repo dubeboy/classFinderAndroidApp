@@ -5,9 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.support.annotation.NonNull
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
@@ -17,6 +19,8 @@ import com.google.firebase.database.DatabaseError
 
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlinx.android.synthetic.main.activity_host_panel.*
+import za.co.metalojiq.classfinder.someapp.R
 import za.co.metalojiq.classfinder.someapp.activity.ChatActivity
 import za.co.metalojiq.classfinder.someapp.activity.LoginActivity
 import za.co.metalojiq.classfinder.someapp.activity.fragment.AccomList
@@ -136,4 +140,7 @@ object KtUtils {
                     }
                 })
     }
+
+
+    fun getView(context: Activity): View = context.findViewById(android.R.id.content)
 }

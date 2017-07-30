@@ -89,31 +89,34 @@ public class StudentPanel extends Fragment {
         call.enqueue(new Callback<TransactionResponse>() {
             @Override
             public void onResponse(Call<TransactionResponse> call, Response<TransactionResponse> response) {
-                ArrayList<Transaction> transactions = response.body().getTransactions();
-                if (transactions.size() == 0) {
-                   // recyclerView.setVisibility(View.GONE);
-                   // Snackbar.make(getView(), "You have not requested to view an accommodation yet!", Snackbar.LENGTH_INDEFINITE);
-                    Toast.makeText(getActivity(), "You have not requested to view an accommodation yet!", Toast.LENGTH_LONG).show();
-                    mProgressBar.setVisibility(View.GONE);
-                    return;
-                }
-                recyclerView.setAdapter(new TransactionAdapter(transactions, R.layout.list_item_runner, getActivity(), new TransactionAdapter.OnClickListener() {
-                    @Override
-                    public void click(Transaction transaction) {
-                        Intent intent = KtUtils.INSTANCE.setIntentForChatActivity(
-                                getContext(),
-                                transaction.getHostId(),
-                                transaction.getStudentId(),
-                                transaction.getRoomAddress(),
-                                false,
-                                transaction.getStudentEmail(),
-                                transaction.getPrice(),
-                                transaction.getRoomType());
-                        startActivity(intent);
+                if (response.body() != null) {
+                    ArrayList<Transaction> transactions = response.body().getTransactions();
+                    if (transactions.size() == 0) {
+                        Snackbar.make(KtUtils.INSTANCE.getView(getActivity()), "You have not requested to view an accommodation yet!, please book one", Snackbar.LENGTH_INDEFINITE).show();
+                        return;
                     }
-                }));
-                mProgressBar.setVisibility(View.GONE);
+                    recyclerView.setAdapter(new TransactionAdapter(transactions, R.layout.list_item_runner, getActivity(), new TransactionAdapter.OnClickListener() {
+                        @Override
+                        public void click(Transaction transaction) {
+                            Intent intent = KtUtils.INSTANCE.setIntentForChatActivity(
+                                    getContext(),
+                                    transaction.getHostId(),
+                                    transaction.getStudentId(),
+                                    transaction.getRoomAddress(),
+                                    false,
+                                    transaction.getStudentEmail(),
+                                    transaction.getPrice(),
+                                    transaction.getRoomType());
+                            startActivity(intent);
+                        }
+                    }));
+                    mProgressBar.setVisibility(View.GONE);
+                } else {
+                    Snackbar.make(KtUtils.INSTANCE.getView(getActivity()), "You have not requested to view an accommodation yet!, please go back to book one.", Snackbar.LENGTH_INDEFINITE).show();
+
+                }
             }
+
             @Override
             public void onFailure(Call<TransactionResponse> call, Throwable t) {
 //                recyclerView.setVisibility(View.GONE);

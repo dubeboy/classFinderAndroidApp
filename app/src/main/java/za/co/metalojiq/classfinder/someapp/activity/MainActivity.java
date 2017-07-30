@@ -152,7 +152,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         googleSignOut();  // todo: reactivate soon
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -171,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         Log.d(TAG, "onCreate: hello tye fcm token is: " + Utils.getUserSharedPreferences(this).getAll());
         // it was exactly what i needed
         fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setVisibility(View.VISIBLE);
+//        fab.setVisibility(View.VISIBLE); // should return the state of this to false the wy it was
         fab1 = (FloatingActionButton) findViewById(R.id.fab1);
         fab2 = (FloatingActionButton) findViewById(R.id.fab2);
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
@@ -182,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             fab.setOnClickListener(this);
             fab1.setOnClickListener(this);
             fab2.setOnClickListener(this);
-        } else {
+        } else {  // todo : id this really required man
             makeToast("Please sign in first", this);
             startActivity(new Intent(this, LoginActivity.class));
         }
@@ -225,9 +224,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 ArrayList<Accommodation> accommodations = new ArrayList<>();
                 final AccomList accomList = AccomList.newInstance(accommodations, -1);
                 //    final HouseActivityFragment myHousesList = HouseActivityFragment.Companion.newInstance(userId);
-
                 // start the activity tu
-                setTitle("Error");
+             //   setTitle("Error");
+                Snackbar.make(findViewById(android.R.id.content), "Please connect to the internet, swipe down to refresh", Snackbar.LENGTH_INDEFINITE).show();
                 startAccomListActivity(accomList, fragmentTransaction);
             }
         });
